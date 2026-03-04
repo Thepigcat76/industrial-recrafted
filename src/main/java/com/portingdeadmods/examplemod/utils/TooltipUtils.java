@@ -8,9 +8,11 @@ import com.portingdeadmods.examplemod.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 import java.util.List;
@@ -60,6 +62,31 @@ public final class TooltipUtils {
                     .append(IRTranslations.FLUID_UNIT.component()
                             .withStyle(ChatFormatting.WHITE)));
         }
+    }
+
+    public static void addFluidToolTipAlways(List<Component> tooltip, ItemStack itemStack, int capacity) {
+        IFluidHandlerItem item = itemStack.getCapability(Capabilities.FluidHandler.ITEM);
+
+        MutableComponent component;
+        int stored;
+        if (item != null && !item.getFluidInTank(0).isEmpty()) {
+            component = item.getFluidInTank(0).getHoverName().copy();
+            stored = item.getFluidInTank(0).getAmount();
+        } else {
+            component = Component.literal("Empty");
+            stored = 0;
+        }
+        tooltip.add(IRTranslations.FLUID_TYPE.component()
+                .withStyle(ChatFormatting.GRAY)
+                .append(component.withColor(-1)));
+        tooltip.add(IRTranslations.FLUID_STORED.component()
+                .withStyle(ChatFormatting.GRAY)
+                .append(IRTranslations.FLUID_AMOUNT_WITH_CAPACITY.component(stored, capacity)
+                        .withStyle(ChatFormatting.WHITE))
+                .append(" ")
+                .append(IRTranslations.FLUID_UNIT.component()
+                        .withStyle(ChatFormatting.WHITE)));
+
     }
 
 }

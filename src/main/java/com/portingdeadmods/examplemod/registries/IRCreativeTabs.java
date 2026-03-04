@@ -34,10 +34,9 @@ public final class IRCreativeTabs {
                     } else if (stack.getItem() instanceof FluidCellItem) {
                         for (Fluid fluid : BuiltInRegistries.FLUID) {
                             if (fluid.isSource(fluid.defaultFluidState())) {
-                                ItemStack copy = stack.copy();
-                                IFluidHandlerItem fluidHandlerItem = copy.getCapability(Capabilities.FluidHandler.ITEM);
+                                out.accept(stack.copy());
+                                IFluidHandlerItem fluidHandlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
                                 fluidHandlerItem.fill(new FluidStack(fluid, fluidHandlerItem.getTankCapacity(0)), IFluidHandler.FluidAction.EXECUTE);
-                                out.accept(copy);
                             }
                         }
                     } else if (stack.getItem() instanceof FuelJetpackItem) {

@@ -28,7 +28,7 @@ public class FuelJetpackItem extends AbstractJetpackItem implements IFluidItem {
     }
 
     public static FuelJetpackItem defaultItem(Properties properties) {
-        return new FuelJetpackItem(properties, IRArmorMaterials.FUEL_JETPACK, Type.CHESTPLATE, () -> 10, () -> 1_000);
+        return new FuelJetpackItem(properties, IRArmorMaterials.FUEL_JETPACK, Type.CHESTPLATE, () -> 2, () -> 1_000);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class FuelJetpackItem extends AbstractJetpackItem implements IFluidItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext p_339594_, List<Component> tooltip, TooltipFlag p_41424_) {
         super.appendHoverText(stack, p_339594_, tooltip, p_41424_);
-        TooltipUtils.addFluidToolTip(tooltip, stack);
+        TooltipUtils.addFluidToolTipAlways(tooltip, stack, this.getFluidCapacity());
     }
 
 }

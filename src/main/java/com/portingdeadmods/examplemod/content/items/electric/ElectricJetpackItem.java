@@ -9,12 +9,16 @@ import com.portingdeadmods.examplemod.content.items.AbstractJetpackItem;
 import com.portingdeadmods.examplemod.impl.energy.ComponentEuStorage;
 import com.portingdeadmods.examplemod.registries.IRArmorMaterials;
 import com.portingdeadmods.examplemod.registries.IREnergyTiers;
+import com.portingdeadmods.examplemod.utils.TooltipUtils;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -73,5 +77,12 @@ public class ElectricJetpackItem extends AbstractJetpackItem implements EnergyIt
     @Override
     public int getDefaultCapacity() {
         return this.energyCapacity.getAsInt();
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+
+        TooltipUtils.addEnergyTooltip(tooltipComponents, stack);
     }
 }

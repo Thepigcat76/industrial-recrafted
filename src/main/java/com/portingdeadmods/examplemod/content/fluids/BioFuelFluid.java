@@ -10,7 +10,7 @@ import org.joml.Vector4i;
 public class BioFuelFluid extends PDLFluid {
     public BioFuelFluid(String name) {
         super(name);
-        this.fluidType = registerFluidType(FluidType.Properties.create(), new Vector4i(88, 214, 113, 255), FluidTemplates.WATER);
+        this.fluidType = registerFluidType(FluidType.Properties.create(), new Vector4i(190, 234, 45, 255), FluidTemplates.WATER);
     }
 
     @Override

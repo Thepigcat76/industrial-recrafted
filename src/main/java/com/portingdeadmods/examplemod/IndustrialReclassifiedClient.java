@@ -34,6 +34,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.model.DynamicFluidContainerModel;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.List;
@@ -96,7 +97,8 @@ public final class IndustrialReclassifiedClient {
 
     private void registerItemColor(RegisterColorHandlersEvent.Item event) {
         event.register(new SimpleFluidItem.Colors(), IRItems.FLUID_CELL.get());
-        event.register(new SimpleFluidItem.Colors(), IRItems.JETPACK.get());
+        event.register(new SimpleFluidItem.Colors(), IRItems.FLUID_CELL.get());
+        event.register(new DynamicFluidContainerModel.Colors(), IRFluids.BIO_FUEL.getDeferredBucket());
 //        for (PDLFluid fluid : IRFluids.HELPER.getFluids()) {
 //            if (fluid instanceof MoltenMetalFluid) {
 //                event.register(new DynamicFluidContainerModel.Colors(), fluid.getDeferredBucket());

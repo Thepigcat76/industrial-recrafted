@@ -229,6 +229,28 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_energy_crystal", has(IRItems.ENERGY_CRYSTAL))
                 .save(output);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IRItems.JETPACK.get())
+                .pattern("PCP")
+                .pattern("PBP")
+                .pattern("R R")
+                .define('P', CTags.ItemTags.INGOTS_REFINED_IRON)
+                .define('R', Tags.Items.DUSTS_REDSTONE)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .define('B', IRItems.FLUID_CELL)
+                .unlockedBy("has_circuit", has(IRItems.BASIC_CIRCUIT.get()))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IRItems.ELECTRIC_JETPACK.get())
+                .pattern("PCP")
+                .pattern("PBP")
+                .pattern("R R")
+                .define('P', CTags.ItemTags.PLATES_ADVANCED_ALLOY)
+                .define('R', Tags.Items.DUSTS_GLOWSTONE)
+                .define('C', IRItems.ADVANCED_CIRCUIT)
+                .define('B', IRItems.REDSTONE_BATTERY)
+                .unlockedBy("has_circuit", has(IRItems.ADVANCED_CIRCUIT.get()))
+                .save(output);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.ELECTRIC_HOE.get())
                 .requires(IRItems.REDSTONE_BATTERY)
                 .requires(ItemTags.HOES)
