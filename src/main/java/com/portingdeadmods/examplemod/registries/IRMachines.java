@@ -112,12 +112,11 @@ public final class IRMachines {
             )
             .blockEntity(WindMillBlockEntity::new)
             .menu(WindMillMenu::new));
-//    public static final IRMachine CENTRIFUGE = HELPER.registerMachine("centrifuge", IRMachine.builder(IREnergyTiers.LOW)
-//            .block(CentrifugeBlock::new)
-//            .blockEntity(CentrifugeBlockEntity::new)
-//            .menu(CentrifugeMenu::new));
 //    public static final IRMachine BATTERY_BOX = HELPER.registerMachine("battery_box", IRMachine.builder(IREnergyTiers.LOW)
-//            .block(BatteryBoxBlock::new)
+//            .block(MachineBlock::new, builder -> builder
+//                    .rotatable()
+//                    .ticking()
+//            )
 //            .blockEntity(BatteryBoxBlockEntity::new)
 //            .menu(BatteryBoxMenu::new));
 }

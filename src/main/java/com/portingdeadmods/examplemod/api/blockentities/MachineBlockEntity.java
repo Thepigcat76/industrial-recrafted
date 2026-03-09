@@ -149,49 +149,59 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected void tickRecipe() {
-        if (this.cachedRecipe != null && !this.level.isClientSide()) {
-            if (this.hasProgressFinished()) {
-                this.progress = 0;
-                RegistryAccess provider = this.level.registryAccess();
-                ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
-                FluidStack resultFluid = this.cachedRecipe.assembleFluid(this.createRecipeInput(), provider);
+        if (!this.level.isClientSide()) {
+            if (this.cachedRecipe != null) {
+                if (this.hasProgressFinished()) {
+                    this.progress = 0;
+                    RegistryAccess provider = this.level.registryAccess();
+                    ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
+                    FluidStack resultFluid = this.cachedRecipe.assembleFluid(this.createRecipeInput(), provider);
 
-                int resultEnergy = this.cachedRecipe.assembleEnergy(this.createRecipeInput(), provider);
-                ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
-                FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
+                    int resultEnergy = this.cachedRecipe.assembleEnergy(this.createRecipeInput(), provider);
+                    ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
+                    FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
 
-                ItemInputComponentFlag itemInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
-                FluidInputComponentFlag fluidInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
+                    ItemInputComponentFlag itemInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
+                    FluidInputComponentFlag fluidInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
 
-                boolean hasResultEnergy = this.cachedRecipe.hasResultEnergy(provider);
-                boolean hasResultItem = this.cachedRecipe.hasResultItem(provider);
-                boolean hasResultFluid = this.cachedRecipe.hasResultFluid(provider);
+                    boolean hasResultEnergy = this.cachedRecipe.hasResultEnergy(provider);
+                    boolean hasResultItem = this.cachedRecipe.hasResultItem(provider);
+                    boolean hasResultFluid = this.cachedRecipe.hasResultFluid(provider);
 
-                if (hasResultEnergy) {
-                    this.getEuStorage().forceFillEnergy(resultEnergy, false);
+                    if (hasResultEnergy) {
+                        this.getEuStorage().forceFillEnergy(resultEnergy, false);
+                    }
+                    if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
+                        this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot(), resultItem.copy(), false, this::onItemsChanged);
+                    }
+                    if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
+                        this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
+                    }
+
+                    if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
+                        this.getItemHandler().extractItem(0, itemInput.getIngredients().getFirst().count(), false);
+                    }
+                    if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
+                        this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
+                    }
+
+                    if (this.cachedRecipe == null) {
+                        setActive(false);
+                    }
+                } else {
+                    this.progress += this.progressIncrement;
+                    EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
+                    if (inputComponent != null) {
+                        this.getEuStorage().forceDrainEnergy(inputComponent.energy() / getMaxProgress(), false);
+                        setActive(true);
+                    }
                 }
-                if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
-                    this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot(), resultItem.copy(), false, this::onItemsChanged);
-                }
-                if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
-                    this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
-                }
-
-                if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
-                    this.getItemHandler().extractItem(0, itemInput.getIngredients().getFirst().count(), false);
-                }
-                if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
-                    this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
-                }
-
             } else {
-                this.progress += this.progressIncrement;
-                EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
-                if (inputComponent != null) {
-                    this.getEuStorage().forceDrainEnergy(inputComponent.energy() / getMaxProgress(), false);
-                    setActive(true);
-                }
+                this.progress = 0;
+                this.updateData();
+                setActive(false);
             }
+
         }
     }
 

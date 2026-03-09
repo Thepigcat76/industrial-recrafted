@@ -114,6 +114,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
                 .front(this::blockTextureSuffix, "_front")
                 .horizontalFacing()
+                .active()
                 .create();
 
         modelBuilder(IRMachines.MACERATOR.getBlock())
@@ -121,6 +122,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .front(this::blockTextureSuffix, "_front")
                 .top(this::blockTextureSuffix, "_top")
                 .horizontalFacing()
+                .active()
                 .create();
 
         modelBuilder(IRMachines.COMPRESSOR.getBlock())
@@ -128,6 +130,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .front(this::blockTextureSuffix, "_front")
                 .top(this::blockTextureSuffix, "_top")
                 .horizontalFacing()
+                .active()
                 .create();
 
         modelBuilder(IRMachines.RECYCLER.getBlock())
@@ -149,6 +152,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
                 .front(this::blockTextureSuffix, "_front")
                 .horizontalFacing()
+                .active()
                 .create();
 
         modelBuilder(IRMachines.CHARGE_PAD.getBlock())
