@@ -56,11 +56,6 @@ public class CompressorBlockEntity extends MachineBlockEntity implements MenuPro
     }
 
     @Override
-    protected void onEuChanged(int oldAmount) {
-        this.updateData();
-    }
-
-    @Override
     public IItemHandler getItemHandlerOnSide(Direction direction) {
         return this.exposedItemHandler;
     }

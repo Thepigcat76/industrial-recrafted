@@ -2,6 +2,7 @@ package com.portingdeadmods.examplemod.datagen.data;
 
 import com.mojang.datafixers.util.Either;
 import com.portingdeadmods.examplemod.registries.IRBlocks;
+import com.portingdeadmods.examplemod.registries.IRItems;
 import com.portingdeadmods.examplemod.tags.IRTags;
 import com.portingdeadmods.examplemod.IndustrialReclassified;
 import com.portingdeadmods.examplemod.tags.CTags;
@@ -11,6 +12,8 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
@@ -42,6 +45,15 @@ public class IRTagsProvider {
         protected void addTags(HolderLookup.@NotNull Provider provider) {
             CTags.ItemTags.TAGS.forEach(this::addTag);
             IRTags.ItemTags.TAGS.forEach(this::addTag);
+
+            tag(ItemTags.PLANKS)
+                    .add(IRBlocks.RUBBER_TREE_PLANKS.asItem());
+
+            tag(ItemTags.LOGS_THAT_BURN)
+                    .add(IRBlocks.RUBBER_TREE_LOG.asItem())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_LOG.asItem())
+                    .add(IRBlocks.RUBBER_TREE_WOOD.asItem())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_WOOD.asItem());
         }
 
         private void addTag(TagKey<Item> itemTagKey, Supplier<List<Either<ItemLike, TagKey<Item>>>> listSupplier) {
@@ -67,6 +79,43 @@ public class IRTagsProvider {
                     .add(IRBlocks.GOLD_CABLE.get())
                     .add(IRBlocks.HV_CABLE.get())
                     .add(IRBlocks.GLASS_FIBRE_CABLE.get());
+
+            this.tag(BlockTags.NEEDS_STONE_TOOL)
+                    .add(IRBlocks.TIN_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_TIN_ORE.get());
+            this.tag(BlockTags.NEEDS_IRON_TOOL)
+                    .add(IRBlocks.URANIUM_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_URANIUM_ORE.get());
+            this.tag(BlockTags.NEEDS_DIAMOND_TOOL)
+                    .add(IRBlocks.IRIDIUM_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_IRIDIUM_ORE.get());
+
+            this.tag(BlockTags.LEAVES)
+                    .add(IRBlocks.RUBBER_TREE_LEAVES.get());
+
+            this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .add(IRBlocks.TIN_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_TIN_ORE.get())
+                    .add(IRBlocks.URANIUM_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_URANIUM_ORE.get())
+                    .add(IRBlocks.IRIDIUM_ORE.get())
+                    .add(IRBlocks.DEEPSLATE_IRIDIUM_ORE.get());
+
+            this.tag(BlockTags.MINEABLE_WITH_AXE)
+                    .add(IRBlocks.RUBBER_TREE_RESIN_HOLE.get())
+                    .add(IRBlocks.RUBBER_TREE_LOG.get())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_LOG.get())
+                    .add(IRBlocks.RUBBER_TREE_WOOD.get())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_WOOD.get())
+                    .add(IRBlocks.RUBBER_TREE_PLANKS.get())
+                    .add(IRBlocks.RUBBER_TREE_DOOR.get())
+                    .add(IRBlocks.RUBBER_TREE_TRAPDOOR.get())
+                    .add(IRBlocks.RUBBER_TREE_STAIRS.get())
+                    .add(IRBlocks.RUBBER_TREE_SLAB.get())
+                    .add(IRBlocks.RUBBER_TREE_BUTTON.get())
+                    .add(IRBlocks.RUBBER_TREE_PRESSURE_PLATE.get())
+                    .add(IRBlocks.RUBBER_TREE_FENCE.get())
+                    .add(IRBlocks.RUBBER_TREE_FENCE_GATE.get());
         }
 
         private void addTag(TagKey<Block> itemTagKey, Supplier<List<Either<Block, TagKey<Block>>>> listSupplier) {

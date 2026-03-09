@@ -142,6 +142,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .front(this::blockTextureSuffix, "_front")
                 .top(this::blockTextureSuffix, "_top")
                 .horizontalFacing()
+                .active()
                 .create();
 
         modelBuilder(IRMachines.CANNING_MACHINE.getBlock())

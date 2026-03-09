@@ -2,6 +2,7 @@ package com.portingdeadmods.examplemod.api.blockentities;
 
 import com.mojang.datafixers.util.Pair;
 import com.portingdeadmods.examplemod.IRCapabilities;
+import com.portingdeadmods.examplemod.api.blocks.MachineBlock;
 import com.portingdeadmods.examplemod.api.capabilities.StorageChangedListener;
 import com.portingdeadmods.examplemod.api.energy.EnergyHandler;
 import com.portingdeadmods.examplemod.api.energy.EnergyTier;
@@ -10,6 +11,7 @@ import com.portingdeadmods.examplemod.content.recipes.MachineRecipe;
 import com.portingdeadmods.examplemod.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.examplemod.content.recipes.MachineRecipeLayout;
 import com.portingdeadmods.examplemod.content.recipes.components.TimeComponent;
+import com.portingdeadmods.examplemod.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.examplemod.content.recipes.flags.FluidInputComponentFlag;
 import com.portingdeadmods.examplemod.content.recipes.flags.FluidOutputComponentFlag;
 import com.portingdeadmods.examplemod.content.recipes.flags.ItemInputComponentFlag;
@@ -18,6 +20,7 @@ import com.portingdeadmods.examplemod.registries.IRRecipeComponentFlags;
 import com.portingdeadmods.examplemod.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -45,6 +48,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+// TODO: Secondary chance outputs are not working
+// FIXME: When rejoining world, recipe doesn't load
 public class MachineBlockEntity extends ContainerBlockEntity implements RedstoneBlockEntity, WrenchListenerBlockEntity {
     private final List<ChargingSlot> chargingSlots;
     private final List<BlockCapabilityCache<EnergyHandler, Direction>> caches;
@@ -181,7 +186,18 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
             } else {
                 this.progress += this.progressIncrement;
+                EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
+                if (inputComponent != null) {
+                    this.getEuStorage().forceDrainEnergy(inputComponent.energy() / getMaxProgress(), false);
+                    setActive(true);
+                }
             }
+        }
+    }
+
+    public void setActive(boolean active) {
+        if (MachineBlock.isActive(getBlockState()) != active) {
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PDLBlockStateProperties.ACTIVE, active));
         }
     }
 

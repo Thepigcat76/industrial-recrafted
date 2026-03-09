@@ -2,6 +2,7 @@ package com.portingdeadmods.examplemod.content.blockentities;
 
 import com.portingdeadmods.examplemod.IRCapabilities;
 import com.portingdeadmods.examplemod.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.examplemod.api.blocks.MachineBlock;
 import com.portingdeadmods.examplemod.content.menus.ExtractorMenu;
 import com.portingdeadmods.examplemod.content.recipes.MachineRecipe;
 import com.portingdeadmods.examplemod.content.recipes.MachineRecipeInput;
@@ -9,6 +10,7 @@ import com.portingdeadmods.examplemod.content.recipes.components.TimeComponent;
 import com.portingdeadmods.examplemod.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.examplemod.impl.items.LimitedItemHandler;
 import com.portingdeadmods.examplemod.registries.*;
+import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
@@ -49,25 +51,32 @@ public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProv
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
+    public void tickRecipe() {
         if (!this.level.isClientSide()) {
             if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
                 if (this.progress < this.getMaxProgress()) {
                     this.progress++;
                     this.getEuStorage().forceDrainEnergy(3, false);
+                    setActive(true);
                 } else {
                     this.progress = 0;
                     ItemStack resultItem = this.cachedRecipe.getResultItem(this.level.registryAccess());
                     int inputCount = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT).getIngredients().getFirst().count();
                     forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, resultItem.copy(), false, this::onItemsChanged);
                     this.getItemHandler().extractItem(0, inputCount, false);
+                    setActive(false);
                 }
             } else if (this.progress != 0) {
                 this.progress = 0;
                 this.updateData();
+                setActive(false);
             }
+        }
+    }
+
+    public void setActive(boolean active) {
+        if (MachineBlock.isActive(getBlockState()) != active) {
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PDLBlockStateProperties.ACTIVE, active));
         }
     }
 

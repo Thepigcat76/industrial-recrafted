@@ -1,6 +1,7 @@
 package com.portingdeadmods.examplemod.tags;
 
 import com.mojang.datafixers.util.Either;
+import com.portingdeadmods.examplemod.registries.IRBlocks;
 import com.portingdeadmods.examplemod.registries.IRItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,9 @@ import java.util.function.Supplier;
 public final class CTags {
     public static class ItemTags {
         public static final Map<TagKey<Item>, Supplier<List<Either<ItemLike, TagKey<Item>>>>> TAGS = new HashMap<>();
+
+        public static final TagKey<Item> ORES_TIN = createTag("ores/tin", () -> List.of(item(IRBlocks.TIN_ORE)));
+        public static final TagKey<Item> ORES = createTag("ores", () -> List.of(tag(ORES_TIN)));
 
         public static final TagKey<Item> PLATES_COPPER = createTag("plates/copper", () -> List.of(item(IRItems.COPPER_PLATE)));
         public static final TagKey<Item> PLATES_TIN = createTag("plates/tin", () -> List.of(item(IRItems.TIN_PLATE)));
@@ -39,7 +43,8 @@ public final class CTags {
         public static final TagKey<Item> DUSTS = createTag("dusts", () -> List.of(tag(DUSTS_COPPER), tag(DUSTS_TIN), tag(DUSTS_IRON), tag(DUSTS_COAL), tag(DUSTS_GOLD)));
 
         public static final TagKey<Item> RAW_MATERIALS_IRIDIUM = createTag("raw_materials/iridium", () -> List.of(item(IRItems.RAW_IRIDIUM)));
-        public static final TagKey<Item> RAW_MATERIALS = createTag("raw_materials", () -> List.of(tag(RAW_MATERIALS_IRIDIUM)));
+        public static final TagKey<Item> RAW_MATERIALS_TIN = createTag("raw_materials/tin", () -> List.of(item(IRItems.RAW_TIN)));
+        public static final TagKey<Item> RAW_MATERIALS = createTag("raw_materials", () -> List.of(tag(RAW_MATERIALS_IRIDIUM), tag(RAW_MATERIALS_TIN)));
 
         private static TagKey<Item> createTag(String id, Supplier<List<Either<ItemLike, TagKey<Item>>>> items) {
             TagKey<Item> tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", id));

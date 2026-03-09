@@ -50,14 +50,8 @@ public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProv
         this.exposedItemHandler = new LimitedItemHandler(this.getItemHandler(), IntSet.of(0), IntSet.of(1, 2), IntSet.of(3));
     }
 
-    protected void onEuChanged(int oldAmount) {
-        this.updateData();
-    }
-
     @Override
-    public void tick() {
-        super.tick();
-
+    public void tickRecipe() {
         if (!this.level.isClientSide()) {
             if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
                 if (this.progress < this.getMaxProgress()) {

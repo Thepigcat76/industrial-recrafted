@@ -53,9 +53,7 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
+    public void tickRecipe() {
         if (!this.level.isClientSide()) {
             if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
                 if (this.progress < this.getMaxProgress()) {

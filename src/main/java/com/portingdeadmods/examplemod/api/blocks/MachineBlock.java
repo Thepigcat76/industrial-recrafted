@@ -30,6 +30,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -70,6 +71,7 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         if (this.activatable) {
             defaultState = defaultState.setValue(PDLBlockStateProperties.ACTIVE, false);
         }
+        registerDefaultState(defaultState);
     }
 
     public static boolean isActive(BlockState state) {
@@ -162,7 +164,7 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
-        if (state != null) {
+        if (state != null && this.rotatable) {
             return state.setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
         }
         return null;
@@ -186,6 +188,14 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
 
         BlockUtils.getBE(MachineBlockEntity.class, level, pos).initCapCache();
+    }
+
+    @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        if (this.activatable && isActive(state)) {
+            return 7;
+        }
+        return super.getLightEmission(state, level, pos);
     }
 
     @Override
