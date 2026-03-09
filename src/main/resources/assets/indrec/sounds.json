@@ -1,0 +1,9 @@
+{
+  "jetpack": {
+    "category": "players",
+    "subtitle": "indrec.jetpack",
+    "sounds": [
+      "indrec:jetpack"
+    ]
+  }
+}

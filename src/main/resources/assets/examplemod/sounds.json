@@ -1,9 +1,0 @@
-{
-  "jetpack": {
-    "category": "players",
-    "subtitle": "examplemod.jetpack",
-    "sounds": [
-      "examplemod:jetpack"
-    ]
-  }
-}
