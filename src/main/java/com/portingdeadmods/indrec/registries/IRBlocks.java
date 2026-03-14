@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blocks.*;
 import com.portingdeadmods.indrec.content.worldgen.IRTreeGrowers;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
@@ -13,16 +13,17 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 public final class IRBlocks {
-    public static final PDLDeferredRegisterBlocks BLOCKS = PDLDeferredRegisterBlocks.createBlocksRegister(IndustrialReclassified.MODID, IRItems.ITEMS);
+    public static final PDLDeferredRegisterBlocks BLOCKS = PDLDeferredRegisterBlocks.createBlocksRegister(IndustrialRecrafted.MODID, IRItems.ITEMS);
 
-    public static final BlockSetType RUBBER_SET_TYPE = BlockSetType.register(new BlockSetType(IndustrialReclassified.MODID + ":rubber"));
+    public static final BlockSetType RUBBER_SET_TYPE = BlockSetType.register(new BlockSetType(IndustrialRecrafted.MODID + ":rubber"));
     public static final BlockSetType REINFORCED_STONE_SET_TYPE = BlockSetType.register(new BlockSetType("reinforced_stone", false, false, false, BlockSetType.PressurePlateSensitivity.EVERYTHING, SoundType.METAL, SoundEvents.IRON_DOOR_CLOSE, SoundEvents.IRON_DOOR_OPEN, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundEvents.IRON_TRAPDOOR_OPEN, SoundEvents.METAL_PRESSURE_PLATE_CLICK_OFF, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, SoundEvents.STONE_BUTTON_CLICK_OFF, SoundEvents.STONE_BUTTON_CLICK_ON));
-    public static final WoodType RUBBER_WOOD_TYPE = WoodType.register(new WoodType(IndustrialReclassified.MODID + ":rubber", RUBBER_SET_TYPE));
+    public static final WoodType RUBBER_WOOD_TYPE = WoodType.register(new WoodType(IndustrialRecrafted.MODID + ":rubber", RUBBER_SET_TYPE));
     public static final BlockBehaviour.Properties MACHINE_FRAME_PROPS = BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK);
 
-    public static final Set<DeferredBlock<? extends Block>> CUSTOM_ITEM_MODELS;
+    public static final Set<Supplier<? extends Block>> CUSTOM_ITEM_MODELS;
 
     public static final DeferredBlock<Block> MACHINE_FRAME = BLOCKS.registerBlockWithItem("machine_frame", Block::new, MACHINE_FRAME_PROPS);
     public static final DeferredBlock<Block> ADVANCED_MACHINE_FRAME = BLOCKS.registerBlockWithItem("advanced_machine_frame", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
@@ -112,7 +113,7 @@ public final class IRBlocks {
 
     static {
         CUSTOM_ITEM_MODELS = Set.of(
-            RUBBER_TREE_FENCE, RUBBER_TREE_TRAPDOOR, RUBBER_TREE_BUTTON, RUBBER_TREE_SAPLING, RUBBER_TREE_DOOR, REINFORCED_DOOR, RUBBER_SHEET, STICKY_RESIN_SHEET, TIN_CABLE, COPPER_CABLE, GOLD_CABLE, HV_CABLE, GLASS_FIBRE_CABLE, BURNT_CABLE
+                RUBBER_TREE_FENCE, RUBBER_TREE_TRAPDOOR, RUBBER_TREE_BUTTON, RUBBER_TREE_SAPLING, RUBBER_TREE_DOOR, REINFORCED_DOOR, RUBBER_SHEET, STICKY_RESIN_SHEET, TIN_CABLE, COPPER_CABLE, GOLD_CABLE, HV_CABLE, GLASS_FIBRE_CABLE, BURNT_CABLE, IRMachines.BATTERY_BOX.getBlockSupplier(), IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier()
         );
     }
 

@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.items.*;
 import com.portingdeadmods.indrec.content.items.electric.*;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterItems;
@@ -9,7 +9,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 public final class IRItems {
-    public static final PDLDeferredRegisterItems ITEMS = PDLDeferredRegisterItems.createItemsRegister(IndustrialReclassified.MODID);
+    public static final PDLDeferredRegisterItems ITEMS = PDLDeferredRegisterItems.createItemsRegister(IndustrialRecrafted.MODID);
 
     /* Raw Ores */
     public static final DeferredItem<Item> RAW_TIN = ITEMS.registerSimpleItem("raw_tin");

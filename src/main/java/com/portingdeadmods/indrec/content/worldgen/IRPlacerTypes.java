@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.worldgen;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
@@ -10,8 +10,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public final class IRPlacerTypes {
-    public static final DeferredRegister<FoliagePlacerType<?>> FOLIAGE_PLACERS = DeferredRegister.create(BuiltInRegistries.FOLIAGE_PLACER_TYPE, IndustrialReclassified.MODID);
-    public static final DeferredRegister<TrunkPlacerType<?>> TRUNK_PLACERS = DeferredRegister.create(Registries.TRUNK_PLACER_TYPE, IndustrialReclassified.MODID);
+    public static final DeferredRegister<FoliagePlacerType<?>> FOLIAGE_PLACERS = DeferredRegister.create(BuiltInRegistries.FOLIAGE_PLACER_TYPE, IndustrialRecrafted.MODID);
+    public static final DeferredRegister<TrunkPlacerType<?>> TRUNK_PLACERS = DeferredRegister.create(Registries.TRUNK_PLACER_TYPE, IndustrialRecrafted.MODID);
 
     public static final Supplier<FoliagePlacerType<RubberTreeFoliagePlacer>> RUBBER_TREE_FOLIAGE_PLACER =
             FOLIAGE_PLACERS.register("rubber_tree_foliage_placer", () -> new FoliagePlacerType<>(RubberTreeFoliagePlacer.CODEC));

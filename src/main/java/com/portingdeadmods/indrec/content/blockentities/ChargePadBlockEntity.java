@@ -33,4 +33,5 @@ public class ChargePadBlockEntity extends MachineBlockEntity {
             }
         }
     }
+
 }

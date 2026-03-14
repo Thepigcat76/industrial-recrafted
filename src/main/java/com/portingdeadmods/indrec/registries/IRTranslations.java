@@ -1,13 +1,13 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.portingdeadlibs.api.translations.DefaultTranslationCategory;
 import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslation;
 import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslationRegister;
 import com.portingdeadmods.portingdeadlibs.api.translations.TranslatableConstant;
 
 public final class IRTranslations {
-    public static final DeferredTranslationRegister TRANSLATIONS = DeferredTranslationRegister.createTranslations(IndustrialReclassified.MODID);
+    public static final DeferredTranslationRegister TRANSLATIONS = DeferredTranslationRegister.createTranslations(IndustrialRecrafted.MODID);
 
     private static final DefaultTranslationCategory GENERAL_CATEGORY = TRANSLATIONS.createCategory("general");
     public static final DeferredTranslation<TranslatableConstant> FLUID_UNIT = GENERAL_CATEGORY.registerWithDefault("unit.fluid", "mb");
@@ -59,6 +59,7 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> MACERATOR = MENUS_CATEGORY.registerWithDefault("macerator", "Macerator");
     public static final DeferredTranslation<TranslatableConstant> EXTRACTOR = MENUS_CATEGORY.registerWithDefault("extractor", "Extractor");
     public static final DeferredTranslation<TranslatableConstant> RECYCLER = MENUS_CATEGORY.registerWithDefault("recycler", "Recycler");
+    public static final DeferredTranslation<TranslatableConstant> BATTERY_BOX = MENUS_CATEGORY.registerWithDefault("battery_box", "Battery Box");
 
     private static final DefaultTranslationCategory MESSAGES_CATEGORY = TRANSLATIONS.createCategory("messages");
     public static final DeferredTranslation<TranslatableConstant> GUIDE_ME_MISSING = MESSAGES_CATEGORY.registerWithDefault("guide_me_missing", "GuideME must be installed to access the guide book!");

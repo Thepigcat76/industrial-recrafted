@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -31,6 +32,7 @@ import java.util.function.Supplier;
 public class IRMachine implements ItemLike {
     public static final Map<ResourceLocation, Supplier<BlockEntityType<? extends MachineBlockEntity>>> BLOCK_ENTITY_TYPES = Collections.synchronizedMap(new HashMap<>());
     public static final AtomicReference<MachineBlock.Builder> MACHINE_BLOCK_BUILDER = new AtomicReference<>();
+    public static final Map<String, MachineBlock.Builder> MACHINE_BUILDERS = new HashMap<>();
     private final String name;
     private final Supplier<? extends EnergyTier> energyTierSupplier;
     private final Supplier<? extends MachineBlock> blockSupplier;
@@ -119,8 +121,8 @@ public class IRMachine implements ItemLike {
     }
 
     public static class Builder {
-        private BiFunction<MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory;
-        private Function<MachineBlock.Builder, MachineBlock.Builder> machineBuilderFactory;
+        private TriFunction<String, MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory;
+        private MachineBlock.Builder machineBlockBuilder;
         private Supplier<? extends BlockItem> blockItemSupplier;
         private IContainerFactory<? extends MachineMenu<?>> menuSupplier;
         private BlockEntityType.BlockEntitySupplier<? extends MachineBlockEntity> blockEntitySupplier;
@@ -157,9 +159,9 @@ public class IRMachine implements ItemLike {
             return this;
         }
 
-        public Builder block(BiFunction<MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory, Function<MachineBlock.Builder, MachineBlock.Builder> builder) {
+        public Builder block(TriFunction<String, MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory, MachineBlock.Builder builder) {
             this.blockFactory = blockFactory;
-            this.machineBuilderFactory = builder;
+            this.machineBlockBuilder = builder;
             return this;
         }
 
@@ -180,19 +182,24 @@ public class IRMachine implements ItemLike {
 
         public IRMachine build(String name, MachineRegistrationHelper registrationHelper) {
             Objects.requireNonNull(this.blockFactory, "%s machine's block was not initialized".formatted(name));
-            Objects.requireNonNull(this.blockEntitySupplier, "%s machine's block entity was not initialized".formatted(name));
 
-            MachineBlock.Builder builder = this.machineBuilderFactory.apply(MachineBlock.builder());
-            Supplier<? extends MachineBlock> blockSupplier = () -> this.blockFactory.apply(builder, this.energyTierSupplier);
-            MACHINE_BLOCK_BUILDER.set(builder);
+            Supplier<? extends MachineBlock> blockSupplier = () -> {
+                MACHINE_BLOCK_BUILDER.set(this.machineBlockBuilder);
+                return this.blockFactory.apply(name, this.machineBlockBuilder, this.energyTierSupplier);
+            };
             DeferredHolder<Block, ? extends MachineBlock> registeredBlock = registrationHelper.getBlockRegister().register(name, blockSupplier);
             if (this.blockItemSupplier == null) {
                 this.blockItemSupplier = () -> new BlockItem(registeredBlock.get(), new Item.Properties());
             }
 
-            DeferredHolder<BlockEntityType<?>, BlockEntityType<? extends MachineBlockEntity>> typeSupplier = registrationHelper.getBlockEntityRegister().register(name,
-                    () -> BlockEntityType.Builder.of(this.blockEntitySupplier, registeredBlock.get()).build(null));
-            BLOCK_ENTITY_TYPES.put(ResourceLocation.fromNamespaceAndPath(registrationHelper.getBlockEntityRegister().getNamespace(), name), typeSupplier);
+            DeferredHolder<BlockEntityType<?>, BlockEntityType<? extends MachineBlockEntity>> typeSupplier;
+            if (this.blockEntitySupplier != null) {
+                typeSupplier = registrationHelper.getBlockEntityRegister().register(name,
+                        () -> BlockEntityType.Builder.of(this.blockEntitySupplier, registeredBlock.get()).build(null));
+                BLOCK_ENTITY_TYPES.put(ResourceLocation.fromNamespaceAndPath(registrationHelper.getBlockEntityRegister().getNamespace(), name), typeSupplier);
+            } else {
+                typeSupplier = null;
+            }
             return new IRMachine(
                     name,
                     this.energyTierSupplier,

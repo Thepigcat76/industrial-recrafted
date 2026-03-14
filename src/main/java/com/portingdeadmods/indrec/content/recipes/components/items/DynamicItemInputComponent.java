@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.recipes.components.items;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.api.recipes.RecipeFlagType;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 
 public class DynamicItemInputComponent implements RecipeComponent, ItemInputComponentFlag {
-    public static final Type<DynamicItemInputComponent> TYPE = new Type<>(IndustrialReclassified.rl("dynamic_item_input"));
+    public static final Type<DynamicItemInputComponent> TYPE = new Type<>(IndustrialRecrafted.rl("dynamic_item_input"));
     public static final Set<RecipeFlagType<?>> FLAGS = Set.of(IRRecipeComponentFlags.ITEM_INPUT);
 
     private final BiPredicate<List<ItemStack>, Boolean> testFunction;

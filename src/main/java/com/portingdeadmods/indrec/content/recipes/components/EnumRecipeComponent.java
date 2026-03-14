@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.content.recipes.components;
 
 import com.mojang.serialization.Codec;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.portingdeadlibs.utils.codec.CodecUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 public record EnumRecipeComponent<E extends Enum<E> & StringRepresentable>(E value) implements RecipeComponent {
-    public static final ResourceLocation ID = IndustrialReclassified.rl("enum");
+    public static final ResourceLocation ID = IndustrialRecrafted.rl("enum");
 
     @Override
     public Type<EnumRecipeComponent<E>> type() {

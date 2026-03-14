@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
 // Registry for minecraft's items data component system
 // entities and blockentities are handled in IRAttachmentTypes
 public final class IRDataComponents {
-    public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, IndustrialReclassified.MODID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, IndustrialRecrafted.MODID);
 
     public static final Supplier<DataComponentType<Boolean>> ACTIVE = registerDataComponentType("active",
             () -> builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));

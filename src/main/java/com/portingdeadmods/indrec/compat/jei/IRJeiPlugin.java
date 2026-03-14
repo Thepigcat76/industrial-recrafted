@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.compat.jei;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.registries.IRMachines;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 @JeiPlugin
 public class IRJeiPlugin implements IModPlugin {
-    public static final ResourceLocation UID = IndustrialReclassified.rl("ir_jei_plugin");
+    public static final ResourceLocation UID = IndustrialRecrafted.rl("ir_jei_plugin");
     private final Map<MachineRecipeLayout<?>, IRecipeCategory<?>> recipes = new HashMap<>();
 
     @Override

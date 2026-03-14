@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.client.screens;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
 import com.portingdeadmods.indrec.api.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.content.menus.SolarPanelMenu;
@@ -26,6 +26,6 @@ public class SolarPanelScreen extends MachineScreen<SolarPanelMenu> {
 
     @Override
     public @NotNull ResourceLocation getBackgroundTexture() {
-        return IndustrialReclassified.rl("");
+        return IndustrialRecrafted.rl("");
     }
 }

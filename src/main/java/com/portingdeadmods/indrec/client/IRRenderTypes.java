@@ -2,16 +2,16 @@ package com.portingdeadmods.indrec.client;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.OptionalDouble;
 
 public class IRRenderTypes extends RenderType {
-    private final static ResourceLocation laserBeam = IndustrialReclassified.rl("textures/misc/laser.png");
-    private final static ResourceLocation laserBeam2 = IndustrialReclassified.rl("textures/misc/laser2.png");
-    private final static ResourceLocation laserBeamGlow = IndustrialReclassified.rl("textures/misc/laser_glow.png");
+    private final static ResourceLocation laserBeam = IndustrialRecrafted.rl("textures/misc/laser.png");
+    private final static ResourceLocation laserBeam2 = IndustrialRecrafted.rl("textures/misc/laser2.png");
+    private final static ResourceLocation laserBeamGlow = IndustrialRecrafted.rl("textures/misc/laser_glow.png");
 
     // Dummy
     public IRRenderTypes(String name, VertexFormat format, VertexFormat.Mode p_i225992_3_, int p_i225992_4_, boolean p_i225992_5_, boolean p_i225992_6_, Runnable runnablePre, Runnable runnablePost) {

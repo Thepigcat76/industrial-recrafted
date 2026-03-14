@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.datagen;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.datagen.assets.IRBlockStateProvider;
 import com.portingdeadmods.indrec.datagen.assets.IREnUsLangProvider;
 import com.portingdeadmods.indrec.datagen.assets.IRItemModelProvider;
@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = IndustrialReclassified.MODID)
+@EventBusSubscriber(modid = IndustrialRecrafted.MODID)
 public final class EMDataGatherer {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {

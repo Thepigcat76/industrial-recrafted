@@ -1,11 +1,11 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyOutputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.fluids.FluidInputComponent;
 import com.portingdeadmods.indrec.content.recipes.layouts.CanningMachineRecipeLayout;
 import com.portingdeadmods.indrec.tags.IRTags;
-import com.portingdeadmods.indrec.IndustrialReclassified;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputComponent;
@@ -34,7 +34,7 @@ import net.neoforged.neoforge.common.Tags;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.portingdeadmods.indrec.IndustrialReclassified.rl;
+import static com.portingdeadmods.indrec.IndustrialRecrafted.rl;
 
 public class IRRecipeProvider extends RecipeProvider {
 
@@ -145,6 +145,8 @@ public class IRRecipeProvider extends RecipeProvider {
 
         componentsCraftingRecipes(output);
 
+        energyStorageUnitCraftingRecipes(output);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.BRONZE_DUST, 3)
                 .requires(CTags.ItemTags.DUSTS_TIN)
                 .requires(CTags.ItemTags.DUSTS_COPPER)
@@ -242,7 +244,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_rubber", has(IRItems.RUBBER))
                 .save(output);
 
-        this.recyclerRecipe().save(output, IndustrialReclassified.rl("scrap_from_recycling"));
+        this.recyclerRecipe().save(output, IndustrialRecrafted.rl("scrap_from_recycling"));
 
         plantBallRecipe(Tags.Items.CROPS, "crops", output);
         plantBallRecipe(ItemTags.SAPLINGS, "sapling", output);
@@ -251,7 +253,7 @@ public class IRRecipeProvider extends RecipeProvider {
         this.geothermalGeneratorRecipe()
                 .component(new FluidInputComponent(FluidTags.LAVA, 1))
                 .component(new EnergyOutputComponent(20))
-                .save(output, IndustrialReclassified.rl("geothermal_energy_from_lava"));
+                .save(output, IndustrialRecrafted.rl("geothermal_energy_from_lava"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.CHARGE_PAD.asItem())
                 .pattern(" D ")
@@ -269,6 +271,38 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_burnt_cable", has(IRBlocks.BURNT_CABLE))
                 .save(output);
 
+    }
+
+    private void energyStorageUnitCraftingRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.BATTERY_BOX)
+                .pattern("PBP")
+                .pattern("BCB")
+                .pattern("PBP")
+                .define('P', ItemTags.PLANKS)
+                .define('C', IRBlocks.COPPER_CABLE)
+                .define('B', IRItems.REDSTONE_BATTERY)
+                .unlockedBy("has_redstone_battery", has(IRItems.REDSTONE_BATTERY))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.BASIC_ENERGY_STORAGE_UNIT)
+                .pattern("CBC")
+                .pattern("BMB")
+                .pattern("CBC")
+                .define('M', IRBlocks.MACHINE_FRAME)
+                .define('C', IRBlocks.GOLD_CABLE)
+                .define('B', IRItems.ENERGY_CRYSTAL)
+                .unlockedBy("has_energy_crystal", has(IRItems.ENERGY_CRYSTAL))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.ADVANCED_ENERGY_STORAGE_UNIT)
+                .pattern("CBC")
+                .pattern("BMB")
+                .pattern("CBC")
+                .define('M', IRBlocks.ADVANCED_MACHINE_FRAME)
+                .define('C', IRBlocks.GLASS_FIBRE_CABLE)
+                .define('B', IRItems.LAPOTRON_CRYSTAL)
+                .unlockedBy("has_redstone_battery", has(IRItems.LAPOTRON_CRYSTAL))
+                .save(output);
     }
 
     private static void componentsCraftingRecipes(RecipeOutput output) {
@@ -529,7 +563,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .define('L', Tags.Items.GEMS_LAPIS)
                 .define('C', IRItems.BASIC_CIRCUIT)
                 .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
-                .save(output, IndustrialReclassified.rl("advanced_circuit1"));
+                .save(output, IndustrialRecrafted.rl("advanced_circuit1"));
     }
 
     private void machineFrameCraftingRecipes(RecipeOutput output) {
@@ -560,7 +594,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .define('A', CTags.ItemTags.PLATES_ADVANCED_ALLOY)
                 .define('M', IRBlocks.MACHINE_FRAME)
                 .unlockedBy("has_advanced_alloy_plate", has(IRItems.ADVANCED_ALLOY_PLATE))
-                .save(output, IndustrialReclassified.rl("advanced_machine_frame1"));
+                .save(output, IndustrialRecrafted.rl("advanced_machine_frame1"));
     }
 
     private void electricToolCraftingRecipes(RecipeOutput output) {
@@ -658,7 +692,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new ItemInputListComponent(IRItems.TIN_CAN))
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
-                .save(output, IndustrialReclassified.rl("food_canning"));
+                .save(output, IndustrialRecrafted.rl("food_canning"));
     }
 
     private void extractingRecipes(RecipeOutput output) {
@@ -667,7 +701,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new ItemOutputListComponent(IRItems.RUBBER, 3))
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
-                .save(output, IndustrialReclassified.rl("sticky_resin_extracting"));
+                .save(output, IndustrialRecrafted.rl("sticky_resin_extracting"));
     }
 
     private void compressingRecipes(RecipeOutput output) {
@@ -720,7 +754,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new ItemOutputListComponent(new ItemOutputComponent(IRItems.RAW_IRIDIUM), new ItemOutputComponent(IRItems.RAW_IRIDIUM, 0.5f)))
                 .component(new TimeComponent(800))
                 .component(new EnergyInputComponent(3200))
-                .save(output, IndustrialReclassified.rl("raw_iridium_from_deepslate_iridium_ore"));
+                .save(output, IndustrialRecrafted.rl("raw_iridium_from_deepslate_iridium_ore"));
     }
 
     private static void plantBallRecipe(TagKey<Item> plantTag, String group, RecipeOutput output) {
@@ -730,7 +764,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .requires(Tags.Items.CROPS)
                 .requires(Tags.Items.CROPS)
                 .unlockedBy("has_plant", has(plantTag))
-                .save(output, IndustrialReclassified.rl("plant_ball_from_" + group));
+                .save(output, IndustrialRecrafted.rl("plant_ball_from_" + group));
     }
 
     private static void cableRecipe(TagKey<Item> ingotTag, ItemLike cableBlock, RecipeOutput output) {
@@ -750,13 +784,13 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new ItemOutputListComponent(result, 2))
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
-                .save(output, IndustrialReclassified.rl(oreName + "_dust_from_ore_maceration"));
+                .save(output, IndustrialRecrafted.rl(oreName + "_dust_from_ore_maceration"));
         this.maceratorRecipe()
                 .component(new ItemInputComponent(rawTag))
                 .component(new ItemOutputListComponent(new ItemOutputComponent(result), new ItemOutputComponent(result, 0.33f)))
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
-                .save(output, IndustrialReclassified.rl(oreName + "_dust_from_raw_ore_maceration"));
+                .save(output, IndustrialRecrafted.rl(oreName + "_dust_from_raw_ore_maceration"));
     }
 
     private static void armorCraftingRecipes(RecipeOutput output) {

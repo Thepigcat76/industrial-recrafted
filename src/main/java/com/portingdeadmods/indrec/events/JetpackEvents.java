@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.events;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.client.sounds.JetpackSound;
 import com.portingdeadmods.indrec.content.items.AbstractJetpackItem;
 import com.portingdeadmods.indrec.networking.serverbound.UpdateInputPayload;
@@ -23,7 +23,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-@EventBusSubscriber(modid = IndustrialReclassified.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = IndustrialRecrafted.MODID, value = Dist.CLIENT)
 public final class JetpackEvents {
     private static boolean up = false;
     private static boolean down = false;

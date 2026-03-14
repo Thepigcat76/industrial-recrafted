@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.client.blockentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -21,7 +21,7 @@ public class WindMillBlockEntityRenderer implements BlockEntityRenderer<WindMill
 
     public WindMillBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.modelRenderer = context.getBlockRenderDispatcher().getModelRenderer();
-        this.windMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialReclassified.WINDMILL_BLADE_MODEL);
+        this.windMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialRecrafted.WINDMILL_BLADE_MODEL);
     }
 
     @Override

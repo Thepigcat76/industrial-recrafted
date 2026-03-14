@@ -48,12 +48,14 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     private final Supplier<? extends EnergyTier> energyTier;
     private BlockEntityType<? extends MachineBlockEntity> blockEntityType;
     private final boolean ticking;
+    private final boolean rotatableHorizontal;
     private final boolean rotatable;
     private final boolean activatable;
 
-    public MachineBlock(Builder builder, Supplier<? extends EnergyTier> energyTier) {
+    public MachineBlock(String name, Builder builder, Supplier<? extends EnergyTier> energyTier) {
         super(builder.properties);
         this.ticking = builder.ticking;
+        this.rotatableHorizontal = builder.rotatableHorizontal;
         this.rotatable = builder.rotatable;
         this.activatable = builder.activatable;
         this.energyTier = energyTier;
@@ -61,6 +63,10 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         BlockState defaultState = this.defaultBlockState();
 
         if (this.rotatable) {
+            defaultState = defaultState.setValue(BlockStateProperties.FACING, Direction.NORTH);
+        }
+
+        if (this.rotatableHorizontal) {
             defaultState = defaultState.setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH);
         }
 
@@ -146,6 +152,10 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         Builder builder1 = IRMachine.MACHINE_BLOCK_BUILDER.get();
 
         if (builder1.rotatable) {
+            builder.add(BlockStateProperties.FACING);
+        }
+
+        if (builder1.rotatableHorizontal) {
             builder.add(BlockStateProperties.HORIZONTAL_FACING);
         }
 
@@ -160,8 +170,12 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
-        if (state != null && this.rotatable) {
-            return state.setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
+        if (state != null) {
+            if (this.rotatableHorizontal) {
+                return state.setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
+            } else if (this.rotatable) {
+                return state.setValue(BlockStateProperties.FACING, context.getNearestLookingDirection().getOpposite());
+            }
         }
         return null;
     }
@@ -220,6 +234,7 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         private BlockBehaviour.Properties properties = IRBlocks.MACHINE_FRAME_PROPS;
         private boolean ticking;
         private boolean activatable;
+        private boolean rotatableHorizontal;
         private boolean rotatable;
 
         private Builder() {
@@ -232,6 +247,11 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
 
         public Builder properties(BlockBehaviour.Properties properties) {
             this.properties = properties;
+            return this;
+        }
+
+        public Builder rotatableHorizontal() {
+            this.rotatableHorizontal = true;
             return this;
         }
 

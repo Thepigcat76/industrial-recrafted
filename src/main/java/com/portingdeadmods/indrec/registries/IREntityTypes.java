@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.entities.IndustrialPrimedTntEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class IREntityTypes {
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, IndustrialReclassified.MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, IndustrialRecrafted.MODID);
 
     public static final Supplier<EntityType<IndustrialPrimedTntEntity>> INDUSTRIAL_TNT = ENTITY_TYPES.register("industrial_tnt",
             () -> EntityType.Builder.<IndustrialPrimedTntEntity>of(IndustrialPrimedTntEntity::new, MobCategory.MISC)

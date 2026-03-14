@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blocks.PipeBlock;
 import com.portingdeadmods.indrec.content.blocks.RubberTreeResinHoleBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class IRBlockStateProvider extends BlockStateProvider {
     public IRBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, IndustrialReclassified.MODID, exFileHelper);
+        super(output, IndustrialRecrafted.MODID, exFileHelper);
     }
 
     @Override
@@ -64,6 +64,24 @@ public class IRBlockStateProvider extends BlockStateProvider {
         cableBlock(IRBlocks.HV_CABLE.get(), 8);
         cableBlock(IRBlocks.GLASS_FIBRE_CABLE.get(), 4);
         cableBlock(IRBlocks.BURNT_CABLE.get(), 4);
+
+        modelBuilder(IRMachines.BATTERY_BOX.getBlock())
+                .defaultTexture(modLoc("block/battery_box"))
+                .top(this::blockTextureSuffix, "_top")
+                .facing()
+                .create();
+
+        modelBuilder(IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlock())
+                .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
+                .top(this::blockTextureSuffix, "_top")
+                .facing()
+                .create();
+
+        modelBuilder(IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlock())
+                .defaultTexture(blockTexture(IRBlocks.ADVANCED_MACHINE_FRAME.get()))
+                .top(this::blockTextureSuffix, "_top")
+                .facing()
+                .create();
 
         modelBuilder(IRMachines.BASIC_GENERATOR.getBlock())
                 .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
@@ -252,7 +270,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
         fenceGateBlock(IRBlocks.RUBBER_TREE_FENCE_GATE.get(), blockTexture(IRBlocks.RUBBER_TREE_PLANKS.get(), "tree"));
         pressurePlateBlock(IRBlocks.RUBBER_TREE_PRESSURE_PLATE.get(), blockTexture(IRBlocks.RUBBER_TREE_PLANKS.get(), "tree"));
         trapdoorBlock(IRBlocks.RUBBER_TREE_TRAPDOOR.get(), blockTexture(IRBlocks.RUBBER_TREE_TRAPDOOR.get(), "tree"), false);
-        slabBlock(IRBlocks.RUBBER_TREE_SLAB.get(), ResourceLocation.fromNamespaceAndPath(IndustrialReclassified.MODID, "block/rubber_tree_planks"),
+        slabBlock(IRBlocks.RUBBER_TREE_SLAB.get(), ResourceLocation.fromNamespaceAndPath(IndustrialRecrafted.MODID, "block/rubber_tree_planks"),
                 blockTexture(IRBlocks.RUBBER_TREE_PLANKS.get(), "tree"));
         stairsBlock(IRBlocks.RUBBER_TREE_STAIRS.get(),
                 blockTexture(IRBlocks.RUBBER_TREE_PLANKS.get(), "tree"));

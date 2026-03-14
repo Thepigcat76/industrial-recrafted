@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRRegistries;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.impl.energy.EnergyTierImpl;
 import net.minecraft.ChatFormatting;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public final class IREnergyTiers {
-    public static final DeferredRegister<EnergyTier> ENERGY_TIERS = DeferredRegister.create(IRRegistries.ENERGY_TIER, IndustrialReclassified.MODID);
+    public static final DeferredRegister<EnergyTier> ENERGY_TIERS = DeferredRegister.create(IRRegistries.ENERGY_TIER, IndustrialRecrafted.MODID);
 
     public static final Supplier<EnergyTierImpl> NONE = ENERGY_TIERS.register("none", () -> new EnergyTierImpl(0, 0, ChatFormatting.GRAY.getColor(), 0));
     public static final Supplier<EnergyTierImpl> LOW = ENERGY_TIERS.register("low", () -> new EnergyTierImpl(32, 4_000, ChatFormatting.WHITE.getColor(), 1));

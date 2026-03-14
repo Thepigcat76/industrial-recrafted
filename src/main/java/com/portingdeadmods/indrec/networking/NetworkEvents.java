@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.networking;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.networking.bidirectional.ExampleBidirectionalPayload;
 import com.portingdeadmods.indrec.networking.clientbound.ExampleClientboundPayload;
 import com.portingdeadmods.indrec.networking.serverbound.ExampleServerboundPayload;
@@ -10,11 +10,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@EventBusSubscriber(modid = IndustrialReclassified.MODID)
+@EventBusSubscriber(modid = IndustrialRecrafted.MODID)
 public class NetworkEvents {
     @SubscribeEvent
     public static void registerPayloads(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar(IndustrialReclassified.MODID);
+        final PayloadRegistrar registrar = event.registrar(IndustrialRecrafted.MODID);
 
         registrar.playToServer(
                 ExampleServerboundPayload.TYPE,

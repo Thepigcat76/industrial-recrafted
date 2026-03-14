@@ -39,15 +39,15 @@ import net.neoforged.fml.ModContainer;
 
 import java.util.Map;
 
-@Mod(IndustrialReclassified.MODID)
-public final class IndustrialReclassified {
+@Mod(IndustrialRecrafted.MODID)
+public final class IndustrialRecrafted {
     public static final String MODID = "indrec";
     public static final String MODNAME = "Industrial Reclassified";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final ModelResourceLocation WINDMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/windmill_blade"));
     public static final ModelResourceLocation WATERMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/watermill_blade"));
 
-    public IndustrialReclassified(IEventBus modEventBus, ModContainer modContainer) {
+    public IndustrialRecrafted(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::registerPayloads);
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::registerRegistries);
@@ -73,27 +73,10 @@ public final class IndustrialReclassified {
         IRSoundEvents.SOUND_EVENTS.register(modEventBus);
         IRFluids.HELPER.register(modEventBus);
 
-        mapMissingRegistryEntries();
-
         PDLConfigHelper.registerConfig(IRConfig.class, ModConfig.Type.COMMON, modContainer);
     }
 
     private void addFeaturePacks(AddPackFindersEvent event) {
-    }
-
-    private void mapMissingRegistryEntries() {
-        mapOldModid(IRItems.ITEMS);
-        mapOldModid(IREnergyTiers.ENERGY_TIERS);
-        mapOldModid(IRDataComponents.DATA_COMPONENT_TYPES);
-        mapOldModid(IRBlocks.BLOCKS);
-        mapOldModid(IRBlockEntityTypes.BLOCK_ENTITY_TYPES);
-    }
-
-    private static <T> void mapOldModid(DeferredRegister<T> registry) {
-        for (DeferredHolder<T, ? extends T> item : registry.getEntries()) {
-            ResourceLocation id = item.getId();
-            registry.addAlias(ResourceLocation.fromNamespaceAndPath("examplemod", id.getPath()), id);
-        }
     }
 
     private void registerAdditionalModels(ModelEvent.RegisterAdditional event) {

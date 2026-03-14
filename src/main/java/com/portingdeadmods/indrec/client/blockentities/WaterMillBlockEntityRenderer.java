@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.client.blockentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blockentities.WaterMillBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -21,7 +21,7 @@ public class WaterMillBlockEntityRenderer implements BlockEntityRenderer<WaterMi
 
     public WaterMillBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.modelRenderer = context.getBlockRenderDispatcher().getModelRenderer();
-        this.waterMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialReclassified.WATERMILL_BLADE_MODEL);
+        this.waterMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialRecrafted.WATERMILL_BLADE_MODEL);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.portingdeadmods.indrec.client.items;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.IRDataComponents;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
 import com.portingdeadmods.indrec.content.items.electric.ElectricChainsawItem;
@@ -17,9 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 
 public final class IRItemProperties {
-    public static final ResourceLocation ACTIVE_KEY = IndustrialReclassified.rl("active");
-    public static final ResourceLocation BATTERY_STAGE_KEY = IndustrialReclassified.rl("battery_stage");
-    public static final ResourceLocation JETPACK_STAGE_KEY = IndustrialReclassified.rl("jetpack_stage");
+    public static final ResourceLocation ACTIVE_KEY = IndustrialRecrafted.rl("active");
+    public static final ResourceLocation BATTERY_STAGE_KEY = IndustrialRecrafted.rl("battery_stage");
+    public static final ResourceLocation JETPACK_STAGE_KEY = IndustrialRecrafted.rl("jetpack_stage");
 
     public static float isActive(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
         return stack.getOrDefault(IRDataComponents.ACTIVE, false) ? 1 : 0;

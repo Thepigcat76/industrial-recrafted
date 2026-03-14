@@ -6,19 +6,22 @@ public final class IRConfig {
     private static final String BLOCKS_ENERGY_CAPACITY = "blocks.energy.capacity";
 
     @ConfigValue(key = "basic_generator", name = "Basic Generator Energy Capacity", comment = "The Energy Capacity of the Basic Generator", category = BLOCKS_ENERGY_CAPACITY)
-    public static int basicGeneratorEnergyCapacity = 4000;
+    public static int basicGeneratorEnergyCapacity = 4_000;
     @ConfigValue(key = "geothermal_generator", name = "Geothermal Generator Energy Capacity", comment = "The Energy Capacity of the Geothermal Generator", category = BLOCKS_ENERGY_CAPACITY)
-    public static int geothermalGeneratorEnergyCapacity = 16000;
+    public static int geothermalGeneratorEnergyCapacity = 4_000;
     @ConfigValue(key = "wind_mill", name = "Wind Mill Energy Capacity", comment = "The Energy Capacity of the Wind Mill", category = BLOCKS_ENERGY_CAPACITY)
     public static int windMillEnergyCapacity = 16000;
     @ConfigValue(key = "water_mill", name = "Water Mill Energy Capacity", comment = "The Energy Capacity of the Water Mill", category = BLOCKS_ENERGY_CAPACITY)
     public static int waterMillEnergyCapacity = 16000;
     @ConfigValue(key = "basic_solar_panel", name = "Basic Solar Panel Energy Capacity", comment = "The Energy Capacity of the Basic Solar Panel", category = BLOCKS_ENERGY_CAPACITY)
     public static int basicSolarPanelEnergyCapacity = 4000;
-    @ConfigValue(key = "centrifuge", name = "Centrifuge Energy Capacity", comment = "The Energy Capacity of the Centrifuge", category = BLOCKS_ENERGY_CAPACITY)
-    public static int centrifugeEnergyCapacity = 4000;
+
     @ConfigValue(key = "battery_box", name = "Battery Box Energy Capacity", comment = "The Energy Capacity of the Battery Box", category = BLOCKS_ENERGY_CAPACITY)
-    public static int batteryBoxEnergyCapacity = 4000;
+    public static int batteryBoxEnergyCapacity = 40_000;
+    @ConfigValue(key = "basic_energy_storage_unit", name = "Basic Energy Storage Unit Capacity", comment = "The Energy Capacity of the Basic Energy Storage Unit", category = BLOCKS_ENERGY_CAPACITY)
+    public static int basicEnergyStorageUnitEnergyCapacity = 4_000_000;
+    @ConfigValue(key = "advanced_energy_storage_unit", name = "Advanced Energy Storage Unit Capacity", comment = "The Energy Capacity of the Advanced Energy Storage Unit", category = BLOCKS_ENERGY_CAPACITY)
+    public static int advancedEnergyStorageUnitEnergyCapacity = 40_000_000;
 
     private static final String BLOCKS_ENERGY_PRODUCTION = "blocks.energy.production";
 
@@ -41,36 +44,32 @@ public final class IRConfig {
     private static final String ITEMS_ENERGY_CAPACITY = "items.energy.capacity";
 
     @ConfigValue(key = "basic_drill", name = "Basic Drill Energy Capacity", comment = "The Energy Capacity of the Basic Drill", category = ITEMS_ENERGY_CAPACITY)
-    public static int basicDrillCapacity = 4000;
+    public static int basicDrillCapacity = 40_000;
     @ConfigValue(key = "basic_chainsaw", name = "Basic Chainsaw Energy Capacity", comment = "The Energy Capacity of the Basic Chainsaw", category = ITEMS_ENERGY_CAPACITY)
-    public static int basicChainsawCapacity = 4000;
+    public static int basicChainsawCapacity = 40_000;
     @ConfigValue(key = "basic_battery", name = "Basic Battery Energy Capacity", comment = "The Energy Capacity of the Basic Battery", category = ITEMS_ENERGY_CAPACITY)
-    public static int basicBatteryCapacity = 4000;
+    public static int basicBatteryCapacity = 10_000;
     @ConfigValue(key = "electric_hoe", name = "Electric Hoe Energy Capacity", comment = "The Energy Capacity of the Electric Hoe", category = ITEMS_ENERGY_CAPACITY)
-    public static int electricHoeCapacity = 4000;
+    public static int electricHoeCapacity = 10_000;
     @ConfigValue(key = "electric_tree_tap", name = "Electric Tree Tap Energy Capacity", comment = "The Energy Capacity of the Electric Tree Tap", category = ITEMS_ENERGY_CAPACITY)
-    public static int electricTreeTapCapacity = 4000;
+    public static int electricTreeTapCapacity = 10_000;
     @ConfigValue(key = "electric_wrench", name = "Electric Wrench Energy Capacity", comment = "The Energy Capacity of the Electric Wrench", category = ITEMS_ENERGY_CAPACITY)
-    public static int electricWrenchCapacity = 4000;
-    @ConfigValue(key = "rock_cutter", name = "Rock Cutter Energy Capacity", comment = "The Energy Capacity of the Rock Cutter", category = ITEMS_ENERGY_CAPACITY)
-    public static int rockCutterCapacity = 4000;
+    public static int electricWrenchCapacity = 10_000;
 
-    @ConfigValue(key = "scanner", name = "Scanner Energy Capacity", comment = "The Energy Capacity of the Rock Cutter", category = ITEMS_ENERGY_CAPACITY)
-    public static int scannerCapacity = 16_000;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Capacity", comment = "The Energy Capacity of the Jetpack", category = ITEMS_ENERGY_CAPACITY)
-    public static int jetpackCapacity = 16_000;
+    public static int jetpackCapacity = 40_000;
 
     @ConfigValue(key = "nano_saber", name = "Nano Saber Energy Capacity", comment = "The Energy Capacity of the Nano Saber", category = ITEMS_ENERGY_CAPACITY)
-    public static int nanoSaberCapacity = 32_000;
+    public static int nanoSaberCapacity = 400_000;
     @ConfigValue(key = "advanced_drill", name = "Advanced Drill Energy Capacity", comment = "The Energy Capacity of the Advanced Drill", category = ITEMS_ENERGY_CAPACITY)
-    public static int advancedDrillCapacity = 32_000;
+    public static int advancedDrillCapacity = 400_000;
     @ConfigValue(key = "advanced_chainsaw", name = "Advanced Chainsaw Energy Capacity", comment = "The Energy Capacity of the Advanced Chainsaw", category = ITEMS_ENERGY_CAPACITY)
-    public static int advancedChainsawCapacity = 32_000;
+    public static int advancedChainsawCapacity = 400_000;
     @ConfigValue(key = "energy_crystal", name = "Energy Crystal Capacity", comment = "The Energy Capacity of the Energy Crystal", category = ITEMS_ENERGY_CAPACITY)
-    public static int energyCrystalCapacity = 32_000;
+    public static int energyCrystalCapacity = 1_000_000;
 
     @ConfigValue(key = "lapotron_crystal", name = "Lapotron Crystal Energy Capacity", comment = "The Energy Capacity of the Lapotron Crystal", category = ITEMS_ENERGY_CAPACITY)
-    public static int lapotronCrystalCapacity = 128_000;
+    public static int lapotronCrystalCapacity = 10_000_000;
 
     private static final String ITEMS_ENERGY_USAGE = "items.energy.usage";
 
@@ -84,11 +83,7 @@ public final class IRConfig {
     public static int electricTreeTapEnergyUsage = 16;
     @ConfigValue(key = "electric_wrench", name = "Electric Wrench Energy Usage", comment = "The Energy Usage of the Electric Wrench", category = ITEMS_ENERGY_USAGE)
     public static int electricWrenchEnergyUsage = 16;
-    @ConfigValue(key = "rock_cutter", name = "Rock Cutter Energy Usage", comment = "The Energy Usage of the Rock Cutter", category = ITEMS_ENERGY_USAGE)
-    public static int rockCutterEnergyUsage = 16;
 
-    @ConfigValue(key = "scanner", name = "Scanner Energy Usage", comment = "The Energy Usage of the Scanner", category = ITEMS_ENERGY_USAGE)
-    public static int scannerEnergyUsage = 32;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Usage", comment = "The Energy Usage of the Jetpack", category = ITEMS_ENERGY_USAGE)
     public static int jetpackEnergyUsage = 32;
 

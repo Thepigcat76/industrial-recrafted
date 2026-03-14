@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.client.screens;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
 import com.portingdeadmods.indrec.api.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class BasicGeneratorScreen extends MachineScreen<BasicGeneratorMenu> {
-    private static final ResourceLocation TEXTURE = IndustrialReclassified.rl("textures/gui/basic_generator.png");
+    private static final ResourceLocation TEXTURE = IndustrialRecrafted.rl("textures/gui/basic_generator.png");
     private static final ResourceLocation LIT_PROGRESS_SPRITE = ResourceLocation.parse("container/smoker/lit_progress");
 
     public BasicGeneratorScreen(BasicGeneratorMenu pMenu, Inventory pPlayerInventory, Component pTitle) {

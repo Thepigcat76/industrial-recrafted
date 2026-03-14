@@ -31,9 +31,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.model.DynamicFluidContainerModel;
 import net.neoforged.neoforge.common.NeoForge;
 
-@Mod(value = IndustrialReclassified.MODID, dist = Dist.CLIENT)
-public final class IndustrialReclassifiedClient {
-    public IndustrialReclassifiedClient(IEventBus modEventBus, ModContainer container) {
+@Mod(value = IndustrialRecrafted.MODID, dist = Dist.CLIENT)
+public final class IndustrialRecraftedClient {
+    public IndustrialRecraftedClient(IEventBus modEventBus, ModContainer container) {
         modEventBus.addListener(this::registerMenuScreens);
         modEventBus.addListener(this::onClientSetup);
         modEventBus.addListener(this::registerItemColor);
@@ -53,6 +53,7 @@ public final class IndustrialReclassifiedClient {
         event.register(IRMachines.RECYCLER.getMenuType(), RecyclerScreen::new);
         event.register(IRMachines.CANNING_MACHINE.getMenuType(), CanningMachineScreen::new);
         event.register(IRMachines.BASIC_SOLAR_PANEL.getMenuType(), SolarPanelScreen::new);
+        event.register(IRMachines.BATTERY_BOX.getMenuType(), BatteryBoxScreen::new);
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {

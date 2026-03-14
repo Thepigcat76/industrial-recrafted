@@ -100,7 +100,10 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
     @Override
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
         if (level instanceof ServerLevel serverLevel) {
-            if (IRNetworks.ENERGY.get().checkForInteractorAt(serverLevel, blockPos, facingDirection)) {
+            boolean interactorExists = IRNetworks.ENERGY.get().checkForInteractorAt(serverLevel, blockPos, facingDirection);
+            if (IRNetworks.ENERGY.get().hasInteractorAt(serverLevel, facingBlockPos) && !interactorExists) {
+                IRNetworks.ENERGY.get().removeInteractor(serverLevel, facingBlockPos);
+            } else if (interactorExists) {
                 int connectionsAmount = 0;
                 Direction[] directions = new Direction[6];
                 for (Direction direction : Direction.values()) {

@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.layouts.*;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,7 @@ public final class IRRecipeLayouts {
     public static final GeothermalGeneratorRecipeLayout GEOTHERMAL_GENERATOR = register("geothermal_generator", GeothermalGeneratorRecipeLayout::new);
 
     private static <L extends MachineRecipeLayout<?>> L register(String key, Function<ResourceLocation, L> factory) {
-        ResourceLocation id = IndustrialReclassified.rl(key);
+        ResourceLocation id = IndustrialRecrafted.rl(key);
         L layout = factory.apply(id);
         LAYOUTS.put(id, layout);
         return layout;

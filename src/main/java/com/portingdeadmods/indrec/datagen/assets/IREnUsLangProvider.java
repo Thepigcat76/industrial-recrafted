@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
 import com.portingdeadmods.indrec.IRRegistries;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.registries.*;
 import net.minecraft.data.PackOutput;
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class IREnUsLangProvider extends LanguageProvider {
     public IREnUsLangProvider(PackOutput output) {
-        super(output, IndustrialReclassified.MODID, "en_us");
+        super(output, IndustrialRecrafted.MODID, "en_us");
     }
 
     @Override
@@ -171,7 +171,7 @@ public class IREnUsLangProvider extends LanguageProvider {
     }
 
     private void addEnergyTier(Supplier<? extends EnergyTier> key, String val) {
-        add("energy_tier." + IndustrialReclassified.MODID + "." + IRRegistries.ENERGY_TIER.getKey(key.get()).getPath(), val);
+        add("energy_tier." + IndustrialRecrafted.MODID + "." + IRRegistries.ENERGY_TIER.getKey(key.get()).getPath(), val);
     }
 
 }

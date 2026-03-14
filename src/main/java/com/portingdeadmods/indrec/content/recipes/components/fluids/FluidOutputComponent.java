@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.content.recipes.components.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.api.recipes.RecipeFlagType;
 import com.portingdeadmods.indrec.content.recipes.flags.FluidOutputComponentFlag;
@@ -28,7 +28,7 @@ public record FluidOutputComponent(FluidStack fluid, float chance) implements Re
             FluidOutputComponent::chance,
             FluidOutputComponent::new
     );
-    public static final Type<FluidOutputComponent> TYPE = new Type<>(IndustrialReclassified.rl("fluid_output"), CODEC, STREAM_CODEC);
+    public static final Type<FluidOutputComponent> TYPE = new Type<>(IndustrialRecrafted.rl("fluid_output"), CODEC, STREAM_CODEC);
     public static final Set<RecipeFlagType<?>> FLAGS = Set.of(IRRecipeComponentFlags.FLUID_OUTPUT);
 
     public FluidOutputComponent(FluidStack fluid) {

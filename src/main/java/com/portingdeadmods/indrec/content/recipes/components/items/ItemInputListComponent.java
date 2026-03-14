@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.content.recipes.components.items;
 
 import com.mojang.serialization.Codec;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.api.recipes.RecipeFlagType;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
@@ -25,7 +25,7 @@ import java.util.Set;
 public record ItemInputListComponent(List<ItemInputComponent> inputs) implements RecipeComponent, ItemInputComponentFlag {
     public static final Codec<ItemInputListComponent> CODEC = ItemInputComponent.CODEC.listOf().xmap(ItemInputListComponent::new, ItemInputListComponent::inputs);
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemInputListComponent> STREAM_CODEC = ItemInputComponent.STREAM_CODEC.apply(ByteBufCodecs.list()).map(ItemInputListComponent::new, ItemInputListComponent::inputs);
-    public static final Type<ItemInputListComponent> TYPE = new Type<>(IndustrialReclassified.rl("item_input_list"), CODEC, STREAM_CODEC);
+    public static final Type<ItemInputListComponent> TYPE = new Type<>(IndustrialRecrafted.rl("item_input_list"), CODEC, STREAM_CODEC);
     public static final Set<RecipeFlagType<?>> FLAGS = Set.of(IRRecipeComponentFlags.ITEM_INPUT);
 
     public ItemInputListComponent(Ingredient ingredient, int count) {

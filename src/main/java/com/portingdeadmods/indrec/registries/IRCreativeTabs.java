@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRCapabilities;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.items.FluidCellItem;
 import com.portingdeadmods.indrec.content.items.FuelJetpackItem;
@@ -19,11 +19,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public final class IRCreativeTabs {
-    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, IndustrialReclassified.MODID);
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, IndustrialRecrafted.MODID);
 
     public static final Supplier<CreativeModeTab> MAIN = TABS.register("main", () -> CreativeModeTab.builder()
             .icon(IRItems.BASIC_DRILL::toStack)
-            .title(Component.literal(IndustrialReclassified.MODNAME))
+            .title(Component.literal(IndustrialRecrafted.MODNAME))
             .displayItems((params, out) -> {
                 IRItems.ITEMS.getCreativeTabItems().stream().map(Supplier::get).map(ItemStack::new).peek(stack -> {
                     EnergyHandler handler = stack.getCapability(IRCapabilities.ENERGY_ITEM);

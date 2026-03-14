@@ -1,9 +1,9 @@
 package com.portingdeadmods.indrec.datagen.data;
 
 import com.mojang.datafixers.util.Either;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.tags.IRTags;
-import com.portingdeadmods.indrec.IndustrialReclassified;
 import com.portingdeadmods.indrec.tags.CTags;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import net.minecraft.core.HolderLookup;
@@ -66,7 +66,7 @@ public class IRTagsProvider {
 
     protected static class BlocksProvider extends BlockTagsProvider {
         public BlocksProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(output, lookupProvider, IndustrialReclassified.MODID, existingFileHelper);
+            super(output, lookupProvider, IndustrialRecrafted.MODID, existingFileHelper);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class IRTagsProvider {
 
     public static class FluidsProvider extends FluidTagsProvider {
         public FluidsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(output, provider, IndustrialReclassified.MODID, existingFileHelper);
+            super(output, provider, IndustrialRecrafted.MODID, existingFileHelper);
         }
 
         @Override

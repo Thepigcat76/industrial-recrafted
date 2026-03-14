@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.networking.serverbound;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ExampleServerboundPayload(int payload) implements CustomPacketPayload {
-    public static final Type<ExampleServerboundPayload> TYPE = new Type<>(IndustrialReclassified.rl("example_serverbound_payload"));
+    public static final Type<ExampleServerboundPayload> TYPE = new Type<>(IndustrialRecrafted.rl("example_serverbound_payload"));
     public static final StreamCodec<? super RegistryFriendlyByteBuf, ExampleServerboundPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             ExampleServerboundPayload::payload,
@@ -27,7 +27,7 @@ public record ExampleServerboundPayload(int payload) implements CustomPacketPayl
             ServerPlayer player = (ServerPlayer) context.player();
             ServerLevel level = (ServerLevel) player.level();
         }).exceptionally(err -> {
-            IndustrialReclassified.LOGGER.error("Failed to handle " + TYPE.id(), err);
+            IndustrialRecrafted.LOGGER.error("Failed to handle " + TYPE.id(), err);
             return null;
         });
     }

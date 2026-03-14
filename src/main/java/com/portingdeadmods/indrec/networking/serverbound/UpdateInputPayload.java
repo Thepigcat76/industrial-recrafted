@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.networking.serverbound;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.utils.InputHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record UpdateInputPayload(boolean up, boolean down, boolean forwards, boolean backwards, boolean left, boolean right, boolean sprint) implements CustomPacketPayload {
-    public static final Type<UpdateInputPayload> TYPE = new Type<>(IndustrialReclassified.rl("update_inputs"));
+    public static final Type<UpdateInputPayload> TYPE = new Type<>(IndustrialRecrafted.rl("update_inputs"));
 
     public static final StreamCodec<ByteBuf, UpdateInputPayload> STREAM_CODEC = StreamCodec.of(UpdateInputPayload::encode, UpdateInputPayload::decode);
 

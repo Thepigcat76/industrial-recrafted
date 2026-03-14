@@ -41,9 +41,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -62,6 +60,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     protected float progressIncrement;
     protected boolean burnt;
     private boolean removedByWrench;
+    protected Set<Direction> spreadDirections;
 
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
@@ -69,6 +68,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.caches = new ArrayList<>();
         this.chargingSlots = new ArrayList<>();
         this.progressIncrement = 1F;
+        this.spreadDirections = Set.of(Direction.values());
     }
 
     public MachineRecipeLayout<?> getRecipeLayout() {
@@ -95,15 +95,21 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     }
 
+    public Set<Direction> getSpreadDirections() {
+        return spreadDirections;
+    }
+
     protected void tickEnergySpreading() {
         if (this.shouldSpreadEnergy() && !level.isClientSide()) {
             int amountPerBlock = this.getAmountPerBlock();
 
             for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.caches) {
-                EnergyHandler energyStorage = cache.getCapability();
-                if (energyStorage != null) {
-                    int filled = energyStorage.fillEnergy(amountPerBlock, false);
-                    getEuStorage().drainEnergy(filled, false);
+                if (this.getSpreadDirections().contains(cache.context())) {
+                    EnergyHandler energyStorage = cache.getCapability();
+                    if (energyStorage != null) {
+                        int filled = energyStorage.fillEnergy(amountPerBlock, false);
+                        getEuStorage().forceDrainEnergy(filled, false);
+                    }
                 }
             }
         }

@@ -24,12 +24,17 @@ public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuPro
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
+    public void tickRecipe() {
         if (level.isDay() && level.canSeeSky(this.worldPosition.above())) {
             this.getEuStorage().forceFillEnergy(this.getGenerationAmount(), false);
         }
+
+        GeneratorBlockEntity.transportEnergy(level, worldPosition,  this.getEuStorage());
+    }
+
+    @Override
+    public boolean shouldSpreadEnergy() {
+        return true;
     }
 
     @Override

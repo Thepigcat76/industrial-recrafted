@@ -1,17 +1,21 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.client.items.IRItemProperties;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRFluids;
 import com.portingdeadmods.indrec.registries.IRItems;
+import com.portingdeadmods.indrec.registries.IRMachines;
+import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -31,7 +35,7 @@ public class IRItemModelProvider extends ItemModelProvider {
     public static final Set<? extends Block> CUSTOM_ITEM_MODELS = IRBlocks.CUSTOM_ITEM_MODELS.stream().map(Supplier::get).collect(Collectors.toSet());
 
     public IRItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, IndustrialReclassified.MODID, existingFileHelper);
+        super(output, IndustrialRecrafted.MODID, existingFileHelper);
     }
 
     @Override
@@ -124,6 +128,10 @@ public class IRItemModelProvider extends ItemModelProvider {
         basicItem(IRItems.SCRAP_BOX.get());
         basicItem(IRItems.UU_MATTER.get());
 
+        energyStorageUnit(IRMachines.BATTERY_BOX);
+        energyStorageUnit(IRMachines.BASIC_ENERGY_STORAGE_UNIT);
+        energyStorageUnit(IRMachines.ADVANCED_ENERGY_STORAGE_UNIT);
+
         cableItem(IRBlocks.TIN_CABLE.get(), 6);
         cableItem(IRBlocks.COPPER_CABLE.get(), 6);
         cableItem(IRBlocks.GOLD_CABLE.get(), 6);
@@ -146,6 +154,39 @@ public class IRItemModelProvider extends ItemModelProvider {
         overrideItemModel(6, basicItem(IRItems.ELECTRIC_JETPACK, itemTexture(IRItems.ELECTRIC_JETPACK).withSuffix("_0")), IRItemProperties.JETPACK_STAGE_KEY,
                 i -> basicItem(IRItems.ELECTRIC_JETPACK, "_" + i));
 
+    }
+
+    private void energyStorageUnit(ItemLike energyStorageUnit) {
+        ModelBuilder<ItemModelBuilder>.TransformsBuilder builder = parentItemBlock(energyStorageUnit.asItem())
+                .guiLight(BlockModel.GuiLight.SIDE)
+                .transforms();
+        builder.transform(ItemDisplayContext.GUI)
+                .rotation(30, 315, 270)
+                .scale(0.625f, 0.625f, 0.625f)
+                .end();
+        builder.transform(ItemDisplayContext.GROUND)
+                .rotation(0, 0, 270)
+                .translation(0, 3, 0)
+                .scale(0.25f, 0.25f, 0.25f)
+                .end();
+        builder.transform(ItemDisplayContext.FIXED)
+                .rotation(0, 90, 270)
+                .scale(0.5f, 0.5f, 0.5f)
+                .end();
+        builder.transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+                .rotation(75, 135, 270)
+                .translation(0f, 0.25f, 0f)
+                .scale(0.375f, 0.375f, 0.375f)
+                .end();
+        builder.transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+                .rotation(0, 45, 270)
+                .scale(0.4f, 0.4f, 0.4f)
+                .end();
+        builder.transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
+                .rotation(0, 225, 270)
+                .scale(0.4f, 0.4f, 0.4f)
+                .end();
+        builder.end();
     }
 
     private void fluidContainerModel(ItemLike item) {

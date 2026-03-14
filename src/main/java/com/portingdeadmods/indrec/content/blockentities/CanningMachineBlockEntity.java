@@ -46,7 +46,7 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
                     case 0, 1 -> true;
                     case 2 -> false;
                     case 3 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
-                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Extractor");
+                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Canning Machine");
                 })
                 .onChange(this::onItemsChanged));
         this.exposedItemHandler = new LimitedItemHandler(this.getItemHandler(), IntSet.of(0, 1), IntSet.of(2), IntSet.of(3));

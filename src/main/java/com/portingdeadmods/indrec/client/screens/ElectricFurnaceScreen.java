@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.client.screens;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
 import com.portingdeadmods.indrec.api.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
@@ -15,8 +15,8 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class ElectricFurnaceScreen extends MachineScreen<ElectricFurnaceMenu> {
-    public static final ResourceLocation PROGRESS_ARROW_SPRITE = IndustrialReclassified.rl("container/progress_arrow");
-    private static final ResourceLocation TEXTURE = IndustrialReclassified.rl("textures/gui/electric_furnace.png");
+    public static final ResourceLocation PROGRESS_ARROW_SPRITE = IndustrialRecrafted.rl("container/progress_arrow");
+    private static final ResourceLocation TEXTURE = IndustrialRecrafted.rl("textures/gui/electric_furnace.png");
 
     public ElectricFurnaceScreen(ElectricFurnaceMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

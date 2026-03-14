@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.content.recipes.components.items;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
@@ -36,7 +36,7 @@ public record ItemInputComponent(Ingredient ingredient, int count, float chance)
             ItemInputComponent::chance,
             ItemInputComponent::new
     );
-    public static final Type<ItemInputComponent> TYPE = new Type<>(IndustrialReclassified.rl("item_input"), CODEC, STREAM_CODEC);
+    public static final Type<ItemInputComponent> TYPE = new Type<>(IndustrialRecrafted.rl("item_input"), CODEC, STREAM_CODEC);
     public static final Set<RecipeFlagType<?>> FLAGS = Set.of(IRRecipeComponentFlags.ITEM_INPUT);
 
     public ItemInputComponent(Ingredient ingredient, int count) {

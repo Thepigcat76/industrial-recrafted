@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.tags;
 
 import com.mojang.datafixers.util.Either;
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
@@ -23,7 +23,7 @@ public final class IRTags {
         public static final TagKey<Item> RUBBER_LOGS = createTag("rubber_logs", () -> List.of(item(IRBlocks.RUBBER_TREE_LOG), item(IRBlocks.STRIPPED_RUBBER_TREE_LOG), item(IRBlocks.RUBBER_TREE_WOOD), item(IRBlocks.STRIPPED_RUBBER_TREE_WOOD)));
 
         private static TagKey<Item> createTag(String id, Supplier<List<Either<ItemLike, TagKey<Item>>>> items) {
-            TagKey<Item> tag = TagKey.create(Registries.ITEM, IndustrialReclassified.rl(id));
+            TagKey<Item> tag = TagKey.create(Registries.ITEM, IndustrialRecrafted.rl(id));
             TAGS.put(tag, items);
             return tag;
         }
@@ -44,7 +44,7 @@ public final class IRTags {
         public static final TagKey<Block> WRENCHABLE = createTag("wrenchable", () -> IRMachines.HELPER.getMachines().stream().map(IRMachine::getBlock).map(BlockTags::block).toList());
 
         private static TagKey<Block> createTag(String id, Supplier<List<Either<Block, TagKey<Block>>>> items) {
-            TagKey<Block> tag = TagKey.create(Registries.BLOCK, IndustrialReclassified.rl(id));
+            TagKey<Block> tag = TagKey.create(Registries.BLOCK, IndustrialRecrafted.rl(id));
             TAGS.put(tag, items);
             return tag;
         }

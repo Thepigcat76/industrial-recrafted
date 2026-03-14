@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.portingdeadmods.indrec.IndustrialReclassified;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class IRArmorMaterials {
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, IndustrialReclassified.MODID);
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, IndustrialRecrafted.MODID);
 
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> FUEL_JETPACK = register("fuel_jetpack",
             Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
