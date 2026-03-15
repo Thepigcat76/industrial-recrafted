@@ -24,9 +24,12 @@ public interface ElectricConsumerItem {
     }
 
     default boolean canWork(ItemStack stack, @Nullable Entity entity) {
-        EnergyHandler energyStorage = stack.getCapability(IRCapabilities.ENERGY_ITEM);
-        if (energyStorage != null && requireEnergyToWork(stack, entity)) {
-            return energyStorage.getEnergyStored() >= getEnergyUsage(stack, entity);
+        return canWork(stack.getCapability(IRCapabilities.ENERGY_ITEM), stack, entity);
+    }
+
+    default boolean canWork(EnergyHandler energyHandler, ItemStack stack, @Nullable Entity entity) {
+        if (energyHandler != null && requireEnergyToWork(stack, entity)) {
+            return energyHandler.getEnergyStored() >= getEnergyUsage(stack, entity);
         }
         return false;
     }
@@ -37,7 +40,7 @@ public interface ElectricConsumerItem {
 
     default void consumeEnergy(ItemStack stack, @Nullable Entity entity) {
         EnergyHandler energyStorage = stack.getCapability(IRCapabilities.ENERGY_ITEM);
-        if (requireEnergyToWork(stack, entity) && canWork(stack, entity)) {
+        if (requireEnergyToWork(stack, entity)) {
             energyStorage.drainEnergy(getEnergyUsage(stack, entity), false);
         }
     }

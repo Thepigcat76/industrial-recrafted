@@ -39,10 +39,9 @@ public final class IRCreativeTabs {
                             }
                         }
                     } else if (stack.getItem() instanceof FuelJetpackItem) {
-                        ItemStack copy = stack.copy();
-                        IFluidHandlerItem fluidHandlerItem = copy.getCapability(Capabilities.FluidHandler.ITEM);
+                        out.accept(stack.copy());
+                        IFluidHandlerItem fluidHandlerItem = stack.getCapability(Capabilities.FluidHandler.ITEM);
                         fluidHandlerItem.fill(new FluidStack(IRFluids.BIO_FUEL.getStillFluid(), fluidHandlerItem.getTankCapacity(0)), IFluidHandler.FluidAction.EXECUTE);
-                        out.accept(copy);
                     }
                 }).forEach(out::accept);
             })

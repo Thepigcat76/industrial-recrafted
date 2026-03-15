@@ -45,7 +45,7 @@ public abstract class ElectricSwordItem extends SwordItem implements EnergyItem,
 
     @Override
     public int getEnergyUsage(ItemStack itemStack, @Nullable Entity entity) {
-        return getEnergyUsage();
+        return this.getEnergyUsage();
     }
 
     @Override

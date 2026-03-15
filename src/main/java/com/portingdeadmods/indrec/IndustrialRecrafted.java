@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec;
 
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.recipes.RegisterRecipeLayoutEvent;
@@ -16,14 +17,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -56,6 +64,8 @@ public final class IndustrialRecrafted {
         modEventBus.addListener(this::registerAdditionalModels);
         modEventBus.addListener(RegisterEvent.class, event -> this.onRegister(event, modEventBus));
 
+        NeoForge.EVENT_BUS.addListener(this::onArmorHurt);
+
         IRItems.ITEMS.register(modEventBus);
         IREnergyTiers.ENERGY_TIERS.register(modEventBus);
         IRDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
@@ -74,6 +84,20 @@ public final class IndustrialRecrafted {
         IRFluids.HELPER.register(modEventBus);
 
         PDLConfigHelper.registerConfig(IRConfig.class, ModConfig.Type.COMMON, modContainer);
+    }
+
+    private void onArmorHurt(ArmorHurtEvent event) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (EquipmentSlotGroup.ARMOR.test(slot)) {
+                ItemStack armorItemStack = event.getArmorItemStack(slot);
+                if (armorItemStack.getItem() instanceof ElectricConsumerItem consumerItem) {
+                    LivingEntity entity = event.getEntity();
+                    if (consumerItem.requireEnergyToWork(armorItemStack, entity)) {
+                        consumerItem.consumeEnergy(armorItemStack, entity);
+                    }
+                }
+            }
+        }
     }
 
     private void addFeaturePacks(AddPackFindersEvent event) {

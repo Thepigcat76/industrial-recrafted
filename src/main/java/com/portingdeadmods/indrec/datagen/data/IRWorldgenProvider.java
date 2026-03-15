@@ -33,7 +33,7 @@ public class IRWorldgenProvider {
     public static void bootstrapPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
         context.register(IRWorldgenKeys.RUBBER_TREE_KEY.placedFeature(), new PlacedFeature(configuredFeatures.getOrThrow(IRWorldgenKeys.RUBBER_TREE_KEY.configuredFeature()),
-                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.01F, 1), IRBlocks.RUBBER_TREE_SAPLING.get())));
+                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.05F, 1), IRBlocks.RUBBER_TREE_SAPLING.get())));
         registerPlacedOre(context, IRWorldgenKeys.TIN_ORE_KEY,  18, -20, 120);
         registerPlacedOre(context, IRWorldgenKeys.URANIUM_ORE_KEY, 12, -64, -8);
         registerPlacedOre(context, IRWorldgenKeys.IRIDIUM_ORE_KEY, 4, -64, -40);

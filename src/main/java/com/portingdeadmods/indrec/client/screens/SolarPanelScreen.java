@@ -26,6 +26,6 @@ public class SolarPanelScreen extends MachineScreen<SolarPanelMenu> {
 
     @Override
     public @NotNull ResourceLocation getBackgroundTexture() {
-        return IndustrialRecrafted.rl("");
+        return IndustrialRecrafted.rl("textures/gui/solar_panel.png");
     }
 }

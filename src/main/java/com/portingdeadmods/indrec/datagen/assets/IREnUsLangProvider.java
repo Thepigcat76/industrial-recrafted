@@ -105,7 +105,11 @@ public class IREnUsLangProvider extends LanguageProvider {
         addBlock(IRBlocks.NUKE, "Nuke");
 
         addBlock(IRBlocks.MACHINE_FRAME, "Machine Frame");
-        addBlock(IRBlocks.ADVANCED_MACHINE_FRAME, "Machine Frame");
+        addBlock(IRBlocks.ADVANCED_MACHINE_FRAME, "Advanced Machine Frame");
+
+        addBlock(IRMachines.BATTERY_BOX.getBlockSupplier(), "Battery Box");
+        addBlock(IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Basic Energy Storage Unit");
+        addBlock(IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Advanced Energy Storage Unit");
 
         addBlock(IRBlocks.TIN_CABLE, "Tin Cable");
         addBlock(IRBlocks.COPPER_CABLE, "Copper Cable");

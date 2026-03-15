@@ -56,6 +56,11 @@ public final class IRConfig {
     @ConfigValue(key = "electric_wrench", name = "Electric Wrench Energy Capacity", comment = "The Energy Capacity of the Electric Wrench", category = ITEMS_ENERGY_CAPACITY)
     public static int electricWrenchCapacity = 10_000;
 
+
+    @ConfigValue(key = "nano_suit", name = "Nano Suit Energy Capacity", comment = "The Energy Capacity of the Nano Suit", category = ITEMS_ENERGY_CAPACITY)
+    public static int nanoSuitEnergyCapacity = 1_000_000;
+    @ConfigValue(key = "quantum_suit", name = "Quantum Suit Energy Capacity", comment = "The Energy Capacity of the Quantum Suit", category = ITEMS_ENERGY_CAPACITY)
+    public static int quantumSuitEnergyCapacity = 10_000_000;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Capacity", comment = "The Energy Capacity of the Jetpack", category = ITEMS_ENERGY_CAPACITY)
     public static int jetpackCapacity = 40_000;
 
@@ -84,6 +89,10 @@ public final class IRConfig {
     @ConfigValue(key = "electric_wrench", name = "Electric Wrench Energy Usage", comment = "The Energy Usage of the Electric Wrench", category = ITEMS_ENERGY_USAGE)
     public static int electricWrenchEnergyUsage = 16;
 
+    @ConfigValue(key = "nano_suit", name = "Nano Suit Energy Usage", comment = "The Energy Usage of the Nano Suit", category = ITEMS_ENERGY_USAGE)
+    public static int nanoSuitEnergyUsage = 1000;
+    @ConfigValue(key = "quantum_suit", name = "Quantum Suit Energy Usage", comment = "The Energy Usage of the Quantum Suit", category = ITEMS_ENERGY_USAGE)
+    public static int quantumSuitEnergyUsage = 10_000;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Usage", comment = "The Energy Usage of the Jetpack", category = ITEMS_ENERGY_USAGE)
     public static int jetpackEnergyUsage = 32;
 

@@ -90,7 +90,7 @@ public final class IndustrialRecraftedClient {
 
     private void registerItemColor(RegisterColorHandlersEvent.Item event) {
         event.register(new SimpleFluidItem.Colors(), IRItems.FLUID_CELL.get());
-        event.register(new SimpleFluidItem.Colors(), IRItems.FLUID_CELL.get());
+        event.register(new SimpleFluidItem.Colors(), IRItems.JETPACK.get());
         event.register(new DynamicFluidContainerModel.Colors(), IRFluids.BIO_FUEL.getDeferredBucket());
 //        for (PDLFluid fluid : IRFluids.HELPER.getFluids()) {
 //            if (fluid instanceof MoltenMetalFluid) {

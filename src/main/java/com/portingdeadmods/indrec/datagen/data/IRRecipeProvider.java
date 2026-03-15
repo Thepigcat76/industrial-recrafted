@@ -998,5 +998,25 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_nuclear_reactor_chamber", has(IRBlocks.NUCLEAR_REACTOR_CHAMBER))
                 .save(output);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.WATER_MILL.getBlock())
+                .pattern(" P ")
+                .pattern("PGP")
+                .pattern("CPC")
+                .define('P', ItemTags.PLANKS)
+                .define('G', IRMachines.BASIC_GENERATOR)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .unlockedBy("has_basic_generator", has(IRMachines.BASIC_GENERATOR))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.WIND_MILL.getBlock())
+                .pattern(" P ")
+                .pattern("PGP")
+                .pattern("CPC")
+                .define('P', CTags.ItemTags.INGOTS_REFINED_IRON)
+                .define('G', IRMachines.BASIC_GENERATOR)
+                .define('C', IRItems.ADVANCED_CIRCUIT)
+                .unlockedBy("has_basic_generator", has(IRMachines.BASIC_GENERATOR))
+                .save(output);
+
     }
 }

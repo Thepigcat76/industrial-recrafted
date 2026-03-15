@@ -4,6 +4,7 @@ import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.SolarPanelMenu;
+import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRMachines;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuProvider, GeneratorBlockEntity {
@@ -30,6 +32,16 @@ public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuPro
         }
 
         GeneratorBlockEntity.transportEnergy(level, worldPosition,  this.getEuStorage());
+    }
+
+    @Override
+    protected void onEuChanged(int oldAmount) {
+        this.updateData();
+    }
+
+    @Override
+    protected @NotNull MachineRecipeInput createRecipeInput() {
+        return new MachineRecipeInput();
     }
 
     @Override

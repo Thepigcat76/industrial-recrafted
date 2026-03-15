@@ -19,6 +19,10 @@ public record MachineRecipeInput(List<ItemStack> items, List<FluidStack> fluids)
         this(List.of(item));
     }
 
+    public MachineRecipeInput() {
+        this(List.of());
+    }
+
     @Override
     public ItemStack getItem(int i) {
         return this.items().get(i);

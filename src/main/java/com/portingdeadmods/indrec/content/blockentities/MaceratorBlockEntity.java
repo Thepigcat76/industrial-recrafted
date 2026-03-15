@@ -16,6 +16,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -55,15 +57,24 @@ public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProv
                 if (this.progress < this.getMaxProgress()) {
                     this.progress++;
                     this.getEuStorage().forceDrainEnergy(3, false);
+                    if (this.progress % 12 == 0) {
+                        this.level.playSound(null, worldPosition, SoundEvents.MINECART_RIDING, SoundSource.BLOCKS, 0.25f, 0.8f);
+                    }
+                    setActive(true);
                 } else {
                     this.progress = 0;
                     ItemStack resultItem = this.cachedRecipe.getResultItem(this.level.registryAccess());
                     forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, resultItem.copy(), false, this::onItemsChanged);
                     this.getItemHandler().extractItem(0, 1, false);
+
+                    if (this.cachedRecipe == null) {
+                        setActive(false);
+                    }
                 }
             } else if (this.progress != 0) {
                 this.progress = 0;
                 this.updateData();
+                setActive(false);
             }
         }
     }
