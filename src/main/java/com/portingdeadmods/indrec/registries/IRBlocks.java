@@ -60,6 +60,9 @@ public final class IRBlocks {
     public static final DeferredBlock<LayeredSheetBlock> RUBBER_SHEET = BLOCKS.registerBlockWithItem("rubber_sheet", LayeredSheetBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL));
     public static final DeferredBlock<LayeredSheetBlock> STICKY_RESIN_SHEET = BLOCKS.registerBlockWithItem("sticky_resin_sheet", LayeredSheetBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.HONEY_BLOCK));
 
+    // Crops
+    //public static final DeferredBlock<Block> CROP_STICKS = BLOCKS.registerBlockWithItem("crop_sticks", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS));
+
     // Reinforced Blocks
     public static final DeferredBlock<Block> REINFORCED_STONE = BLOCKS.registerBlockWithItem("reinforced_stone", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(12.0F, 400.0F));
     public static final DeferredBlock<Block> REINFORCED_GLASS = BLOCKS.registerBlockWithItem("reinforced_glass", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)

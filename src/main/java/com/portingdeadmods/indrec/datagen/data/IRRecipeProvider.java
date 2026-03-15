@@ -67,11 +67,11 @@ public class IRRecipeProvider extends RecipeProvider {
     }
 
     private void compressorRecipe(TagKey<Item> input, ItemLike output, RecipeOutput recipeOutput) {
-        this.compressorRecipe(Ingredient.of(input), 1, output, 1, 200, 800, recipeOutput);
+        this.compressorRecipe(Ingredient.of(input), 1, output, 1, 200, 4, recipeOutput);
     }
 
     private void compressorRecipe(ItemLike input, ItemLike output, RecipeOutput recipeOutput) {
-        this.compressorRecipe(Ingredient.of(input), 1, output, 1, 200, 800, recipeOutput);
+        this.compressorRecipe(Ingredient.of(input), 1, output, 1, 200, 4, recipeOutput);
     }
 
     private void maceratorRecipe(Ingredient input, int inputCount, ItemLike output, int outputCount, int time, int energyPerTick, RecipeOutput recipeOutput) {
@@ -96,11 +96,11 @@ public class IRRecipeProvider extends RecipeProvider {
     }
 
     private void maceratorRecipe(TagKey<Item> input, ItemLike output, RecipeOutput recipeOutput) {
-        this.maceratorRecipe(Ingredient.of(input), 1, output, 1, 200, 800, recipeOutput);
+        this.maceratorRecipe(Ingredient.of(input), 1, output, 1, 200, 4, recipeOutput);
     }
 
     private void maceratorRecipe(ItemLike input, ItemLike output, RecipeOutput recipeOutput) {
-        this.maceratorRecipe(Ingredient.of(input), 1, output, 1, 200, 800, recipeOutput);
+        this.maceratorRecipe(Ingredient.of(input), 1, output, 1, 200, 4, recipeOutput);
     }
 
     @Override

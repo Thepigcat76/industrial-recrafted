@@ -32,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProvider {
     private final IItemHandler exposedItemHandler;
-    private MachineRecipe cachedRecipe;
-    private int progress;
 
     public MaceratorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.MACERATOR, blockPos, blockState);
@@ -51,77 +49,43 @@ public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProv
     }
 
     @Override
-    public void tickRecipe() {
-        if (!this.level.isClientSide()) {
-            if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
-                if (this.progress < this.getMaxProgress()) {
-                    this.progress++;
-                    this.getEuStorage().forceDrainEnergy(3, false);
-                    if (this.progress % 12 == 0) {
-                        this.level.playSound(null, worldPosition, SoundEvents.MINECART_RIDING, SoundSource.BLOCKS, 0.25f, 0.8f);
-                    }
-                    setActive(true);
-                } else {
-                    this.progress = 0;
-                    ItemStack resultItem = this.cachedRecipe.getResultItem(this.level.registryAccess());
-                    forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, resultItem.copy(), false, this::onItemsChanged);
-                    this.getItemHandler().extractItem(0, 1, false);
-
-                    if (this.cachedRecipe == null) {
-                        setActive(false);
-                    }
-                }
-            } else if (this.progress != 0) {
-                this.progress = 0;
-                this.updateData();
-                setActive(false);
-            }
+    protected void playMachineSound() {
+        if (this.progress % 12 == 0) {
+            this.level.playSound(null, worldPosition, SoundEvents.MINECART_RIDING, SoundSource.BLOCKS, 0.25f, 0.8f);
         }
-    }
-
-    public MachineRecipe getCachedRecipe() {
-        return cachedRecipe;
-    }
-
-    public int getProgress() {
-        return progress;
-    }
-
-    public int getMaxProgress() {
-        return this.cachedRecipe != null ? this.cachedRecipe.getComponent(TimeComponent.TYPE).time() : 0;
     }
 
     @Override
-    protected void onItemsChanged(int slot) {
-        this.updateData();
-
-        MachineRecipe recipe = this.level.getRecipeManager().getRecipeFor(IRRecipeLayouts.MACERATOR.getRecipeType(), new MachineRecipeInput(this.getItemHandler().getStackInSlot(0)), this.level)
-                .map(RecipeHolder::value)
-                .orElse(null);
-        if (recipe != null && forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, recipe.getResultItem(this.level.registryAccess()).copy(), true, i -> {}).isEmpty()) {
-            this.cachedRecipe = recipe;
-        } else {
-            this.cachedRecipe = null;
-        }
+    public void tickRecipe() {
+        super.tickRecipe();
+//        if (!this.level.isClientSide()) {
+//            if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
+//                if (this.progress < this.getMaxProgress()) {
+//                    this.progress++;
+//                    this.getEuStorage().forceDrainEnergy(3, false);
+//                    this.playMachineSound();
+//                    setActive(true);
+//                } else {
+//                    this.progress = 0;
+//                    ItemStack resultItem = this.cachedRecipe.getResultItem(this.level.registryAccess());
+//                    forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, resultItem.copy(), false, this::onItemsChanged);
+//                    this.getItemHandler().extractItem(0, 1, false);
+//
+//                    if (this.cachedRecipe == null) {
+//                        setActive(false);
+//                    }
+//                }
+//            } else if (this.progress != 0) {
+//                this.progress = 0;
+//                this.updateData();
+//                setActive(false);
+//            }
+//        }
     }
 
     @Override
     public IItemHandler getItemHandlerOnSide(Direction direction) {
         return this.exposedItemHandler;
-    }
-
-    @Override
-    protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadData(tag, provider);
-
-        this.progress = tag.getInt("progress");
-    }
-
-    @Override
-    protected void saveData(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveData(tag, provider);
-
-        tag.putInt("progress", this.progress);
     }
 
     @Override

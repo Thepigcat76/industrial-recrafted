@@ -29,6 +29,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -154,6 +156,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.refreshCachedRecipe();
     }
 
+    protected void playMachineSound() {
+    }
+
     protected void tickRecipe() {
         if (!this.level.isClientSide()) {
             if (this.cachedRecipe != null) {
@@ -198,9 +203,12 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     this.progress += this.progressIncrement;
                     EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
                     if (inputComponent != null) {
-                        this.getEuStorage().forceDrainEnergy(inputComponent.energy() / getMaxProgress(), false);
-                        setActive(true);
+                        int energy = inputComponent.energy() / this.cachedRecipe.getComponent(TimeComponent.TYPE).time();
+                        this.getEuStorage().forceDrainEnergy(energy, false);
                     }
+
+                    setActive(true);
+                    this.playMachineSound();
                 }
             } else {
                 this.progress = 0;
@@ -320,6 +328,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         super.onLoad();
 
         this.initCapCache();
+        this.refreshCachedRecipe();
     }
 
     @Override

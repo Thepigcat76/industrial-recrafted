@@ -25,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
@@ -50,7 +49,7 @@ import java.util.Map;
 @Mod(IndustrialRecrafted.MODID)
 public final class IndustrialRecrafted {
     public static final String MODID = "indrec";
-    public static final String MODNAME = "Industrial Reclassified";
+    public static final String MODNAME = "Industrial Recrafted";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final ModelResourceLocation WINDMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/windmill_blade"));
     public static final ModelResourceLocation WATERMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/watermill_blade"));

@@ -72,6 +72,7 @@ public class IRItemModelProvider extends ItemModelProvider {
         basicItem(IRItems.TREETAP.get());
         handheldItem(IRItems.WRENCH.get());
         handheldItem(IRItems.CUTTER.get());
+        basicItem(IRItems.REMOTE_DETONATOR.get());
 
         handheldItem(IRItems.ELECTRIC_HOE.get());
         handheldItem(IRItems.ELECTRIC_WRENCH.get());

@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.items.electric;
 
-import com.portingdeadmods.indrec.IRDataComponents;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;

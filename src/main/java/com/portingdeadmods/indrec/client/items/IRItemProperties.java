@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.client.items;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
-import com.portingdeadmods.indrec.IRDataComponents;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;

@@ -42,6 +42,7 @@ public final class IRItems {
     public static final DeferredItem<TreetapItem> TREETAP = ITEMS.registerItem("treetap", TreetapItem::defaultItem);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::defaultItem);
     public static final DeferredItem<CutterItem> CUTTER = ITEMS.registerItem("cutter", CutterItem::defaultItem);
+    public static final DeferredItem<RemoteDetonatorItem> REMOTE_DETONATOR = ITEMS.registerItem("remote_detonator", RemoteDetonatorItem::defaultItem);
     /* Electric Tools */
     public static final DeferredItem<ElectricTreetapItem> ELECTRIC_TREETAP = ITEMS.register("electric_treetap", ElectricTreetapItem::defaultItem);
     public static final DeferredItem<ElectricWrenchItem> ELECTRIC_WRENCH = ITEMS.register("electric_wrench", ElectricWrenchItem::defaultItem);
