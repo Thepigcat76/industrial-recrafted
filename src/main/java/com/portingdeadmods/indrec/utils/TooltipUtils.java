@@ -14,17 +14,25 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public final class TooltipUtils {
+    private static final DecimalFormat DF;
 
     public static void addEnergyTooltip(List<Component> tooltip, ItemStack itemStack) {
         EnergyHandler energyStorage = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
         if (energyStorage != null) {
+
+            String energyStored = DF.format(energyStorage.getEnergyStored());
+            String energyCapacity = DF.format(energyStorage.getEnergyCapacity());
             tooltip.add(
                     IRTranslations.ENERGY_STORED.component()
                             .withStyle(ChatFormatting.GRAY)
-                            .append(IRTranslations.ENERGY_AMOUNT_WITH_CAPACITY.component(energyStorage.getEnergyStored(), energyStorage.getEnergyCapacity())
+                            .append(IRTranslations.ENERGY_AMOUNT_WITH_CAPACITY.component(energyStored, energyCapacity)
                                     .withColor(FastColor.ARGB32.color(255, 245, 192, 89)))
                             .append(" ")
                             .append(IRTranslations.ENERGY_UNIT.component()
@@ -43,6 +51,10 @@ public final class TooltipUtils {
                             .append(Utils.registryTranslation(IRRegistries.ENERGY_TIER, tier).copy().withColor(tier.color()))
             );
         }
+    }
+
+    public static void addFluidFillableTooltip(List<Component> tooltip) {
+        tooltip.add(IRTranslations.FILLABLE.component().withStyle(ChatFormatting.GRAY));
     }
 
     public static void addFluidToolTip(List<Component> tooltip, ItemStack itemStack) {
@@ -86,6 +98,15 @@ public final class TooltipUtils {
                 .append(IRTranslations.FLUID_UNIT.component()
                         .withStyle(ChatFormatting.WHITE)));
 
+    }
+
+    static {
+        DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ROOT);
+        sym.setGroupingSeparator(',');
+
+        DF = new DecimalFormat("#,###", sym);
+        DF.setGroupingSize(3);
+        DF.setGroupingUsed(true);
     }
 
 }

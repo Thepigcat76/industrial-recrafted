@@ -51,7 +51,7 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
 
     @Override
     protected void onItemsChanged(int slot) {
-        this.updateData();
+        //this.updateData();
     }
 
     public boolean supportsUpgrades() {

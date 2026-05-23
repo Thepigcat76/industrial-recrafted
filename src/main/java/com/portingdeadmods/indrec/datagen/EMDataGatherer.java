@@ -39,5 +39,6 @@ public final class EMDataGatherer {
                 new LootTableProvider.SubProviderEntry(IRMiscLootTableProvider::new, LootContextParamSets.EMPTY)
         ), lookupProvider));
         generator.addProvider(event.includeServer(), new IRDatapackEntriesProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new IRDataMapProvider(packOutput, lookupProvider));
     }
 }

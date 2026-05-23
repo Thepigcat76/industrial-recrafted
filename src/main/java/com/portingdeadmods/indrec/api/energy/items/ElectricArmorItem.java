@@ -62,6 +62,11 @@ public class ElectricArmorItem extends ArmorItem implements EnergyItem, Electric
     }
 
     @Override
+    public int getDefaultCapacity() {
+        return this.getEnergyCapacity();
+    }
+
+    @Override
     public EnergyTier getEnergyTier() {
         return this.energyTier.get();
     }

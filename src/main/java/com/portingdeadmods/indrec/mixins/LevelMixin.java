@@ -20,8 +20,8 @@ public class LevelMixin {
             method = "explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;ZLnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/core/Holder;)Lnet/minecraft/world/level/Explosion;",
             at = @At(
                     value = "STORE"
-            )
-    )
+            ),
+            name = "explosion")
     private Explosion replaceExplosion(
             Explosion originalExplosion,
             @Local(argsOnly = true) @Nullable Entity source,

@@ -6,6 +6,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,5 +31,15 @@ public class IndustrialTntBlock extends TntBlock {
             level.playSound(null, primedtnt.getX(), primedtnt.getY(), primedtnt.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(entity, GameEvent.PRIME_FUSE, pos);
         }
+    }
+
+    public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
+        if (!level.isClientSide) {
+            IndustrialPrimedTntEntity primedtnt = new IndustrialPrimedTntEntity(level, (double)pos.getX() + (double)0.5F, pos.getY(), (double)pos.getZ() + (double)0.5F, explosion.getIndirectSourceEntity());
+            int i = primedtnt.getFuse();
+            primedtnt.setFuse((short)(level.random.nextInt(i / 4) + i / 8));
+            level.addFreshEntity(primedtnt);
+        }
+
     }
 }

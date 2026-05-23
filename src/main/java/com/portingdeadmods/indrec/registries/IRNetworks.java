@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import com.portingdeadmods.indrec.impl.networks.EnergyNetwork;
 import com.portingdeadmods.indrec.impl.networks.EnergyTransportHandler;
@@ -11,6 +12,8 @@ import com.thepigcat.transportlib.impl.TransportNetworkImpl;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
@@ -23,7 +26,9 @@ public final class IRNetworks {
             .interactorCheck((level, cablePos, interactorPos, dir) -> {
                 BlockEntity be = level.getBlockEntity(interactorPos);
                 if (be != null) {
-                    return level.getCapability(IRCapabilities.ENERGY_BLOCK, be.getBlockPos(), be.getBlockState(), be, dir) != null;
+                    EnergyHandler euHandler = level.getCapability(IRCapabilities.ENERGY_BLOCK, be.getBlockPos(), be.getBlockState(), be, dir);
+                    IEnergyStorage feHandler = level.getCapability(Capabilities.EnergyStorage.BLOCK, be.getBlockPos(), be.getBlockState(), be, dir);
+                    return euHandler != null || feHandler != null;
                 }
                 return false;
             })

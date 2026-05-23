@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.datagen;
 
-import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
 import net.minecraft.advancements.Criterion;
@@ -12,10 +12,10 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
 public class MachineRecipeBuilder implements RecipeBuilder {
-    private final MachineRecipe.Builder<MachineRecipe> builder;
+    private final MachineRecipeImpl.Builder<MachineRecipeImpl> builder;
 
-    public MachineRecipeBuilder(MachineRecipeLayout<MachineRecipe> layout) {
-        this.builder = MachineRecipe.builder(layout.getId());
+    public MachineRecipeBuilder(MachineRecipeLayout<MachineRecipeImpl> layout) {
+        this.builder = MachineRecipeImpl.builder(layout.getId());
     }
 
     public MachineRecipeBuilder component(RecipeComponent component) {

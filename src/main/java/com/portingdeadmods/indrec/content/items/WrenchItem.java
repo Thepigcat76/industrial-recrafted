@@ -38,7 +38,7 @@ public class WrenchItem extends Item {
         BlockState wrenchableBlock = level.getBlockState(clickPos);
         ItemStack itemInHand = useOnContext.getItemInHand();
 
-        if (wrenchableBlock.is(IRTags.BlockTags.WRENCHABLE) && player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown() && wrenchableBlock.is(IRTags.BlockTags.WRENCHABLE)) {
             ItemStack dropItemStack = new ItemStack(wrenchableBlock.getBlock());
 
             if (wrenchableBlock.hasBlockEntity()) {
@@ -61,15 +61,6 @@ public class WrenchItem extends Item {
             level.removeBlock(clickPos, false);
 
             return InteractionResult.SUCCESS;
-        } else if (!player.isShiftKeyDown()) {
-            for (Property<?> prop : wrenchableBlock.getProperties()) {
-                if (prop instanceof DirectionProperty directionProperty && prop.getName().equals("facing")) {
-                    BlockState rotatedState = BlockUtils.rotateBlock(wrenchableBlock, directionProperty, wrenchableBlock.getValue(directionProperty));
-                    level.setBlock(clickPos, rotatedState, 3);
-                    level.playSound(null, clickPos, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    return InteractionResult.SUCCESS;
-                }
-            }
         }
 
         return InteractionResult.FAIL;

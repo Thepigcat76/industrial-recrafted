@@ -47,7 +47,7 @@ public class FluidCellItem extends SimpleFluidItem {
     }
 
     public static FluidCellItem defaultItem(Properties properties) {
-        return new FluidCellItem(properties, () -> IRConfig.fluidCellCapacity);
+        return new FluidCellItem(properties, () -> 1000);
     }
 
     @Override

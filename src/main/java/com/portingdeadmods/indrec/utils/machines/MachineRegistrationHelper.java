@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class MachineRegistrationHelper {
     private final List<IRMachine> machines;
@@ -31,8 +32,11 @@ public final class MachineRegistrationHelper {
     public <T extends IRMachine> T registerMachine(T machine) {
         this.machines.add(machine);
         IRBlocks.BLOCKS.getBlockItems().add(() -> (BlockItem) machine.getBlockSupplier().get().asItem());
-        IRItems.ITEMS.getCreativeTabItems().add(machine.getBlockItemSupplier());
         return machine;
+    }
+
+    public void addToCreativeTab(Consumer<Item> creativeTabAddFunction) {
+        this.machines.stream().filter(IRMachine::shouldAddToCreativeTab).map(IRMachine::asItem).forEach(creativeTabAddFunction);
     }
 
     public IRMachine registerMachine(String name, IRMachine.Builder builder) {

@@ -73,9 +73,10 @@ public class IRItemModelProvider extends ItemModelProvider {
         handheldItem(IRItems.WRENCH.get());
         handheldItem(IRItems.CUTTER.get());
         basicItem(IRItems.REMOTE_DETONATOR.get());
+        basicItem(IRItems.DYNAMITE.get());
 
         handheldItem(IRItems.ELECTRIC_HOE.get());
-        handheldItem(IRItems.ELECTRIC_WRENCH.get());
+        //handheldItem(IRItems.ELECTRIC_WRENCH.get());
         handheldItem(IRItems.ELECTRIC_TREETAP.get());
         handheldItem(IRItems.MINING_LASER.get());
         activeModel(IRItems.NANO_SABER);

@@ -3,10 +3,10 @@ package com.portingdeadmods.indrec.content.blockentities;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.CanningMachineMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
-import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
-import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeInput;
+import com.portingdeadmods.indrec.impl.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.impl.recipes.flags.ItemInputComponentFlag;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.*;
@@ -34,8 +34,6 @@ import java.util.List;
 
 public class CanningMachineBlockEntity extends MachineBlockEntity implements MenuProvider {
     private final IItemHandler exposedItemHandler;
-    private MachineRecipe cachedRecipe;
-    private int progress;
 
     public CanningMachineBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.CANNING_MACHINE, blockPos, blockState);
@@ -53,65 +51,13 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
     }
 
     @Override
-    public void tickRecipe() {
-        if (!this.level.isClientSide()) {
-            if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
-                if (this.progress < this.getMaxProgress()) {
-                    this.progress++;
-                    this.getEuStorage().forceDrainEnergy(3, false);
-                } else {
-                    this.progress = 0;
-                    ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), this.level.registryAccess());
-                    ItemInputComponentFlag inputs = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
-                    forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 2, resultItem.copy(), false, this::onItemsChanged);
-                    for (int i = 0; i < 2; i++) {
-                        List<IngredientWithCount> ingredients = inputs.getIngredients();
-                        int count;
-                        if (ingredients.size() == 2) {
-                            count = ingredients.get(i).count();
-                        } else {
-                            count = 1;
-                        }
-                        this.getItemHandler().extractItem(i, count, false);
-                    }
-                }
-            } else if (this.progress != 0) {
-                this.progress = 0;
-                this.updateData();
-            }
-        }
+    protected int getResultSlot() {
+        return 2;
     }
 
     @Override
     protected @NotNull MachineRecipeInput createRecipeInput() {
         return new MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0), this.getItemHandler().getStackInSlot(1)));
-    }
-
-    public MachineRecipe getCachedRecipe() {
-        return cachedRecipe;
-    }
-
-    public int getProgress() {
-        return progress;
-    }
-
-    public int getMaxProgress() {
-        return this.cachedRecipe != null ? this.cachedRecipe.getComponent(TimeComponent.TYPE).time() : 0;
-    }
-
-    @Override
-    protected void onItemsChanged(int slot) {
-        this.updateData();
-
-        MachineRecipe recipe = this.level.getRecipeManager().getRecipeFor(IRRecipeLayouts.CANNING_MACHINE.getRecipeType(), this.createRecipeInput(), this.level)
-                .map(RecipeHolder::value)
-                .orElse(null);
-        if (recipe != null && forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 2, recipe.getResultItem(this.level.registryAccess()).copy(), true, i -> {
-        }).isEmpty()) {
-            this.cachedRecipe = recipe;
-        } else {
-            this.cachedRecipe = null;
-        }
     }
 
     @Override
@@ -120,22 +66,8 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
     }
 
     @Override
-    protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadData(tag, provider);
-
-        this.progress = tag.getInt("progress");
-    }
-
-    @Override
-    protected void saveData(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveData(tag, provider);
-
-        tag.putInt("progress", this.progress);
-    }
-
-    @Override
     public @NotNull Component getDisplayName() {
-        return IRTranslations.EXTRACTOR.component();
+        return IRTranslations.CANNING_MACHINE.component();
     }
 
     @Override

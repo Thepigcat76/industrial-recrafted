@@ -4,6 +4,7 @@ import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.registries.*;
+import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -48,9 +49,11 @@ public class IREnUsLangProvider extends LanguageProvider {
         addItem(IRItems.WRENCH, "Wrench");
         addItem(IRItems.TREETAP, "Treetap");
         addItem(IRItems.CUTTER, "Cutter");
+        addItem(IRItems.REMOTE_DETONATOR, "Remote Detonator");
+        addItem(IRItems.DYNAMITE, "Dynamite");
 
         addItem(IRItems.ELECTRIC_TREETAP, "Electric Treetap");
-        addItem(IRItems.ELECTRIC_WRENCH, "Electric Wrench");
+        //addItem(IRItems.ELECTRIC_WRENCH, "Electric Wrench");
         addItem(IRItems.ELECTRIC_HOE, "Electric Hoe");
         addItem(IRItems.MINING_LASER, "Mining Laser");
         addItem(IRItems.NANO_SABER, "Nano Saber");
@@ -95,6 +98,8 @@ public class IREnUsLangProvider extends LanguageProvider {
         addItem(IRItems.SCRAP_BOX, "Scrap Box");
         addItem(IRItems.UU_MATTER, "UU Matter");
 
+        addItem(IRFluids.BIO_FUEL.getDeferredBucket(), "Bio Fuel Bucket");
+
         addItem(IRItems.PLANT_BALL, "Plant Ball");
 
         addItem(IRItems.SINGLE_URANIUM_FUEL_ROD, "Uranium Fuel Rod");
@@ -110,6 +115,10 @@ public class IREnUsLangProvider extends LanguageProvider {
         addBlock(IRMachines.BATTERY_BOX.getBlockSupplier(), "Battery Box");
         addBlock(IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Basic Energy Storage Unit");
         addBlock(IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Advanced Energy Storage Unit");
+
+        addBlock(IRMachines.NUCLEAR_REACTOR.getBlockSupplier(), "Nuclear Reactor");
+        addBlock(IRMachines.MATTER_FABRICATOR.getBlockSupplier(), "Matter Fabricator");
+        addBlock(IRBlocks.NUCLEAR_REACTOR_CHAMBER, "Nuclear Reactor Chamber");
 
         addBlock(IRBlocks.TIN_CABLE, "Tin Cable");
         addBlock(IRBlocks.COPPER_CABLE, "Copper Cable");
@@ -172,6 +181,14 @@ public class IREnUsLangProvider extends LanguageProvider {
         addEnergyTier(IREnergyTiers.EXTREME, "Extreme");
         addEnergyTier(IREnergyTiers.INSANE, "Insane");
         addEnergyTier(IREnergyTiers.CREATIVE, "Creative");
+
+        addFluid(IRFluids.BIO_FUEL, "Bio Fuel");
+
+    }
+
+    private void addFluid(PDLFluid key, String val) {
+        add("fluid." + IndustrialRecrafted.MODID + "." + key.getName(), val);
+        add("fluid_type." + IndustrialRecrafted.MODID + "." + key.getName(), val);
     }
 
     private void addEnergyTier(Supplier<? extends EnergyTier> key, String val) {

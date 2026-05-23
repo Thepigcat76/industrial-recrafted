@@ -6,7 +6,9 @@ import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.TieredEnergy;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
+import com.portingdeadmods.indrec.utils.EnergyHelper;
 import com.thepigcat.transportlib.api.TransportNetwork;
 import com.thepigcat.transportlib.api.Transporting;
 import com.thepigcat.transportlib.api.TransportingHandler;
@@ -15,7 +17,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -79,23 +85,32 @@ public class EnergyTransportHandler implements TransportingHandler<TieredEnergy>
         BlockEntity blockEntity = level.getBlockEntity(interactorPos);
 
         if (blockEntity != null) {
-            EnergyHandler energyHandler = level.getCapability(IRCapabilities.ENERGY_BLOCK, interactorPos, blockEntity.getBlockState(), blockEntity, direction);
+            EnergyHandler euHandler = level.getCapability(IRCapabilities.ENERGY_BLOCK, interactorPos, blockEntity.getBlockState(), blockEntity, direction);
             if (blockEntity instanceof MachineBlockEntity machineBE && machineBE.isBurnt()) {
                 return value;
             }
 
-            if (energyHandler != null) {
+            if (euHandler != null) {
                 EnergyTier valueTier = value.tier();
-                EnergyTier handlerTier = energyHandler.getEnergyTier();
+                EnergyTier handlerTier = euHandler.getEnergyTier();
                 int tierDiff = valueTier.order() - handlerTier.order();
                 if (valueTier.compareTo(handlerTier) < 0 && tierDiff > 1) {
                     if (blockEntity instanceof MachineBlockEntity machineBE) {
                         machineBE.setBurnt(true);
                     }
                 }
-                int filled = energyHandler.fillEnergy(value.energy(), false);
+                int filled = euHandler.fillEnergy(value.energy(), false);
+                PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(interactorPos), new SetEnergyPayload(interactorPos, euHandler.getEnergyStored()));
                 return this.remove(value, new TieredEnergy(filled, value.tier()));
             }
+
+            IEnergyStorage feHandler = level.getCapability(Capabilities.EnergyStorage.BLOCK, interactorPos, blockEntity.getBlockState(), blockEntity, direction);
+            if (feHandler != null) {
+                int feEnergy = EnergyHelper.convertEuToFe(value.energy());
+                int filled = feHandler.receiveEnergy(feEnergy, false);
+                return this.remove(value, new TieredEnergy(filled, value.tier()));
+            }
+
         }
         return value;
     }

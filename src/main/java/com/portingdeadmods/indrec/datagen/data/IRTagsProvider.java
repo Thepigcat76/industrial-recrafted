@@ -1,16 +1,21 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRBlocks;
+import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.tags.IRTags;
 import com.portingdeadmods.indrec.tags.CTags;
+import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -48,6 +53,8 @@ public class IRTagsProvider {
             tag(ItemTags.PLANKS)
                     .add(IRBlocks.RUBBER_TREE_PLANKS.asItem());
 
+            tag(ItemTags.SAPLINGS).add(IRBlocks.RUBBER_TREE_SAPLING.asItem());
+
             tag(ItemTags.LOGS_THAT_BURN)
                     .add(IRBlocks.RUBBER_TREE_LOG.asItem())
                     .add(IRBlocks.STRIPPED_RUBBER_TREE_LOG.asItem())
@@ -65,6 +72,25 @@ public class IRTagsProvider {
     }
 
     protected static class BlocksProvider extends BlockTagsProvider {
+        private static final List<Block> STONE_PICKAXE_MINEABLE = ImmutableList.<Block>builder()
+                .add(IRBlocks.INDUSTRIAL_TNT.get())
+                .add(IRBlocks.MACHINE_FRAME.get())
+                .add(IRBlocks.ADVANCED_MACHINE_FRAME.get())
+                .add(IRBlocks.TIN_BLOCK.get())
+                .add(IRBlocks.BRONZE_BLOCK.get())
+                .add(IRBlocks.URANIUM_BLOCK.get())
+                .add(IRBlocks.NUCLEAR_REACTOR_CHAMBER.get())
+                .addAll(IRMachines.HELPER.getMachines().stream()
+                        .filter(m -> m != IRMachines.BATTERY_BOX)
+                        .map(IRMachine::getBlock)
+                        .toList())
+                .build();
+        private static final List<Block> IRON_PICKAXE_MINEABLE = ImmutableList.<Block>builder()
+                .add(IRBlocks.REINFORCED_STONE.get())
+                .add(IRBlocks.REINFORCED_DOOR.get())
+                .add(IRBlocks.REINFORCED_GLASS.get())
+                .build();
+
         public BlocksProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(output, lookupProvider, IndustrialRecrafted.MODID, existingFileHelper);
         }
@@ -72,6 +98,7 @@ public class IRTagsProvider {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             IRTags.BlockTags.TAGS.forEach(this::addTag);
+
             this.tag(IRTags.BlockTags.WRENCHABLE)
                     .add(IRBlocks.TIN_CABLE.get())
                     .add(IRBlocks.COPPER_CABLE.get())
@@ -88,6 +115,30 @@ public class IRTagsProvider {
             this.tag(BlockTags.NEEDS_DIAMOND_TOOL)
                     .add(IRBlocks.IRIDIUM_ORE.get())
                     .add(IRBlocks.DEEPSLATE_IRIDIUM_ORE.get());
+
+            this.tag(BlockTags.NEEDS_STONE_TOOL)
+                    .add(IRMachines.BATTERY_BOX.getBlock())
+                    .add(STONE_PICKAXE_MINEABLE.toArray(Block[]::new));
+            this.tag(BlockTags.NEEDS_IRON_TOOL).add(IRON_PICKAXE_MINEABLE.toArray(Block[]::new));
+            this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .add(STONE_PICKAXE_MINEABLE.toArray(Block[]::new))
+                    .add(IRON_PICKAXE_MINEABLE.toArray(Block[]::new));
+
+            this.tag(BlockTags.MINEABLE_WITH_AXE)
+                    .add(IRMachines.BATTERY_BOX.getBlock());
+
+            tag(BlockTags.PLANKS)
+                    .add(IRBlocks.RUBBER_TREE_PLANKS.get());
+
+            tag(BlockTags.SAPLINGS)
+                    .add(IRBlocks.RUBBER_TREE_SAPLING.get());
+
+            tag(BlockTags.LOGS_THAT_BURN)
+                    .add(IRBlocks.RUBBER_TREE_RESIN_HOLE.get())
+                    .add(IRBlocks.RUBBER_TREE_LOG.get())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_LOG.get())
+                    .add(IRBlocks.RUBBER_TREE_WOOD.get())
+                    .add(IRBlocks.STRIPPED_RUBBER_TREE_WOOD.get());
 
             this.tag(BlockTags.LEAVES)
                     .add(IRBlocks.RUBBER_TREE_LEAVES.get());

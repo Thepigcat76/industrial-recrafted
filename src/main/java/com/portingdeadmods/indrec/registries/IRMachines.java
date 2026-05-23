@@ -54,7 +54,7 @@ public final class IRMachines {
             .recipeLayout(IRRecipeLayouts.COMPRESSOR)
             .blockEntity(CompressorBlockEntity::new)
             .menu(CompressorMenu::new));
-    public static final IRMachine RECYCLER = HELPER.registerMachine("recycler", IRMachine.builder(IREnergyTiers.LOW)
+    public static final IRMachine RECYCLER = HELPER.registerMachine("recycler", IRMachine.builder(IREnergyTiers.MEDIUM)
             .block(MachineBlock::new, MachineBlock.builder()
                     .activatable()
                     .rotatableHorizontal()
@@ -139,4 +139,21 @@ public final class IRMachines {
             )
             .blockEntity(WindMillBlockEntity::new)
             .menu(WindMillMenu::new));
+    public static final IRMachine MATTER_FABRICATOR = HELPER.registerMachine("matter_fabricator", IRMachine.builder(IREnergyTiers.INSANE)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .blockEntity(MatterFabricatorBlockEntity::new)
+            .menu(MatterFabricatorMenu::new));
+    public static final IRMachine NUCLEAR_REACTOR = HELPER.registerMachine("nuclear_reactor", IRMachine.builder(IREnergyTiers.EXTREME)
+            .addToCreativeTab(false)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .blockEntity(NuclearReactorBlockEntity::new)
+            .menu(NuclearReactorMenu::new));
 }

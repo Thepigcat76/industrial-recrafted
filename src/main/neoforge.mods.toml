@@ -27,6 +27,13 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
+modId="transport_lib"
+type="required"
+versionRange="[1.0.3]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
 versionRange="[${neo_version},)"

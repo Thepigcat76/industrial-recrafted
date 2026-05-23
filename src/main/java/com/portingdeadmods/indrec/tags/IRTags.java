@@ -42,6 +42,7 @@ public final class IRTags {
         public static final Map<TagKey<Block>, Supplier<List<Either<Block, TagKey<Block>>>>> TAGS = new HashMap<>();
 
         public static final TagKey<Block> WRENCHABLE = createTag("wrenchable", () -> IRMachines.HELPER.getMachines().stream().map(IRMachine::getBlock).map(BlockTags::block).toList());
+        public static final TagKey<Block> MINEABLE_WITH_DRILL = createTag("mineable_with_drill", () -> List.of(tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_SHOVEL), tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE)));
 
         private static TagKey<Block> createTag(String id, Supplier<List<Either<Block, TagKey<Block>>>> items) {
             TagKey<Block> tag = TagKey.create(Registries.BLOCK, IndustrialRecrafted.rl(id));

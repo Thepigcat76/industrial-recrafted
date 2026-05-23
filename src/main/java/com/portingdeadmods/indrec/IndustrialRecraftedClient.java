@@ -12,6 +12,7 @@ import com.portingdeadmods.indrec.registries.*;
 import com.thepigcat.transportlib.client.debug.TransportNetworkRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -54,6 +55,7 @@ public final class IndustrialRecraftedClient {
         event.register(IRMachines.CANNING_MACHINE.getMenuType(), CanningMachineScreen::new);
         event.register(IRMachines.BASIC_SOLAR_PANEL.getMenuType(), SolarPanelScreen::new);
         event.register(IRMachines.BATTERY_BOX.getMenuType(), BatteryBoxScreen::new);
+        event.register(IRMachines.MATTER_FABRICATOR.getMenuType(), MatterFabricatorScreen::new);
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {
@@ -67,6 +69,7 @@ public final class IndustrialRecraftedClient {
 
     private void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(IREntityTypes.INDUSTRIAL_TNT.get(), TntRenderer::new);
+        event.registerEntityRenderer(IREntityTypes.DYNAMITE.get(), ctx -> new ThrownItemRenderer<>(ctx, 2, false));
 
         event.registerBlockEntityRenderer((BlockEntityType<WindMillBlockEntity>) IRMachines.WIND_MILL.getBlockEntityType(), WindMillBlockEntityRenderer::new);
         event.registerBlockEntityRenderer((BlockEntityType<WaterMillBlockEntity>) IRMachines.WATER_MILL.getBlockEntityType(), WaterMillBlockEntityRenderer::new);

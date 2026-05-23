@@ -79,7 +79,7 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
 //    }
 
     public void onItemsChanged(int slot) {
-        this.updateData();
+        //this.updateData();
 
         IItemHandler itemHandler = this.getItemHandler();
         if (itemHandler != null) {
@@ -123,12 +123,6 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
         }
 
         GeneratorBlockEntity.transportEnergy(level, worldPosition, this.getEuStorage());
-    }
-
-    public void setActive(boolean active) {
-        if (MachineBlock.isActive(getBlockState()) != active) {
-            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PDLBlockStateProperties.ACTIVE, active));
-        }
     }
 
     @Override

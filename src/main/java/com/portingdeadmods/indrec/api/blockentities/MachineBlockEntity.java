@@ -7,16 +7,18 @@ import com.portingdeadmods.indrec.api.capabilities.StorageChangedListener;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.content.menus.ChargingSlot;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
-import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
-import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
-import com.portingdeadmods.indrec.content.recipes.flags.FluidInputComponentFlag;
-import com.portingdeadmods.indrec.content.recipes.flags.FluidOutputComponentFlag;
-import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
-import com.portingdeadmods.indrec.content.recipes.flags.ItemOutputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeInput;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.impl.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.impl.recipes.components.energy.EnergyInputComponent;
+import com.portingdeadmods.indrec.impl.recipes.flags.FluidInputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.flags.FluidOutputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.flags.ItemOutputComponentFlag;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
+import com.portingdeadmods.indrec.registries.IRSoundEvents;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
@@ -29,17 +31,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,12 +57,12 @@ import java.util.function.Supplier;
 // FIXME: When rejoining world, recipe doesn't load
 public class MachineBlockEntity extends ContainerBlockEntity implements RedstoneBlockEntity, WrenchListenerBlockEntity {
     private final List<ChargingSlot> chargingSlots;
-    private final List<BlockCapabilityCache<EnergyHandler, Direction>> caches;
+    private final List<BlockCapabilityCache<EnergyHandler, Direction>> euCaches;
     protected final IRMachine machine;
     private EnergyHandler euStorage;
     private RedstoneSignalType redstoneSignalType = RedstoneSignalType.IGNORED;
     private int redstoneSignalStrength;
-    protected MachineRecipe cachedRecipe;
+    protected MachineRecipeImpl cachedRecipe;
     protected float progress;
     protected float progressIncrement;
     protected boolean burnt;
@@ -67,7 +72,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
         this.machine = machine;
-        this.caches = new ArrayList<>();
+        this.euCaches = new ArrayList<>();
         this.chargingSlots = new ArrayList<>();
         this.progressIncrement = 1F;
         this.spreadDirections = Set.of(Direction.values());
@@ -77,7 +82,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return this.machine.getRecipeLayout();
     }
 
-    public MachineRecipe getCachedRecipe() {
+    public MachineRecipeImpl getCachedRecipe() {
         return cachedRecipe;
     }
 
@@ -105,13 +110,16 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         if (this.shouldSpreadEnergy() && !level.isClientSide()) {
             int amountPerBlock = this.getAmountPerBlock();
 
-            for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.caches) {
+            for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.euCaches) {
                 if (this.getSpreadDirections().contains(cache.context())) {
-                    EnergyHandler energyStorage = cache.getCapability();
-                    if (energyStorage != null) {
-                        int filled = energyStorage.fillEnergy(amountPerBlock, false);
+                    EnergyHandler euHandler = cache.getCapability();
+                    if (euHandler != null) {
+                        int filled = euHandler.fillEnergy(amountPerBlock, false);
                         getEuStorage().forceDrainEnergy(filled, false);
+                        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
+                        //level.sendBlockUpdated(getBlockPos().relative(cache.context()), getBlockState(), getBlockState(), 3);
                     }
+
                 }
             }
         }
@@ -135,40 +143,47 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected @NotNull MachineRecipeInput createRecipeInput() {
+        if (this.getItemHandler() == null) return new MachineRecipeInput();
         return new MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0)));
     }
 
     protected void onItemsChanged(int slot) {
-        this.updateData();
+        //this.updateData();
 
+        setChanged();
         this.refreshCachedRecipe();
     }
 
     protected void onFluidsChanged(int tank) {
-        this.updateData();
+        //this.updateData();
 
+        setChanged();
         this.refreshCachedRecipe();
     }
 
     protected void onEuChanged(int oldAmount) {
-        this.updateData();
+        //this.updateData();
 
+        setChanged();
         this.refreshCachedRecipe();
     }
 
     protected void playMachineSound() {
+        if (this.progress % 12 == 0) {
+            this.level.playSound(null, worldPosition, IRSoundEvents.MACHINE.get(), SoundSource.BLOCKS, 0.15f, 1f);
+        }
     }
 
     protected void tickRecipe() {
-        if (!this.level.isClientSide()) {
+        //if (!this.level.isClientSide()) {
             if (this.cachedRecipe != null) {
                 if (this.hasProgressFinished()) {
                     this.progress = 0;
                     RegistryAccess provider = this.level.registryAccess();
                     ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
-                    FluidStack resultFluid = this.cachedRecipe.assembleFluid(this.createRecipeInput(), provider);
+                    FluidStack resultFluid = this.cachedRecipe.assembleResultFluid(this.createRecipeInput(), provider);
 
-                    int resultEnergy = this.cachedRecipe.assembleEnergy(this.createRecipeInput(), provider);
+                    int resultEnergy = this.cachedRecipe.assembleResultEnergy(this.createRecipeInput(), provider);
                     ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
                     FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
 
@@ -182,16 +197,30 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     if (hasResultEnergy) {
                         this.getEuStorage().forceFillEnergy(resultEnergy, false);
                     }
-                    if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
-                        this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot(), resultItem.copy(), false, this::onItemsChanged);
+
+                    if (!level.isClientSide()) {
+                        if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
+                            List<ItemStack> outputs = itemOutput.getOutputs();
+                            for (int i = 0; i < outputs.size(); i++) {
+                                ItemStack output = outputs.get(i);
+                                if (itemOutput.isOutputted(this.level.random, i)) {
+                                    this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
+                                }
+                            }
+                            this.updateData();
+                        }
                     }
+
                     if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
                         this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
                     }
 
                     if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
-                        this.getItemHandler().extractItem(0, itemInput.getIngredients().getFirst().count(), false);
+                        for (int i = 0; i < itemInput.getIngredients().size(); i++) {
+                            this.getItemHandler().extractItem(i, itemInput.getIngredients().get(i).count(), false);
+                        }
                     }
+
                     if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
                         this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
                     }
@@ -212,11 +241,12 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                 }
             } else {
                 this.progress = 0;
-                this.updateData();
+                setChanged();
+                //this.updateData();
                 setActive(false);
             }
 
-        }
+        //}
     }
 
     public void setActive(boolean active) {
@@ -231,7 +261,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     protected int getAmountPerBlock() {
         int blocks = 0;
-        for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.caches) {
+        for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.euCaches) {
             if (cache.getCapability() != null) {
                 blocks++;
             }
@@ -318,7 +348,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     public void initCapCache() {
         if (level instanceof ServerLevel serverLevel) {
             for (Direction direction : Direction.values()) {
-                this.caches.add(BlockCapabilityCache.create(IRCapabilities.ENERGY_BLOCK, serverLevel, worldPosition.relative(direction), direction));
+                this.euCaches.add(BlockCapabilityCache.create(IRCapabilities.ENERGY_BLOCK, serverLevel, worldPosition.relative(direction), direction));
             }
         }
     }
@@ -379,7 +409,8 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     private void refreshCachedRecipe() {
         MachineRecipeInput recipeInput = this.createRecipeInput();
         if (this.getRecipeLayout() != null) {
-            MachineRecipe recipe = this.level.getRecipeManager().getRecipeFor(this.getRecipeLayout().getRecipeType(), recipeInput, this.level)
+            RecipeType<MachineRecipeImpl> recipeType = (RecipeType<MachineRecipeImpl>) this.getRecipeLayout().getRecipeType();
+            MachineRecipeImpl recipe = this.level.getRecipeManager().getRecipeFor(recipeType, recipeInput, this.level)
                     .map(RecipeHolder::value)
                     .orElse(null);
             RegistryAccess provider = this.level.registryAccess();
@@ -392,7 +423,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     }
                 }
                 if (recipe.hasResultFluid(provider)) {
-                    FluidStack resultFluid = recipe.assembleFluid(recipeInput, provider);
+                    FluidStack resultFluid = recipe.assembleResultFluid(recipeInput, provider);
                     if (forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.SIMULATE, i -> {
                     }) != resultFluid.getAmount()) {
                         this.cachedRecipe = null;
@@ -400,7 +431,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     }
                 }
                 if (recipe.hasResultEnergy(provider)) {
-                    int resultEnergy = recipe.assembleEnergy(recipeInput, provider);
+                    int resultEnergy = recipe.assembleResultEnergy(recipeInput, provider);
                     if (this.getEuStorage().forceFillEnergy(resultEnergy, true) != resultEnergy) {
                         this.cachedRecipe = null;
                         return;

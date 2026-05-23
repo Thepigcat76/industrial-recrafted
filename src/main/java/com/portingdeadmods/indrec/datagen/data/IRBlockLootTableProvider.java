@@ -2,6 +2,8 @@ package com.portingdeadmods.indrec.datagen.data;
 
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRItems;
+import com.portingdeadmods.indrec.registries.IRMachines;
+import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -27,11 +29,15 @@ public class IRBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        for (IRMachine machine : IRMachines.HELPER.getMachines()) {
+            dropSelf(machine.getBlock());
+        }
+
         dropSelf(IRBlocks.MACHINE_FRAME.get());
         dropSelf(IRBlocks.ADVANCED_MACHINE_FRAME.get());
 
         dropSelf(IRBlocks.NUCLEAR_REACTOR_CHAMBER.get());
-        dropSelf(IRBlocks.NUCLEAR_REACTOR.get());
+        dropSelf(IRMachines.NUCLEAR_REACTOR.getBlock());
 
         dropSelf(IRBlocks.TIN_CABLE.get());
         dropSelf(IRBlocks.COPPER_CABLE.get());

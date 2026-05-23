@@ -3,7 +3,7 @@ package com.portingdeadmods.indrec.content.blockentities;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.RecyclerMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.*;

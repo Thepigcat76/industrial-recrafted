@@ -93,14 +93,15 @@ public abstract class ElectricDiggerItem extends DiggerItem implements EnergyIte
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, Level p_41417_, BlockState p_41418_, BlockPos p_41419_, LivingEntity entity) {
-        Player player = entity instanceof Player player0 ? player0 : null;
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        Player player = miningEntity instanceof Player player0 ? player0 : null;
         if (canWork(stack, player)) {
             EnergyHandler energyStorage = getEnergyCap(stack);
             int energyUsage = getEnergyUsage(stack, player);
             energyStorage.drainEnergy(energyUsage, false);
         }
         return true;
+
     }
 
     @Override

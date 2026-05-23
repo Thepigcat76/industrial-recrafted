@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.content.items.electric;
 
+import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
@@ -36,7 +37,7 @@ public class ElectricJetpackItem extends AbstractJetpackItem implements EnergyIt
     }
 
     public static ElectricJetpackItem defaultItem(Properties properties) {
-        return new ElectricJetpackItem(properties, IRArmorMaterials.ELECTRIC_JETPACK, Type.CHESTPLATE, IREnergyTiers.MEDIUM, () -> 64, () -> 16_000);
+        return new ElectricJetpackItem(properties, IRArmorMaterials.ELECTRIC_JETPACK, Type.CHESTPLATE, IREnergyTiers.MEDIUM, () -> IRConfig.jetpackEnergyUsage, () -> IRConfig.jetpackEnergyCapacity);
     }
 
     public float getJetpackStage(ItemStack stack) {
@@ -55,7 +56,7 @@ public class ElectricJetpackItem extends AbstractJetpackItem implements EnergyIt
     }
 
     @Override
-    public void extractFuel(ItemStack stack, int amount) {
+    public void drainFuel(ItemStack stack, int amount) {
         getEnergyCap(stack).drainEnergy(amount, false);
     }
 

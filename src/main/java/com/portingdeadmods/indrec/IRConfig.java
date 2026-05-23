@@ -62,7 +62,7 @@ public final class IRConfig {
     @ConfigValue(key = "quantum_suit", name = "Quantum Suit Energy Capacity", comment = "The Energy Capacity of the Quantum Suit", category = ITEMS_ENERGY_CAPACITY)
     public static int quantumSuitEnergyCapacity = 10_000_000;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Capacity", comment = "The Energy Capacity of the Jetpack", category = ITEMS_ENERGY_CAPACITY)
-    public static int jetpackCapacity = 40_000;
+    public static int jetpackEnergyCapacity = 40_000;
 
     @ConfigValue(key = "nano_saber", name = "Nano Saber Energy Capacity", comment = "The Energy Capacity of the Nano Saber", category = ITEMS_ENERGY_CAPACITY)
     public static int nanoSaberCapacity = 400_000;
@@ -79,15 +79,13 @@ public final class IRConfig {
     private static final String ITEMS_ENERGY_USAGE = "items.energy.usage";
 
     @ConfigValue(key = "basic_drill", name = "Basic Drill Energy Usage", comment = "The Energy Usage of the Basic Drill", category = ITEMS_ENERGY_USAGE)
-    public static int basicDrillEnergyUsage = 16;
+    public static int basicDrillEnergyUsage = 80;
     @ConfigValue(key = "basic_chainsaw", name = "Basic Chainsaw Energy Usage", comment = "The Energy Usage of the Basic Chainsaw", category = ITEMS_ENERGY_USAGE)
-    public static int basicChainsawEnergyUsage = 16;
+    public static int basicChainsawEnergyUsage = 80;
     @ConfigValue(key = "electric_hoe", name = "Electric Hoe Energy Usage", comment = "The Energy Usage of the Electric Hoe", category = ITEMS_ENERGY_USAGE)
-    public static int electricHoeEnergyUsage = 16;
+    public static int electricHoeEnergyUsage = 80;
     @ConfigValue(key = "electric_tree_tap", name = "Electric Tree Tap Energy Usage", comment = "The Energy Usage of the Electric Tree Tap", category = ITEMS_ENERGY_USAGE)
-    public static int electricTreeTapEnergyUsage = 16;
-    @ConfigValue(key = "electric_wrench", name = "Electric Wrench Energy Usage", comment = "The Energy Usage of the Electric Wrench", category = ITEMS_ENERGY_USAGE)
-    public static int electricWrenchEnergyUsage = 16;
+    public static int electricTreeTapEnergyUsage = 80;
 
     @ConfigValue(key = "nano_suit", name = "Nano Suit Energy Usage", comment = "The Energy Usage of the Nano Suit", category = ITEMS_ENERGY_USAGE)
     public static int nanoSuitEnergyUsage = 1000;
@@ -97,34 +95,13 @@ public final class IRConfig {
     public static int jetpackEnergyUsage = 32;
 
     @ConfigValue(key = "nano_saber", name = "Nano Saber Energy Usage", comment = "The Energy Usage of the Nano Saber", category = ITEMS_ENERGY_USAGE)
-    public static int nanoSaberEnergyUsage = 64;
+    public static int nanoSaberEnergyUsage = 80;
     @ConfigValue(key = "advanced_drill", name = "Advanced Drill Energy Usage", comment = "The Energy Usage of the Advanced Drill", category = ITEMS_ENERGY_USAGE)
-    public static int advancedDrillEnergyUsage = 64;
+    public static int advancedDrillEnergyUsage = 800;
     @ConfigValue(key = "advanced_chainsaw", name = "Advanced Chainsaw Energy Usage", comment = "The Energy Usage of the Advanced Chainsaw", category = ITEMS_ENERGY_USAGE)
-    public static int advancedChainsawEnergyUsage = 64;
+    public static int advancedChainsawEnergyUsage = 800;
 
     private static final String ITEMS_FLUID_CAPACITY = "items.fluid.capacity";
-
-    @ConfigValue(key = "fluid_cell", name = "Fluid Cell Fluid Capacity", comment = "The Fluid Capacity of the Fluid Cell", category = ITEMS_FLUID_CAPACITY)
-    public static int fluidCellCapacity = 4000;
-
-    private static final String BLOCKS_HEAT_PRODUCTION = "blocks.heat.production";
-
-    @ConfigValue(key = "small_firebox", name = "Small Firebox Heat Production", comment = "The Heat Production of the Small Firebox", category = BLOCKS_HEAT_PRODUCTION)
-    public static float smallFireboxHeatProduction = 2.45F;
-    @ConfigValue(key = "firebox", name = "Firebox Heat Production", comment = "The Heat Production of the Firebox", category = BLOCKS_HEAT_PRODUCTION)
-    public static float fireboxHeatProduction = 0.85F;
-
-    private static final String BLOCKS_HEAT_DECAY = "blocks.heat.decay";
-
-    @ConfigValue(key = "small_firebox", name = "Small Firebox Heat Decay", comment = "The Heat Decay of the Small Firebox", category = BLOCKS_HEAT_DECAY)
-    public static float smallFireboxHeatDecay = 0.42F;
-    @ConfigValue(key = "firebox", name = "Firebox Heat Decay", comment = "The Heat Decay of the Firebox", category = BLOCKS_HEAT_DECAY)
-    public static float fireboxHeatDecay = 0.42F;
-    @ConfigValue(key = "crucible", name = "Crucible Heat Decay", comment = "The Heat Decay of the Crucible", category = BLOCKS_HEAT_DECAY)
-    public static float crucibleHeatDecay = 0.42F;
-    @ConfigValue(key = "blast_furnace", name = "Blast Furnace Heat Decay", comment = "The Heat Decay of the Blast Furnace", category = BLOCKS_HEAT_DECAY)
-    public static float blastFurnaceHeatDecay = 0.42F;
 
     @ConfigValue(name = "Play Drill Item Animation", comment = "Whether the Drill items should play an animation")
     public static boolean drillItemAnimation = true;
@@ -136,10 +113,13 @@ public final class IRConfig {
     @ConfigValue(name = "Nano Saber Attack Damage", comment = "The Attack Damage of the Nano Saber when activated")
     public static int nanoSaberAttackDamage = 19;
 
-    public static final String OVERCLOCKER_UPGRADE_CATEGORY = "upgrade.overclocker";
+    @ConfigValue(name = "Energy Conversion Factor", comment = "The factor for converting EU to FE (By default: 1 EU = 4 FE)")
+    public static float energyConversionFactor = 4.0f;
 
-    @ConfigValue(key = "speed", name = "Overclocker Upgrade Speed", comment = "How much the overclocker upgrade speeds up a machine. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
-    public static float overclockerUpgradeSpeed = 0.45F;
-    @ConfigValue(key = "energy", name = "Overclocker Upgrade Energy", comment = "How much more energy a machine with the overclocker upgrade consumes. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
-    public static float overclockerUpgradeEnergy = 0.6F;
+//    public static final String OVERCLOCKER_UPGRADE_CATEGORY = "upgrade.overclocker";
+//
+//    @ConfigValue(key = "speed", name = "Overclocker Upgrade Speed", comment = "How much the overclocker upgrade speeds up a machine. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
+//    public static float overclockerUpgradeSpeed = 0.45F;
+//    @ConfigValue(key = "energy", name = "Overclocker Upgrade Energy", comment = "How much more energy a machine with the overclocker upgrade consumes. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
+//    public static float overclockerUpgradeEnergy = 0.6F;
 }

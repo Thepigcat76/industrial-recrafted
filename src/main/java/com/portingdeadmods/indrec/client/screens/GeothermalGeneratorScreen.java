@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.client.screens;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
-import com.portingdeadmods.indrec.api.energy.IRGenericEnergyWrapper;
+import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
 import com.portingdeadmods.indrec.content.menus.GeothermalGeneratorMenu;
 import com.portingdeadmods.indrec.registries.IRTranslations;

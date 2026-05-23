@@ -3,8 +3,9 @@ package com.portingdeadmods.indrec;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
-import com.portingdeadmods.indrec.content.recipes.RegisterRecipeLayoutEvent;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.data.maps.IRDataMaps;
+import com.portingdeadmods.indrec.impl.recipes.RegisterRecipeLayoutEvent;
 import com.portingdeadmods.indrec.content.worldgen.IRPlacerTypes;
 import com.portingdeadmods.indrec.impl.energy.ItemEnergyHandlerWrapper;
 import com.portingdeadmods.indrec.registries.*;
@@ -33,8 +34,8 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.*;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -61,6 +62,7 @@ public final class IndustrialRecrafted {
         modEventBus.addListener(this::registerRecipeLayout);
         modEventBus.addListener(this::addFeaturePacks);
         modEventBus.addListener(this::registerAdditionalModels);
+        modEventBus.addListener(this::registerDataMaps);
         modEventBus.addListener(RegisterEvent.class, event -> this.onRegister(event, modEventBus));
 
         NeoForge.EVENT_BUS.addListener(this::onArmorHurt);
@@ -112,11 +114,14 @@ public final class IndustrialRecrafted {
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(MODID);
     }
 
     private void registerRecipeLayout(RegisterRecipeLayoutEvent event) {
         IRRecipeLayouts.LAYOUTS.forEach(event::register);
+    }
+
+    private void registerDataMaps(RegisterDataMapTypesEvent event) {
+        event.register(IRDataMaps.MATTER_FABRICATOR_AMPLIFIERS);
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {

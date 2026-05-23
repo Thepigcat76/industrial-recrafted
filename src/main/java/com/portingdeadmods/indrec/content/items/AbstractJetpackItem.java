@@ -21,7 +21,7 @@ public abstract class AbstractJetpackItem extends ArmorItem {
 
     public abstract int getFuelStored(ItemStack stack);
 
-    public abstract void extractFuel(ItemStack stack, int amount);
+    public abstract void drainFuel(ItemStack stack, int amount);
 
     /*
      * Jetpack logic is very much like Simply Jetpacks/Iron Jetpacks, since I used it to learn how to make this work
@@ -52,8 +52,8 @@ public abstract class AbstractJetpackItem extends ArmorItem {
                     double sprintFuel = 2.1D;
                     double usage = player.isSprinting() || InputHandler.isHoldingSprint(player) ? getFuelUsage(stack, entity) * sprintFuel : getFuelUsage(stack, entity);
 
-                    if (!player.isCreative()) {
-                        extractFuel(stack, (int) usage);
+                    if (!player.isCreative() && level.getGameTime() % 10 == 0) {
+                        drainFuel(stack, (int) usage);
                     }
 
                     if (hover && player.isFallFlying()) {

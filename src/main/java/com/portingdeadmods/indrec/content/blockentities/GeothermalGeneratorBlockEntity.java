@@ -5,7 +5,7 @@ import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.GeothermalGeneratorMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRMachines;
@@ -18,8 +18,11 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -57,15 +60,23 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
         ItemStack drainStack = itemHandler.getStackInSlot(0);
         IFluidHandler itemFluidHandler = drainStack.getCapability(Capabilities.FluidHandler.ITEM);
         if (itemFluidHandler != null) {
+            FluidStack fluidInBlockFluidHandler = this.getFluidHandler().getFluidInTank(0);
             FluidStack fluidInItemFluidHandler = itemFluidHandler.getFluidInTank(0);
-            if (!fluidInItemFluidHandler.isEmpty() && this.getFluidHandler().isFluidValid(0, fluidInItemFluidHandler)) {
-                FluidStack fluidInBlockFluidHandler = this.getFluidHandler().getFluidInTank(0);
+            if (!fluidInItemFluidHandler.isEmpty() && this.getFluidHandler().isFluidValid(0, fluidInItemFluidHandler) && fluidInBlockFluidHandler.getAmount() + fluidInItemFluidHandler.getAmount() <= this.getFluidHandler().getTankCapacity(0)) {
                 int drainAmount = this.getFluidHandler().getTankCapacity(0) - fluidInBlockFluidHandler.getAmount();
-                FluidStack drained = itemFluidHandler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
-                this.getFluidHandler().fill(drained, IFluidHandler.FluidAction.EXECUTE);
-                if (itemFluidHandler.getFluidInTank(0).isEmpty()) {
-                    forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, itemHandler.getStackInSlot(1), false, this::onItemsChanged);
+                FluidStack drained;
+                if (drainStack.getItem() instanceof BucketItem) {
+                    itemHandler.extractItem(0, 1, false);
+                    forceInsertItem((IItemHandlerModifiable) itemHandler, 1, new ItemStack(Items.BUCKET), false, this::onItemsChanged);
+                    drained = itemFluidHandler.getFluidInTank(0);
+                } else {
+                    drained = itemFluidHandler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
+                    if (itemFluidHandler.getFluidInTank(0).isEmpty()) {
+                        ItemStack extracted = itemHandler.extractItem(0, 1, false);
+                        forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, extracted, false, this::onItemsChanged);
+                    }
                 }
+                this.getFluidHandler().fill(drained, IFluidHandler.FluidAction.EXECUTE);
             }
         }
 

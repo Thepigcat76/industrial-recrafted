@@ -30,7 +30,6 @@ public final class IRBlocks {
 
     // Generators
     public static final DeferredBlock<ReactorChamberBlock> NUCLEAR_REACTOR_CHAMBER = BLOCKS.registerBlockWithItem("nuclear_reactor_chamber", ReactorChamberBlock::new, MACHINE_FRAME_PROPS);
-    public static final DeferredBlock<Block> NUCLEAR_REACTOR = BLOCKS.registerBlockWithItem("nuclear_reactor", Block::new, MACHINE_FRAME_PROPS);
 
     // Cables
     public static final BlockBehaviour.Properties CABLE_BLOCK_PROPS = BlockBehaviour.Properties.of()
@@ -64,8 +63,10 @@ public final class IRBlocks {
     //public static final DeferredBlock<Block> CROP_STICKS = BLOCKS.registerBlockWithItem("crop_sticks", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS));
 
     // Reinforced Blocks
-    public static final DeferredBlock<Block> REINFORCED_STONE = BLOCKS.registerBlockWithItem("reinforced_stone", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).strength(12.0F, 400.0F));
+    public static final DeferredBlock<Block> REINFORCED_STONE = BLOCKS.registerBlockWithItem("reinforced_stone", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
+            .strength(12.0F, 400.0F));
     public static final DeferredBlock<Block> REINFORCED_GLASS = BLOCKS.registerBlockWithItem("reinforced_glass", Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)
+            .requiresCorrectToolForDrops()
             .sound(SoundType.STONE)
             .strength(12.0F, 400.0F));
     public static final DeferredBlock<DoorBlock> REINFORCED_DOOR = BLOCKS.registerWithItem("reinforced_door", () -> new DoorBlock(REINFORCED_STONE_SET_TYPE, BlockBehaviour.Properties.ofFullCopy(REINFORCED_STONE.get())));

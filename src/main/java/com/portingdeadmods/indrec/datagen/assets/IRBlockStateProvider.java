@@ -5,6 +5,7 @@ import com.portingdeadmods.indrec.api.blocks.PipeBlock;
 import com.portingdeadmods.indrec.content.blocks.RubberTreeResinHoleBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRMachines;
+import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.datagen.ModelBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -115,7 +116,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .horizontalFacing()
                 .create();
 
-        modelBuilder(IRBlocks.NUCLEAR_REACTOR.get())
+        modelBuilder(IRMachines.NUCLEAR_REACTOR.getBlock())
                 .defaultTexture(blockTexture(IRBlocks.ADVANCED_MACHINE_FRAME.get()))
                 .front(this::blockTextureSuffix, "_front")
                 .top(this.blockTexture(IRBlocks.NUCLEAR_REACTOR_CHAMBER.get()))
@@ -130,6 +131,13 @@ public class IRBlockStateProvider extends BlockStateProvider {
         modelBuilder(IRMachines.ELECTRIC_FURNACE.getBlock())
                 .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
                 .front(this::blockTextureSuffix, "_front")
+                .horizontalFacing()
+                .active()
+                .create();
+
+        modelBuilder(IRMachines.MATTER_FABRICATOR.getBlock())
+                .defaultTexture(blockTexture(IRBlocks.ADVANCED_MACHINE_FRAME.get()))
+                .front(this::blockTexture)
                 .horizontalFacing()
                 .active()
                 .create();

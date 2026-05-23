@@ -1,8 +1,8 @@
 package com.portingdeadmods.indrec.compat.jei;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRRecipeLayouts;
 import mezz.jei.api.IModPlugin;
@@ -42,9 +42,9 @@ public class IRJeiPlugin implements IModPlugin {
         registerCategory(registration, createCategory(registration, IRRecipeLayouts.CANNING_MACHINE, Component.literal("Canning Machine"), IRMachines.CANNING_MACHINE.getBlock()), IRRecipeLayouts.CANNING_MACHINE);
     }
 
-    private static @NotNull MachineRecipeCategory createCategory(IRecipeCategoryRegistration registration, MachineRecipeLayout<MachineRecipe> layout, Component component, ItemLike icon) {
+    private static @NotNull MachineRecipeCategory createCategory(IRecipeCategoryRegistration registration, MachineRecipeLayout<MachineRecipeImpl> layout, Component component, ItemLike icon) {
         ClientLevel level = Minecraft.getInstance().level;
-        List<MachineRecipe> recipes = level.getRecipeManager().getAllRecipesFor(layout.getRecipeType()).stream().map(RecipeHolder::value).toList();
+        List<MachineRecipeImpl> recipes = level.getRecipeManager().getAllRecipesFor(layout.getRecipeType()).stream().map(RecipeHolder::value).toList();
         return new MachineRecipeCategory(registration.getJeiHelpers().getGuiHelper(), layout, recipes, component, icon);
     }
 
@@ -69,7 +69,7 @@ public class IRJeiPlugin implements IModPlugin {
         registerRecipe(registration, IRRecipeLayouts.CANNING_MACHINE);
     }
 
-    private <R extends MachineRecipe> void registerRecipe(IRecipeRegistration registration, MachineRecipeLayout<R> layout) {
+    private <R extends MachineRecipeImpl> void registerRecipe(IRecipeRegistration registration, MachineRecipeLayout<R> layout) {
         List<R> recipes = Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(layout.getRecipeType()).stream()
                 .map(RecipeHolder::value)
                 .toList();

@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.api.fluid;
 
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
+import com.portingdeadmods.portingdeadlibs.api.data.PDLDataComponents;
 import com.portingdeadmods.portingdeadlibs.api.items.IFluidItem;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.network.chat.Component;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public abstract class SimpleFluidItem extends Item implements IFluidItem {
     public SimpleFluidItem(Properties properties) {
-        super(properties.component(IRDataComponents.FLUID.get(), SimpleFluidContent.EMPTY));
+        super(properties.component(PDLDataComponents.FLUID.get(), SimpleFluidContent.EMPTY));
     }
 
     public static FluidStack getFluid(ItemStack stack) {

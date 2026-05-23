@@ -1,12 +1,12 @@
 package com.portingdeadmods.indrec.compat.jei;
 
 import com.portingdeadmods.indrec.client.screens.widgets.JEIEnergyBarWidget;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
-import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
-import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
-import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
-import com.portingdeadmods.indrec.content.recipes.flags.ItemOutputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.impl.recipes.components.energy.EnergyInputComponent;
+import com.portingdeadmods.indrec.impl.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.impl.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.impl.recipes.flags.ItemOutputComponentFlag;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.api.capabilities.EnergyStorageWrapper;
@@ -30,13 +30,13 @@ import net.minecraft.world.level.ItemLike;
 import java.util.List;
 import java.util.OptionalInt;
 
-public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipe> {
+public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipeImpl> {
     private final EnergyBarWidget energyBarWidget;
     private int energyUsed;
     private int arrowX;
 
-    public MachineRecipeCategory(IGuiHelper guiHelper, MachineRecipeLayout<?> layout, List<MachineRecipe> recipes, Component title, ItemLike machineIcon) {
-        super(RecipeType.create(layout.getId().getNamespace(), layout.getId().getPath(), MachineRecipe.class), title, guiHelper.createDrawableItemLike(machineIcon), calculateWidthMax(recipes), 48);
+    public MachineRecipeCategory(IGuiHelper guiHelper, MachineRecipeLayout<?> layout, List<MachineRecipeImpl> recipes, Component title, ItemLike machineIcon) {
+        super(RecipeType.create(layout.getId().getNamespace(), layout.getId().getPath(), MachineRecipeImpl.class), title, guiHelper.createDrawableItemLike(machineIcon), calculateWidthMax(recipes), 48);
         this.energyBarWidget = new JEIEnergyBarWidget(0, 0, new EnergyStorageWrapper() {
             @Override
             public int getEnergyStored() {
@@ -51,7 +51,7 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipe>
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, MachineRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, MachineRecipeImpl recipe, IFocusGroup focuses) {
         ItemInputComponentFlag input = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
         ItemOutputComponentFlag output = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
 
@@ -117,7 +117,7 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipe>
     }
 
     @Override
-    public void draw(MachineRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(MachineRecipeImpl recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
         ItemInputComponentFlag input = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
 
@@ -140,7 +140,7 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipe>
     }
 
     @Override
-    public void createRecipeExtras(IRecipeExtrasBuilder builder, MachineRecipe recipe, IFocusGroup focuses) {
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, MachineRecipeImpl recipe, IFocusGroup focuses) {
         ItemInputComponentFlag input = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
         int energy = recipe.getComponent(EnergyInputComponent.TYPE).energy();
         int time = recipe.getComponent(TimeComponent.TYPE).time();
@@ -151,12 +151,12 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipe>
 //                .setPosition((this.getWidth() - Minecraft.getInstance().font.width(literal)) / 2, this.getHeight() - Minecraft.getInstance().font.lineHeight * 2);
     }
 
-    private static int calculateWidthMax(List<MachineRecipe> recipes) {
+    private static int calculateWidthMax(List<MachineRecipeImpl> recipes) {
         OptionalInt max = recipes.stream().mapToInt(MachineRecipeCategory::calculateRecipeWidth).max();
         return max.orElse(96);
     }
 
-    private static int calculateRecipeWidth(MachineRecipe recipe) {
+    private static int calculateRecipeWidth(MachineRecipeImpl recipe) {
         ItemInputComponentFlag input = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
         ItemOutputComponentFlag output = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
 

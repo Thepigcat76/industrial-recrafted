@@ -3,6 +3,7 @@ package com.portingdeadmods.indrec.networking;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.networking.bidirectional.ExampleBidirectionalPayload;
 import com.portingdeadmods.indrec.networking.clientbound.ExampleClientboundPayload;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.networking.serverbound.ExampleServerboundPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpdateInputPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,6 +26,11 @@ public class NetworkEvents {
                 UpdateInputPayload.TYPE,
                 UpdateInputPayload.STREAM_CODEC,
                 UpdateInputPayload::handle
+        );
+        registrar.playToClient(
+                SetEnergyPayload.TYPE,
+                SetEnergyPayload.STREAM_CODEC,
+                SetEnergyPayload::handle
         );
 
         registrar.playToClient(

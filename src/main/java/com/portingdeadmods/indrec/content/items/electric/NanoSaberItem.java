@@ -7,6 +7,7 @@ import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRTranslations;
+import com.portingdeadmods.indrec.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -17,10 +18,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +57,8 @@ public class NanoSaberItem extends ElectricSwordItem {
         ItemStack stack = player.getItemInHand(interactionHand);
         EnergyHandler energyStorage = getEnergyCap(stack);
         if (player.isShiftKeyDown() && energyStorage.getEnergyStored() > 0) {
-            stack.set(IRDataComponents.ACTIVE, !stack.getOrDefault(IRDataComponents.ACTIVE, false));
+            ItemUtils.toggleActive(stack);
+            // TODO: Display message?
             stack.set(DataComponents.ATTRIBUTE_MODIFIERS, createAttributes(stack));
             return InteractionResultHolder.success(stack);
         }
@@ -113,7 +112,7 @@ public class NanoSaberItem extends ElectricSwordItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag p41424) {
-        if (stack.getOrDefault(IRDataComponents.ACTIVE, false)) {
+        if (ItemUtils.isActive(stack)) {
             tooltip.add(IRTranslations.ACTIVE.component().withStyle(ChatFormatting.GREEN));
         } else {
             tooltip.add(IRTranslations.INACTIVE.component().withStyle(ChatFormatting.RED));

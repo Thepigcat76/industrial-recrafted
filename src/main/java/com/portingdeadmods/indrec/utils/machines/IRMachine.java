@@ -6,7 +6,7 @@ import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.menus.MachineMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -44,12 +43,13 @@ public class IRMachine implements ItemLike {
     private final List<Slot> inputSlots;
     private final List<Slot> outputSlots;
     private final List<Slot> catalystSlots;
+    private final boolean addToCreative;
 
     public IRMachine(String name, Supplier<? extends EnergyTier> energyTierSupplier,
                      Supplier<? extends MachineBlock> blockSupplier, Supplier<BlockItem> blockItemSupplier,
                      Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityTypeSupplier,
                      @Nullable Supplier<MenuType<? extends MachineMenu<?>>> menuTypeSupplier,
-                     @Nullable MachineRecipeLayout<?> recipeLayout, List<Slot> inputSlots, List<Slot> outputSlots, List<Slot> catalystSlots) {
+                     @Nullable MachineRecipeLayout<?> recipeLayout, List<Slot> inputSlots, List<Slot> outputSlots, List<Slot> catalystSlots, boolean addToCreative) {
         this.name = name;
         this.energyTierSupplier = energyTierSupplier;
         this.blockSupplier = blockSupplier;
@@ -57,10 +57,15 @@ public class IRMachine implements ItemLike {
         this.blockEntityTypeSupplier = blockEntityTypeSupplier;
         this.menuTypeSupplier = menuTypeSupplier;
         this.recipeLayout = recipeLayout;
+        this.addToCreative = addToCreative;
 
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
         this.catalystSlots = catalystSlots;
+    }
+
+    public boolean shouldAddToCreativeTab() {
+        return this.addToCreative;
     }
 
     public List<Slot> getInputSlots() {
@@ -131,12 +136,14 @@ public class IRMachine implements ItemLike {
         private final List<Slot> inputSlots;
         private final List<Slot> outputSlots;
         private final List<Slot> catalystSlots;
+        private boolean addToCreativeTab;
 
         private Builder(Supplier<? extends EnergyTier> energyTierSupplier) {
             this.energyTierSupplier = energyTierSupplier;
             this.inputSlots = new ArrayList<>();
             this.outputSlots = new ArrayList<>();
             this.catalystSlots = new ArrayList<>();
+            this.addToCreativeTab = true;
         }
 
         public Builder addInputSlot(Slot slot) {
@@ -151,6 +158,11 @@ public class IRMachine implements ItemLike {
 
         public Builder addCatalystSlot(Slot slot) {
             this.catalystSlots.add(slot);
+            return this;
+        }
+
+        public Builder addToCreativeTab(boolean addToCreativeTab) {
+            this.addToCreativeTab = addToCreativeTab;
             return this;
         }
 
@@ -210,7 +222,8 @@ public class IRMachine implements ItemLike {
                     this.recipeLayout,
                     this.inputSlots,
                     this.outputSlots,
-                    this.catalystSlots
+                    this.catalystSlots,
+                    this.addToCreativeTab
             );
         }
     }

@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.utils;
 
-import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputComponent;
+import com.portingdeadmods.indrec.impl.recipes.components.items.ItemInputComponent;
 import com.portingdeadmods.portingdeadlibs.api.recipes.IngredientWithCount;
 import com.portingdeadmods.portingdeadlibs.utils.RecipeUtils;
 import net.minecraft.world.item.ItemStack;

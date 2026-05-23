@@ -1,9 +1,23 @@
 {
   "jetpack": {
-    "category": "players",
+    "category": "player",
     "subtitle": "indrec.jetpack",
     "sounds": [
       "indrec:jetpack"
+    ]
+  },
+  "extractor": {
+    "category": "block",
+    "subtitle": "indrec.extractor",
+    "sounds": [
+      "indrec:extractor"
+    ]
+  },
+  "machine": {
+    "category": "block",
+    "subtitle": "indrec.machine",
+    "sounds": [
+      "indrec:machine"
     ]
   }
 }
