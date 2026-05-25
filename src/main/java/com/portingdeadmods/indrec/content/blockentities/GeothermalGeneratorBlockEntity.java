@@ -9,6 +9,7 @@ import com.portingdeadmods.indrec.impl.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRMachines;
+import com.portingdeadmods.indrec.registries.IRRecipeLayouts;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.SerializerUtils;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implements MenuProvider, GeneratorBlockEntity {
     public GeothermalGeneratorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.GEOTHERMAL_GENERATOR, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoFill::new, IREnergyTiers.MEDIUM, IRConfig.geothermalGeneratorEnergyCapacity, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoFill::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .onChange(this::onItemsChanged)
@@ -45,7 +46,7 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
                     default -> throw new IllegalStateException("No slot 3");
                 }));
         this.addHandler(Capabilities.FluidHandler.BLOCK, HandlerUtils.newFluidTank(
-                (tank, fluid) -> true,
+                (tank, fluid) -> level.getRecipeManager().getRecipeFor(IRRecipeLayouts.GEOTHERMAL_GENERATOR.getRecipeType(), new MachineRecipeInput(fluid), level).isPresent(),
                 tank -> IRConfig.geothermalGeneratorFluidCapacity,
                 this::onFluidsChanged,
                 1

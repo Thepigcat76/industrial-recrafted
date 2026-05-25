@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec.content.items;
 
 import com.portingdeadmods.indrec.registries.IRTranslations;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +18,6 @@ public class ScrapItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
 
-        tooltipComponents.add(IRTranslations.SCRAP_TOOLTIP.component());
+        tooltipComponents.add(IRTranslations.SCRAP_TOOLTIP.component().withStyle(ChatFormatting.GRAY));
     }
 }

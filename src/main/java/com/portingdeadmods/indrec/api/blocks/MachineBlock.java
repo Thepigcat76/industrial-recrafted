@@ -6,12 +6,14 @@ import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.blocks.EnergyTierBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRItems;
+import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blocks.ContainerBlock;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
 import com.portingdeadmods.portingdeadlibs.utils.BlockUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -51,6 +53,7 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     private final boolean rotatableHorizontal;
     private final boolean rotatable;
     private final boolean activatable;
+    private final IRMachine machine;
 
     public MachineBlock(String name, Builder builder, Supplier<? extends EnergyTier> energyTier) {
         super(builder.properties);
@@ -59,6 +62,15 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         this.rotatable = builder.rotatable;
         this.activatable = builder.activatable;
         this.energyTier = energyTier;
+
+        IRMachine machine = null;
+        for (IRMachine machine1 : IRMachines.HELPER.getMachines()) {
+            if (machine1.name().equals(name)) {
+                machine = machine1;
+                break;
+            }
+        }
+        this.machine = machine;
 
         BlockState defaultState = this.defaultBlockState();
 
@@ -228,6 +240,19 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
 
         TooltipUtils.addEnergyTierTooltip(tooltipComponents, this.getEnergyTier());
 
+        if (!tooltipFlag.hasShiftDown()) {
+            tooltipComponents.add(Component.literal("Hold SHIFT for more information").withStyle(ChatFormatting.GRAY));
+        } else {
+            tooltipComponents.add(Component.literal("%sCapacity:%s %s EU".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.machine.getEnergyCapacity()))).withStyle(ChatFormatting.GOLD));
+
+            if (this.machine.allowInsertEnergy()) {
+                tooltipComponents.add(Component.literal("%sMax In:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.getEnergyTier().maxInput()))).withStyle(ChatFormatting.GREEN));
+            }
+
+            if (this.machine.allowExtractEnergy()) {
+                tooltipComponents.add(Component.literal("%sMax Out:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.getEnergyTier().maxOutput()))).withStyle(ChatFormatting.GREEN));
+            }
+        }
     }
 
     public static class Builder {

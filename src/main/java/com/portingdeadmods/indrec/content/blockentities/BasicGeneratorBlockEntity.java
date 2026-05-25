@@ -35,7 +35,7 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
 
     public BasicGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(IRMachines.BASIC_GENERATOR, pos, state);
-        addEuStorage(EnergyHandlerImpl.NoFill::new, IREnergyTiers.LOW, IRConfig.basicGeneratorEnergyCapacity, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoFill::new, this::onEuChanged);
         addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(2)
                 .validator((slot, item) -> switch (slot) {

@@ -23,12 +23,16 @@ import java.util.Locale;
 public final class TooltipUtils {
     private static final DecimalFormat DF;
 
+    public static String formatEnergy(int energy) {
+        return DF.format(energy);
+    }
+
     public static void addEnergyTooltip(List<Component> tooltip, ItemStack itemStack) {
         EnergyHandler energyStorage = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
         if (energyStorage != null) {
 
-            String energyStored = DF.format(energyStorage.getEnergyStored());
-            String energyCapacity = DF.format(energyStorage.getEnergyCapacity());
+            String energyStored = formatEnergy(energyStorage.getEnergyStored());
+            String energyCapacity = formatEnergy(energyStorage.getEnergyCapacity());
             tooltip.add(
                     IRTranslations.ENERGY_STORED.component()
                             .withStyle(ChatFormatting.GRAY)

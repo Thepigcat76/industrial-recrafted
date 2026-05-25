@@ -26,7 +26,7 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvi
 
     public RecyclerBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.RECYCLER, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoDrain::new, IREnergyTiers.LOW, 4000, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .validator((slot, item) -> switch (slot) {

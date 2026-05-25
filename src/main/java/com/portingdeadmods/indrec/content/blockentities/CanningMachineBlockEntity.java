@@ -37,7 +37,7 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
 
     public CanningMachineBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.CANNING_MACHINE, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoDrain::new, IREnergyTiers.LOW, 4000, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(4)
                 .validator((slot, item) -> switch (slot) {

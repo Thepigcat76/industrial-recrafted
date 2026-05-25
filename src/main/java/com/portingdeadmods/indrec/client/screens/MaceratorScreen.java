@@ -31,7 +31,7 @@ public class MaceratorScreen extends MachineScreen<MaceratorMenu> {
         this.inventoryLabelY = this.imageHeight - 94;
         super.init();
         IREnergyBarWidget energyBarWidget = addRenderableOnly(
-                new IREnergyBarWidget(this.leftPos + 11, this.topPos + 17, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString()).setHasBorder(true)
+                new IREnergyBarWidget(this.leftPos + 11, this.topPos + 17, 12, 48, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString()).setHasBorder(true)
         );
         addPanelWidget(new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2));
         addRenderableOnly(new BatterySlotWidget(this.leftPos + 8, this.topPos + 14 + energyBarWidget.getHeight() + 5));

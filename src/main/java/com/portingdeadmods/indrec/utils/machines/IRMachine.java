@@ -7,6 +7,7 @@ import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.menus.MachineMenu;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -45,11 +48,16 @@ public class IRMachine implements ItemLike {
     private final List<Slot> catalystSlots;
     private final boolean addToCreative;
 
+    private boolean allowEnergyInsert;
+    private boolean allowEnergyExtract;
+
+    private IntSupplier energyCapacity;
+
     public IRMachine(String name, Supplier<? extends EnergyTier> energyTierSupplier,
                      Supplier<? extends MachineBlock> blockSupplier, Supplier<BlockItem> blockItemSupplier,
                      Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityTypeSupplier,
                      @Nullable Supplier<MenuType<? extends MachineMenu<?>>> menuTypeSupplier,
-                     @Nullable MachineRecipeLayout<?> recipeLayout, List<Slot> inputSlots, List<Slot> outputSlots, List<Slot> catalystSlots, boolean addToCreative) {
+                     @Nullable MachineRecipeLayout<?> recipeLayout, List<Slot> inputSlots, List<Slot> outputSlots, List<Slot> catalystSlots, boolean addToCreative, boolean allowEnergyInsert, boolean allowEnergyExtract, IntSupplier energyCapacity) {
         this.name = name;
         this.energyTierSupplier = energyTierSupplier;
         this.blockSupplier = blockSupplier;
@@ -62,6 +70,11 @@ public class IRMachine implements ItemLike {
         this.inputSlots = inputSlots;
         this.outputSlots = outputSlots;
         this.catalystSlots = catalystSlots;
+
+        this.allowEnergyInsert = allowEnergyInsert;
+        this.allowEnergyExtract = allowEnergyExtract;
+
+        this.energyCapacity = energyCapacity;
     }
 
     public boolean shouldAddToCreativeTab() {
@@ -125,6 +138,18 @@ public class IRMachine implements ItemLike {
         return blockItemSupplier;
     }
 
+    public boolean allowInsertEnergy() {
+        return this.allowEnergyInsert;
+    }
+
+    public boolean allowExtractEnergy() {
+        return this.allowEnergyExtract;
+    }
+
+    public int getEnergyCapacity() {
+        return this.energyCapacity.getAsInt();
+    }
+
     public static class Builder {
         private TriFunction<String, MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory;
         private MachineBlock.Builder machineBlockBuilder;
@@ -137,6 +162,9 @@ public class IRMachine implements ItemLike {
         private final List<Slot> outputSlots;
         private final List<Slot> catalystSlots;
         private boolean addToCreativeTab;
+        private boolean allowEnergyInsert;
+        private boolean allowEnergyExtract;
+        private IntSupplier energyCapacity;
 
         private Builder(Supplier<? extends EnergyTier> energyTierSupplier) {
             this.energyTierSupplier = energyTierSupplier;
@@ -144,6 +172,13 @@ public class IRMachine implements ItemLike {
             this.outputSlots = new ArrayList<>();
             this.catalystSlots = new ArrayList<>();
             this.addToCreativeTab = true;
+        }
+
+        public Builder energy(IntSupplier capacity, boolean allowInsert, boolean allowExtract) {
+            this.energyCapacity = capacity;
+            this.allowEnergyInsert = allowInsert;
+            this.allowEnergyExtract = allowExtract;
+            return this;
         }
 
         public Builder addInputSlot(Slot slot) {
@@ -168,6 +203,11 @@ public class IRMachine implements ItemLike {
 
         public Builder blockEntity(BlockEntityType.BlockEntitySupplier<? extends MachineBlockEntity> blockEntitySupplier) {
             this.blockEntitySupplier = blockEntitySupplier;
+            return this;
+        }
+
+        public <C> Builder blockEntity(TriFunction<BlockPos, BlockState, C, ? extends MachineBlockEntity> blockEntitySupplier, Supplier<C> context) {
+            this.blockEntitySupplier = (pos, state) -> blockEntitySupplier.apply(pos, state, context.get());
             return this;
         }
 
@@ -223,7 +263,10 @@ public class IRMachine implements ItemLike {
                     this.inputSlots,
                     this.outputSlots,
                     this.catalystSlots,
-                    this.addToCreativeTab
+                    this.addToCreativeTab,
+                    this.allowEnergyInsert,
+                    this.allowEnergyExtract,
+                    this.energyCapacity
             );
         }
     }

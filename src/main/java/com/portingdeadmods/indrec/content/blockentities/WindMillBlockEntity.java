@@ -18,7 +18,7 @@ public class WindMillBlockEntity extends MachineBlockEntity implements Generator
 
     public WindMillBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.WIND_MILL, blockPos, blockState);
-        addEuStorage(EnergyHandlerImpl.NoFill::new, IREnergyTiers.HIGH, IRConfig.windMillEnergyCapacity, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoFill::new, this::onEuChanged);
     }
 
     @Override

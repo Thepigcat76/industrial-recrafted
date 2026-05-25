@@ -59,7 +59,6 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     private final List<ChargingSlot> chargingSlots;
     private final List<BlockCapabilityCache<EnergyHandler, Direction>> euCaches;
     protected final IRMachine machine;
-    private EnergyHandler euStorage;
     private RedstoneSignalType redstoneSignalType = RedstoneSignalType.IGNORED;
     private int redstoneSignalStrength;
     protected MachineRecipeImpl cachedRecipe;
@@ -68,6 +67,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     protected boolean burnt;
     private boolean removedByWrench;
     protected Set<Direction> spreadDirections;
+    private boolean syncEnergyThisTick;
 
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
@@ -88,6 +88,8 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     @Override
     public void tick() {
+        this.syncEnergyThisTick = false;
+
         super.tick();
 
         for (ChargingSlot chargingSlot : this.chargingSlots) {
@@ -99,6 +101,10 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.tickEnergySpreading();
 
         this.tickRecipe();
+
+        if (this.syncEnergyThisTick) {
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition), new SetEnergyPayload(this.worldPosition, this.getEuStorage().getEnergyStored()));
+        }
 
     }
 
@@ -115,13 +121,17 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     EnergyHandler euHandler = cache.getCapability();
                     if (euHandler != null) {
                         int filled = euHandler.fillEnergy(amountPerBlock, false);
+                        if (filled > 0) {
+                            this.syncEnergyThisTick = true;
+                        }
                         getEuStorage().forceDrainEnergy(filled, false);
-                        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
+                        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition.relative(cache.context())), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
                         //level.sendBlockUpdated(getBlockPos().relative(cache.context()), getBlockState(), getBlockState(), 3);
                     }
 
                 }
             }
+
         }
     }
 
@@ -176,75 +186,90 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     protected void tickRecipe() {
         //if (!this.level.isClientSide()) {
-            if (this.cachedRecipe != null) {
-                if (this.hasProgressFinished()) {
-                    this.progress = 0;
-                    RegistryAccess provider = this.level.registryAccess();
-                    ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
-                    FluidStack resultFluid = this.cachedRecipe.assembleResultFluid(this.createRecipeInput(), provider);
+        if (this.cachedRecipe != null) {
+            if (this.hasProgressFinished()) {
+                this.progress = 0;
+                RegistryAccess provider = this.level.registryAccess();
+                ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
+                FluidStack resultFluid = this.cachedRecipe.assembleResultFluid(this.createRecipeInput(), provider);
 
-                    int resultEnergy = this.cachedRecipe.assembleResultEnergy(this.createRecipeInput(), provider);
-                    ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
-                    FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
+                int resultEnergy = this.cachedRecipe.assembleResultEnergy(this.createRecipeInput(), provider);
+                ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
+                FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
 
-                    ItemInputComponentFlag itemInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
-                    FluidInputComponentFlag fluidInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
+                ItemInputComponentFlag itemInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
+                FluidInputComponentFlag fluidInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
 
-                    boolean hasResultEnergy = this.cachedRecipe.hasResultEnergy(provider);
-                    boolean hasResultItem = this.cachedRecipe.hasResultItem(provider);
-                    boolean hasResultFluid = this.cachedRecipe.hasResultFluid(provider);
+                boolean hasResultEnergy = this.cachedRecipe.hasResultEnergy(provider);
+                boolean hasResultItem = this.cachedRecipe.hasResultItem(provider);
+                boolean hasResultFluid = this.cachedRecipe.hasResultFluid(provider);
 
-                    if (hasResultEnergy) {
-                        this.getEuStorage().forceFillEnergy(resultEnergy, false);
-                    }
+                if (hasResultEnergy) {
+                    this.getEuStorage().forceFillEnergy(resultEnergy, false);
+                }
 
-                    if (!level.isClientSide()) {
-                        if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
-                            List<ItemStack> outputs = itemOutput.getOutputs();
-                            for (int i = 0; i < outputs.size(); i++) {
-                                ItemStack output = outputs.get(i);
-                                if (itemOutput.isOutputted(this.level.random, i)) {
-                                    this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
-                                }
+                if (!level.isClientSide()) {
+                    if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
+                        List<ItemStack> outputs = itemOutput.getOutputs();
+                        for (int i = 0; i < outputs.size(); i++) {
+                            ItemStack output = outputs.get(i);
+                            if (itemOutput.isOutputted(this.level.random, i)) {
+                                this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
                             }
-                            this.updateData();
                         }
+                        this.updateData();
                     }
+                }
 
-                    if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
-                        this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
-                    }
+                if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
+                    this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
+                }
 
-                    if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
-                        for (int i = 0; i < itemInput.getIngredients().size(); i++) {
-                            this.getItemHandler().extractItem(i, itemInput.getIngredients().get(i).count(), false);
-                        }
+                if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
+                    for (int i = 0; i < itemInput.getIngredients().size(); i++) {
+                        this.getItemHandler().extractItem(i, itemInput.getIngredients().get(i).count(), false);
                     }
+                }
 
-                    if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
-                        this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
-                    }
+                if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
+                    this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
+                }
 
-                    if (this.cachedRecipe == null) {
-                        setActive(false);
-                    }
-                } else {
-                    this.progress += this.progressIncrement;
-                    EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
-                    if (inputComponent != null) {
-                        int energy = inputComponent.energy() / this.cachedRecipe.getComponent(TimeComponent.TYPE).time();
-                        this.getEuStorage().forceDrainEnergy(energy, false);
-                    }
-
-                    setActive(true);
-                    this.playMachineSound();
+                if (this.cachedRecipe == null) {
+                    setActive(false);
                 }
             } else {
-                this.progress = 0;
-                setChanged();
-                //this.updateData();
-                setActive(false);
+                boolean canRun = false;
+
+                EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
+                if (inputComponent != null) {
+                    int energy = inputComponent.energy() / this.cachedRecipe.getComponent(TimeComponent.TYPE).time();
+                    int drained = this.getEuStorage().forceDrainEnergy(energy, false);
+
+                    if (drained == energy) {
+                        canRun = true;
+                    }
+                } else {
+                    canRun = true;
+                }
+
+
+                if (canRun) {
+                    this.progress += this.progressIncrement;
+                    setActive(true);
+                    this.playMachineSound();
+                } else {
+                    this.progress = 0;
+                    setChanged();
+                    setActive(false);
+                }
+
             }
+        } else {
+            this.progress = 0;
+            setChanged();
+            setActive(false);
+        }
 
         //}
     }
@@ -280,20 +305,31 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected void tickChargingSlot(ChargingSlot slot) {
-        ItemStack itemStack = slot.getItem();
-        EnergyHandler energyStorage = this.getEuStorage();
-        EnergyHandler itemEnergyStorage = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
-        if (itemEnergyStorage != null && !level.isClientSide()) {
-            if (slot.getMode() == ChargingSlot.ChargeMode.CHARGE) {
-                int filled = itemEnergyStorage.fillEnergy(Math.min(itemEnergyStorage.getMaxInput(), energyStorage.getMaxOutput()), true);
-                int drained = energyStorage.forceDrainEnergy(filled, true);
-                int newFilled = itemEnergyStorage.fillEnergy(drained, false);
-                energyStorage.forceDrainEnergy(newFilled, false);
-            } else {
-                int drained = itemEnergyStorage.drainEnergy(Math.min(itemEnergyStorage.getMaxOutput(), energyStorage.getMaxInput()), true);
-                int filled = energyStorage.fillEnergy(drained, true);
-                int newDrained = itemEnergyStorage.drainEnergy(filled, false);
-                energyStorage.fillEnergy(newDrained, false);
+        if (!level.isClientSide()) {
+            ItemStack itemStack = slot.getItem();
+            EnergyHandler energyStorage = this.getEuStorage();
+            EnergyHandler itemEnergyStorage = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
+            if (itemEnergyStorage != null) {
+                if (slot.getMode() == ChargingSlot.ChargeMode.CHARGE) {
+                    int filled = itemEnergyStorage.fillEnergy(Math.min(itemEnergyStorage.getMaxInput(), energyStorage.getMaxOutput()), true);
+                    int drained = energyStorage.forceDrainEnergy(filled, true);
+                    int newFilled = itemEnergyStorage.fillEnergy(drained, false);
+                    energyStorage.forceDrainEnergy(newFilled, false);
+
+                    if (newFilled > 0) {
+                        this.syncEnergyThisTick = true;
+                    }
+                } else {
+                    int drained = itemEnergyStorage.drainEnergy(Math.min(itemEnergyStorage.getMaxOutput(), energyStorage.getMaxInput()), true);
+                    int filled = energyStorage.fillEnergy(drained, true);
+                    int newDrained = itemEnergyStorage.drainEnergy(filled, false);
+                    energyStorage.fillEnergy(newDrained, false);
+
+                    if (newDrained > 0) {
+                        this.syncEnergyThisTick = true;
+                    }
+
+                }
             }
         }
     }
@@ -312,6 +348,10 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     protected <H extends EnergyHandler> H addEuStorage(H handler) {
         return this.addHandler(IRCapabilities.ENERGY_BLOCK.name(), handler);
+    }
+
+    protected final <T extends EnergyHandler & StorageChangedListener> void addMachineEuStorage(Function<Supplier<? extends EnergyTier>, T> energyHandlerConstructor, Consumer<Integer> onChangedFunction) {
+        this.addEuStorage(energyHandlerConstructor, this.machine::getEnergyTier, this.machine.getEnergyCapacity(), onChangedFunction);
     }
 
     protected final <T extends EnergyHandler & StorageChangedListener> void addEuStorage(Function<Supplier<? extends EnergyTier>, T> energyHandlerConstructor, Supplier<? extends EnergyTier> energyTier, int energyCapacity, Consumer<Integer> onChangedFunction) {

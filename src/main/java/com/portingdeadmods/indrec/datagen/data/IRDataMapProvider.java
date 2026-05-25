@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec.datagen.data;
 
 import com.portingdeadmods.indrec.data.maps.IRDataMaps;
+import com.portingdeadmods.indrec.data.maps.MatterFabricatorAmplifier;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRItems;
 import net.minecraft.core.HolderLookup;
@@ -25,8 +26,8 @@ public final class IRDataMapProvider extends DataMapProvider {
                 .add(IRBlocks.RUBBER_TREE_SAPLING.asItem().builtInRegistryHolder(), new Compostable(0.3f), false);
 
         builder(IRDataMaps.MATTER_FABRICATOR_AMPLIFIERS)
-                .add(IRItems.SCRAP, 0.1f, false)
-                .add(IRItems.SCRAP_BOX, 1f, false);
+                .add(IRItems.SCRAP, new MatterFabricatorAmplifier(0.015f), false)
+                .add(IRItems.SCRAP_BOX, new MatterFabricatorAmplifier(0.15f), false);
     }
 
 }

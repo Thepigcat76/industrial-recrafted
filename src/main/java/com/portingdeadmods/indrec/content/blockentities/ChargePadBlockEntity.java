@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
@@ -17,18 +18,18 @@ import java.util.List;
 public class ChargePadBlockEntity extends MachineBlockEntity {
     public ChargePadBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.CHARGE_PAD, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoDrain::new, IREnergyTiers.LOW, 64000, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    public void tickRecipe() {
         List<Player> players = level.getEntitiesOfClass(Player.class, new AABB(this.worldPosition.above()));
         for (Player player : players) {
             for (ItemStack armorItem : player.getArmorSlots()) {
                 EnergyHandler euStorage = armorItem.getCapability(IRCapabilities.ENERGY_ITEM);
                 if (euStorage != null) {
-                    euStorage.fillEnergy(1, false);
+                    int filled = euStorage.fillEnergy(IRConfig.chargePadEnergyTransfer, false);
+                    this.getEuStorage().forceDrainEnergy(filled, false);
                 }
             }
         }

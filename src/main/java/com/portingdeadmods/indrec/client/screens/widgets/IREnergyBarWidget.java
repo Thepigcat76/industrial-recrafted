@@ -3,6 +3,7 @@ package com.portingdeadmods.indrec.client.screens.widgets;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
+import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.portingdeadlibs.PortingDeadLibs;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.capabilities.EnergyStorageWrapper;
@@ -19,36 +20,41 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class IREnergyBarWidget extends AbstractWidget {
     private static final Sprites VERTICAL_SPRITES = new Sprites(
-            PortingDeadLibs.rl("energy_bar_empty"),
-            PortingDeadLibs.rl("energy_bar"),
-            PortingDeadLibs.rl("energy_bar_empty_border"),
-            PortingDeadLibs.rl("energy_bar_border")
+            IndustrialRecrafted.rl("energy_bar/vertical_empty"),
+            IndustrialRecrafted.rl("energy_bar/vertical_full"),
+            IndustrialRecrafted.rl("energy_bar/vertical_empty_border"),
+            IndustrialRecrafted.rl("energy_bar/vertical_full_border")
     );
     private static final Sprites HORIZONTAL_SPRITES = new Sprites(
-            IndustrialRecrafted.rl("horizontal_energy_bar_empty"),
-            IndustrialRecrafted.rl("horizontal_energy_bar"),
-            IndustrialRecrafted.rl("horizontal_energy_bar_empty_border"),
-            IndustrialRecrafted.rl("horizontal_energy_bar_border")
+            IndustrialRecrafted.rl("energy_bar/horizontal_empty"),
+            IndustrialRecrafted.rl("energy_bar/horizontal_full"),
+            IndustrialRecrafted.rl("energy_bar/horizontal_empty_border"),
+            IndustrialRecrafted.rl("energy_bar/horizontal_full_border")
     );
+    public static final int HORIZONTAL_WIDTH = 48;
+    public static final int HORIZONTAL_HEIGHT = 12;
+
+    public static final int VERTICAL_WIDTH = 12;
+    public static final int VERTICAL_HEIGHT = 48;
 
     private final EnergyStorageWrapper wrapper;
     private final String energyUnit;
     private Orientation orientation;
     private boolean hasBorder;
 
-    public IREnergyBarWidget(int x, int y, EnergyStorageWrapper wrapper, String energyUnit) {
-        super(x, y, 12, 48, CommonComponents.EMPTY);
+    public IREnergyBarWidget(int x, int y, int width, int height, EnergyStorageWrapper wrapper, String energyUnit) {
+        super(x, y, width, height, CommonComponents.EMPTY);
         this.wrapper = wrapper;
         this.energyUnit = energyUnit;
         this.orientation = Orientation.VERTICAL;
     }
 
-    public static IREnergyBarWidget widgetForFE(int x, int y, ContainerBlockEntity blockEntity) {
-        return new IREnergyBarWidget(x, y, new IRGenericEnergyWrapper(blockEntity.getHandler(IRCapabilities.ENERGY_BLOCK)), "EU");
+    public static IREnergyBarWidget widgetForFE(int x, int y, int width, int height, ContainerBlockEntity blockEntity) {
+        return new IREnergyBarWidget(x, y, width, height, new IRGenericEnergyWrapper(blockEntity.getHandler(IRCapabilities.ENERGY_BLOCK)), "EU");
     }
 
-    public static IREnergyBarWidget widgetForEU(int x, int y, ContainerBlockEntity blockEntity) {
-        return new IREnergyBarWidget(x, y, new NeoEnergyStorageWrapper(blockEntity.getHandler(Capabilities.EnergyStorage.BLOCK)), "FE");
+    public static IREnergyBarWidget widgetForEU(int x, int y, int width, int height, ContainerBlockEntity blockEntity) {
+        return new IREnergyBarWidget(x, y, width, height, new NeoEnergyStorageWrapper(blockEntity.getHandler(Capabilities.EnergyStorage.BLOCK)), "FE");
     }
 
     public IREnergyBarWidget setHasBorder(boolean hasBorder) {
@@ -58,41 +64,37 @@ public class IREnergyBarWidget extends AbstractWidget {
 
     public IREnergyBarWidget setOrientation(Orientation orientation) {
         this.orientation = orientation;
-        if (this.orientation == Orientation.HORIZONTAL) {
-            setSize(48, 12);
-        } else {
-            setSize(12, 48);
-        }
         return this;
     }
 
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        ResourceLocation loc = (this.orientation == Orientation.HORIZONTAL ? HORIZONTAL_SPRITES.getEmptySprite(this.hasBorder) : VERTICAL_SPRITES.getFullSprite(this.hasBorder));
-        guiGraphics.blitSprite(loc, this.width, this.height, 0, 0, this.getX(), this.getY(), this.width, this.height);
+        boolean horizontal = this.orientation == Orientation.HORIZONTAL;
+        Sprites sprites = horizontal ? HORIZONTAL_SPRITES : VERTICAL_SPRITES;
+
+        ResourceLocation locEmpty = sprites.getEmptySprite(this.hasBorder);
+        guiGraphics.blitSprite(locEmpty, this.getX(), this.getY(), this.width, this.height);
+
         int energyStored = this.wrapper.getEnergyStored();
         int maxStored = this.wrapper.getEnergyCapacity();
-        int maxProgress = this.orientation == Orientation.HORIZONTAL ? this.width : this.height;
+
+        int maxProgress = horizontal ? this.width : this.height;
         int progress = (int)(((float)energyStored / (float)maxStored) * maxProgress);
-        ResourceLocation locFull = (this.orientation == Orientation.HORIZONTAL ? HORIZONTAL_SPRITES.getFullSprite(this.hasBorder) : VERTICAL_SPRITES.getEmptySprite(this.hasBorder));
 
-        int uPos = 0;
-        int vPos = 0;
-        int uWidth = this.width;
-        int vHeight = this.height;
-        if (orientation == Orientation.VERTICAL) {
-            vHeight = maxProgress - progress;
-        }
-        if (orientation == Orientation.HORIZONTAL) {
-            uWidth = progress;
+        if (horizontal) {
+            guiGraphics.enableScissor(this.getX(), this.getY(), this.getX() + progress, this.getY() + this.height);
+        } else {
+            guiGraphics.enableScissor(this.getX(), this.getY() + this.height - progress, this.getX() + this.width, this.getY() + this.height);
         }
 
-        guiGraphics.blitSprite(locFull, this.width, this.height, uPos, vPos, this.getX(), this.getY(), uWidth, vHeight);
+        ResourceLocation locFull = sprites.getFullSprite(this.hasBorder);
+        guiGraphics.blitSprite(locFull, this.getX(), this.getY(), this.width, this.height);
+
+        guiGraphics.disableScissor();
 
         if (this.isHovered()) {
             Font font = Minecraft.getInstance().font;
-            int stored = this.wrapper.getEnergyStored();
-            guiGraphics.renderTooltip(font, Component.literal(stored + "/" + this.wrapper.getEnergyCapacity() + this.energyUnit), mouseX, mouseY);
+            guiGraphics.renderTooltip(font, Component.literal(TooltipUtils.formatEnergy(energyStored) + "/" + TooltipUtils.formatEnergy(maxStored) + this.energyUnit), mouseX, mouseY);
         }
 
     }

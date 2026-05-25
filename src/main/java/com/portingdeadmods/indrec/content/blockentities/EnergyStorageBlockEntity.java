@@ -32,9 +32,9 @@ import java.util.Set;
 public class EnergyStorageBlockEntity extends MachineBlockEntity implements MenuProvider {
     private final EnergyHandlerWrapper.NoFill outputEnergyHandler;
 
-    public EnergyStorageBlockEntity(IRMachine machine, int energyCapacity, BlockPos blockPos, BlockState blockState) {
+    public EnergyStorageBlockEntity(BlockPos blockPos, BlockState blockState, IRMachine machine) {
         super(machine, blockPos, blockState);
-        addEuStorage(EnergyHandlerImpl.NoDrain::new, this.machine::getEnergyTier, energyCapacity, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(2)
                 .validator((slot, item) -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null)

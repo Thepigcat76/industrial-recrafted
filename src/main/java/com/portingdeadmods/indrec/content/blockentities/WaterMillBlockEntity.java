@@ -23,7 +23,7 @@ public class WaterMillBlockEntity extends MachineBlockEntity implements Generato
 
     public WaterMillBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.WATER_MILL, blockPos, blockState);
-        addEuStorage(EnergyHandlerImpl.NoFill::new, IREnergyTiers.MEDIUM, IRConfig.waterMillEnergyCapacity, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoFill::new, this::onEuChanged);
     }
 
     @Override

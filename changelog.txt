@@ -1,0 +1,10 @@
+1.0.2
+
+- New machine: Matter Fabricator for producing Anti Matter
+- Scrap and Scrapboxes now have matter fabricator amplifier values (scrapbox is 10x better than regular scrap)
+- EU to FE conversion (only works with cables)
+- Nuclear Reactor has been hidden from creative tab since its wip
+- Solar Panel gui has been fixed & improved
+- Fixed client energy desync
+- Fixed machines being able to run without energy
+- improved charge pad effectiveness

@@ -18,6 +18,7 @@ import com.portingdeadmods.indrec.tags.CTags;
 import com.portingdeadmods.indrec.utils.ItemStackBuilder;
 import com.portingdeadmods.portingdeadlibs.api.data.PDLDataComponents;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
@@ -37,6 +38,8 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import static com.portingdeadmods.indrec.IndustrialRecrafted.rl;
 
@@ -171,6 +174,8 @@ public class IRRecipeProvider extends RecipeProvider {
         componentsCraftingRecipes(output);
 
         energyStorageUnitCraftingRecipes(output);
+
+        uuMatterRecipes(output);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.BRONZE_DUST, 3)
                 .requires(CTags.ItemTags.DUSTS_TIN)
@@ -321,6 +326,112 @@ public class IRRecipeProvider extends RecipeProvider {
 
     }
 
+    private void uuMatterRecipe(Consumer<ShapedRecipeBuilder> builderPattern, ItemLike result, int count, RecipeOutput output) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, count);
+        builderPattern.accept(builder);
+        builder.define('U', IRItems.UU_MATTER)
+                .unlockedBy("has_uu_matter", has(IRItems.UU_MATTER))
+                .save(output, IndustrialRecrafted.rl(BuiltInRegistries.ITEM.getKey(builder.getResult()).getPath() + "_from_uu_matter"));
+    }
+
+    private void uuMatterRecipe(Consumer<ShapedRecipeBuilder> builderPattern, ItemLike result, RecipeOutput output) {
+        uuMatterRecipe(builderPattern, result, 1, output);
+    }
+
+    private void uuMatterRecipes(RecipeOutput output) {
+
+        // Ores
+        uuMatterRecipe(builder -> builder
+                .pattern("UUU")
+                .pattern(" U ")
+                .pattern("UUU"), IRItems.RAW_IRIDIUM, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U U")
+                .pattern("  U"), IRItems.RAW_TIN, 8, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U U")
+                .pattern("U U")
+                .pattern("UUU"), IRItems.RAW_URANIUM, 8, output);
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern("UUU")
+                .pattern(" U "), Items.RAW_GOLD, 8, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U U")
+                .pattern(" U ")
+                .pattern("U U"), Items.RAW_IRON, 8, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("  U")
+                .pattern("U U"), Items.RAW_COPPER, 8, output);
+
+        // Gems
+        uuMatterRecipe(builder -> builder
+                .pattern("UUU")
+                .pattern("UUU")
+                .pattern("UUU"), Items.DIAMOND, 2, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("UUU")
+                .pattern("UUU")
+                .pattern(" U "), Items.EMERALD, 2, output);
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern(" U ")
+                .pattern(" UU"), Items.LAPIS_LAZULI, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U  ")
+                .pattern("  U")
+                .pattern("U  "), Items.COAL, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern("UUU"), Items.REDSTONE, 16, output);
+
+        // Other blocks
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern("U U")
+                .pattern("UUU"), Blocks.GLOWSTONE, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U U")
+                .pattern("U U"), Blocks.OBSIDIAN, 16, output);
+
+         // Other items
+        uuMatterRecipe(builder -> builder
+                .pattern("U U")
+                .pattern("   ")
+                .pattern("U U"), IRItems.STICKY_RESIN, 16, output);
+
+        // Mob drops
+        uuMatterRecipe(builder -> builder
+                .pattern("UUU")
+                .pattern("U U")
+                .pattern(" U "), Items.ENDER_PEARL, 2, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U  ")
+                .pattern("UU ")
+                .pattern("U  "), Items.BONE, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("U  ")
+                .pattern("UU ")
+                .pattern("U U"), Items.STRING, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern("UUU")
+                .pattern("U  ")
+                .pattern("UUU"), Items.GUNPOWDER, 16, output);
+
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern(" U ")
+                .pattern("U U"), Items.FEATHER, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern(" UU")
+                .pattern(" UU")
+                .pattern(" U "), Items.INK_SAC, 16, output);
+        uuMatterRecipe(builder -> builder
+                .pattern(" U ")
+                .pattern("UUU")
+                .pattern("U U"), Items.LEATHER, 16, output);
+    }
+
     private void energyStorageUnitCraftingRecipes(RecipeOutput output) {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.BATTERY_BOX)
                 .pattern("PBP")
@@ -456,7 +567,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.RECYCLER.getBlock())
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.RECYCLER)
                 .pattern("IOI")
                 .pattern("ICI")
                 .define('I', CTags.ItemTags.INGOTS_REFINED_IRON)
@@ -465,7 +576,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_compressor", has(IRMachines.COMPRESSOR))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.CANNING_MACHINE.getBlock())
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.CANNING_MACHINE)
                 .pattern("AMA")
                 .pattern("ACA")
                 .define('A', IRItems.FLUID_CELL)
@@ -474,7 +585,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.ELECTRIC_FURNACE.getBlockItem())
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.ELECTRIC_FURNACE)
                 .pattern(" F ")
                 .pattern("RMR")
                 .pattern(" C ")
@@ -483,6 +594,17 @@ public class IRRecipeProvider extends RecipeProvider {
                 .define('F', Blocks.FURNACE)
                 .define('M', IRBlocks.MACHINE_FRAME)
                 .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.MATTER_FABRICATOR)
+                .pattern("GAG")
+                .pattern("MLM")
+                .pattern("GAG")
+                .define('G', Tags.Items.DUSTS_GLOWSTONE)
+                .define('A', IRItems.ADVANCED_CIRCUIT)
+                .define('L', IRItems.LAPOTRON_CRYSTAL)
+                .define('M', IRBlocks.ADVANCED_MACHINE_FRAME)
+                .unlockedBy("has_advanced_machine_frame", has(IRBlocks.ADVANCED_MACHINE_FRAME))
                 .save(output);
     }
 
@@ -826,7 +948,7 @@ public class IRRecipeProvider extends RecipeProvider {
         this.compressorRecipe(CTags.ItemTags.INGOTS_TIN, IRItems.TIN_PLATE, output);
         this.compressorRecipe(Tags.Items.INGOTS_COPPER, IRItems.COPPER_PLATE, output);
 
-        this.compressorRecipe(Ingredient.of(IRItems.COPPER_PLATE), 8, IRItems.DENSE_COPPER_PLATE, 1, 200, 4, output);
+        this.compressorRecipe(Ingredient.of(CTags.ItemTags.PLATES_COPPER), 8, IRItems.DENSE_COPPER_PLATE, 1, 200, 4, output);
 
         this.compressorRecipe(Ingredient.of(Tags.Items.CROPS_SUGAR_CANE), 3, Items.PAPER, 5, 200, 4, output);
         this.compressorRecipe(DataComponentIngredient.of(false, PDLDataComponents.FLUID, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, 1000)), IRItems.FLUID_CELL, IRItems.JETPACK), 1, Items.SNOWBALL, 1, 200, 4, output);

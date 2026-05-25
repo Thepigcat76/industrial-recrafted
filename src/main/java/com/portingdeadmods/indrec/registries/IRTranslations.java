@@ -70,6 +70,7 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> RECYCLER = MENUS_CATEGORY.registerWithDefault("recycler", "Recycler");
     public static final DeferredTranslation<TranslatableConstant> BATTERY_BOX = MENUS_CATEGORY.registerWithDefault("battery_box", "Battery Box");
     public static final DeferredTranslation<TranslatableConstant> CANNING_MACHINE = MENUS_CATEGORY.registerWithDefault("canning_machine", "Canning Machine");
+    public static final DeferredTranslation<TranslatableConstant> MATTER_FABRICATOR = MENUS_CATEGORY.registerWithDefault("matter_fabricator", "Matter Fabricator");
 
     private static final DefaultTranslationCategory MESSAGES_CATEGORY = TRANSLATIONS.createCategory("messages");
     public static final DeferredTranslation<TranslatableConstant> GUIDE_ME_MISSING = MESSAGES_CATEGORY.registerWithDefault("guide_me_missing", "GuideME must be installed to access the guide book!");

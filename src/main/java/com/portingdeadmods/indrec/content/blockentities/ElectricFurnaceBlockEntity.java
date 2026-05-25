@@ -29,14 +29,14 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     public ElectricFurnaceBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.ELECTRIC_FURNACE, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoDrain::new, IREnergyTiers.LOW, 4000, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> true;
                     case 1 -> false;
                     case 2 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
-                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Basic Generator");
+                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Electric Furnace");
                 })
                 .onChange(this::onItemsChanged));
     }

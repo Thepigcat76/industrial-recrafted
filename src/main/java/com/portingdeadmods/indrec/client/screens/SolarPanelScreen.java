@@ -25,7 +25,7 @@ public class SolarPanelScreen extends MachineScreen<SolarPanelMenu> {
         super.init();
 
         IREnergyBarWidget energyBarWidget = addRenderableOnly(
-                new IREnergyBarWidget(this.leftPos + 11, this.topPos + 17, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString())
+                new IREnergyBarWidget(this.leftPos + 11, this.topPos + 17, 48, 12, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString())
         ).setHasBorder(true).setOrientation(IREnergyBarWidget.Orientation.HORIZONTAL);
         energyBarWidget.setPosition((this.width - energyBarWidget.getWidth()) / 2, this.topPos + 28);
 

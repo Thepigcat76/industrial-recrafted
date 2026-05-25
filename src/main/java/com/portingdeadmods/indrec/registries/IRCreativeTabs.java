@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
+import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.items.FluidCellItem;
 import com.portingdeadmods.indrec.content.items.FuelJetpackItem;
@@ -9,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -26,7 +28,7 @@ public final class IRCreativeTabs {
             .title(Component.literal(IndustrialRecrafted.MODNAME))
             .displayItems((params, output) -> {
                 IRMachines.HELPER.addToCreativeTab(output::accept);
-                IRItems.ITEMS.getCreativeTabItems().stream().map(Supplier::get).map(ItemStack::new).peek(stack -> {
+                IRItems.ITEMS.getCreativeTabItems().stream().map(Supplier::get).map(ItemStack::new).filter(item -> !(Block.byItem(item.getItem()) instanceof MachineBlock)).peek(stack -> {
                     EnergyHandler handler = stack.getCapability(IRCapabilities.ENERGY_ITEM);
                     if (handler != null) {
                         output.accept(stack.copy());

@@ -37,7 +37,7 @@ public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProv
 
     public ExtractorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.EXTRACTOR, blockPos, blockState);
-        this.addEuStorage(EnergyHandlerImpl.NoDrain::new, IREnergyTiers.LOW, 4000, this::onEuChanged);
+        this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(4)
                 .validator((slot, item) -> switch (slot) {

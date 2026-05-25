@@ -9,6 +9,7 @@ import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -92,11 +93,16 @@ public class BatteryItem extends SimpleEnergyItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag p41424) {
+        MutableComponent activeTooltip = Component.literal("Charging: ").withStyle(ChatFormatting.GRAY);
+
         if (stack.getOrDefault(IRDataComponents.ACTIVE, false)) {
-            tooltip.add(IRTranslations.ACTIVE.component().withStyle(ChatFormatting.GREEN));
+            activeTooltip.append(IRTranslations.ACTIVE.component().withStyle(ChatFormatting.GREEN));
         } else {
-            tooltip.add(IRTranslations.INACTIVE.component().withStyle(ChatFormatting.RED));
+            activeTooltip.append(IRTranslations.INACTIVE.component().withStyle(ChatFormatting.RED));
         }
+
+        tooltip.add(activeTooltip);
+
         super.appendHoverText(stack, ctx, tooltip, p41424);
     }
 }
