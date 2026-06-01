@@ -105,6 +105,7 @@ public class IRItemModelProvider extends ItemModelProvider {
         fluidContainerModel(IRItems.FLUID_CELL.get());
         fluidContainerModel(IRItems.JETPACK.get());
         basicItem(IRItems.FUSE.get());
+        basicItem(IRItems.CROP_STICKS.get());
         basicItem(IRItems.TIN_CAN.get());
         basicItem(IRItems.TIN_CAN_FOOD.get());
 

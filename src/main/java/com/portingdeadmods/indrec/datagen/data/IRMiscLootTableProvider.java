@@ -25,6 +25,10 @@ public class IRMiscLootTableProvider implements LootTableSubProvider {
 
     @Override
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator) {
+        generator.accept(IRLootTables.STICK_REED, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRItems.STICKY_RESIN))));
+
         generator.accept(IRLootTables.SCRAP_BOX,
                 LootTable.lootTable().withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))

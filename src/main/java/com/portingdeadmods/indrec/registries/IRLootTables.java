@@ -7,4 +7,5 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 public final class IRLootTables {
     public static final ResourceKey<LootTable> SCRAP_BOX = ResourceKey.create(Registries.LOOT_TABLE, IndustrialRecrafted.rl("scrap_box"));
+    public static final ResourceKey<LootTable> STICK_REED = ResourceKey.create(Registries.LOOT_TABLE, IndustrialRecrafted.rl("stick_reed"));
 }

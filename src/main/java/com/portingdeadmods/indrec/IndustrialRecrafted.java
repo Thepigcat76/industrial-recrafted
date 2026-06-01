@@ -1,11 +1,12 @@
 package com.portingdeadmods.indrec;
 
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.data.maps.IRDataMaps;
-import com.portingdeadmods.indrec.impl.recipes.RegisterRecipeLayoutEvent;
+import com.portingdeadmods.indrec.content.recipes.RegisterRecipeLayoutEvent;
 import com.portingdeadmods.indrec.content.worldgen.IRPlacerTypes;
 import com.portingdeadmods.indrec.impl.energy.ItemEnergyHandlerWrapper;
 import com.portingdeadmods.indrec.registries.*;
@@ -13,7 +14,6 @@ import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
 import com.portingdeadmods.portingdeadlibs.api.data.PDLDataComponents;
 import com.portingdeadmods.portingdeadlibs.api.items.IFluidItem;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.CapabilityRegistrationHelper;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
@@ -52,16 +51,14 @@ public final class IndustrialRecrafted {
     public static final String MODID = "indrec";
     public static final String MODNAME = "Industrial Recrafted";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final ModelResourceLocation WINDMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/windmill_blade"));
-    public static final ModelResourceLocation WATERMILL_BLADE_MODEL = ModelResourceLocation.standalone(rl("block/watermill_blade"));
 
     public IndustrialRecrafted(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::registerPayloads);
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::registerRegistries);
+        modEventBus.addListener(this::registerDatapackRegistry);
         modEventBus.addListener(this::registerRecipeLayout);
         modEventBus.addListener(this::addFeaturePacks);
-        modEventBus.addListener(this::registerAdditionalModels);
         modEventBus.addListener(this::registerDataMaps);
         modEventBus.addListener(RegisterEvent.class, event -> this.onRegister(event, modEventBus));
 
@@ -104,13 +101,12 @@ public final class IndustrialRecrafted {
     private void addFeaturePacks(AddPackFindersEvent event) {
     }
 
-    private void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
-        event.register(WINDMILL_BLADE_MODEL);
-        event.register(WATERMILL_BLADE_MODEL);
-    }
-
     private void registerRegistries(NewRegistryEvent event) {
         event.register(IRRegistries.ENERGY_TIER);
+    }
+
+    private void registerDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {
+        event.dataPackRegistry(IRRegistries.CROP, Crop.CODEC, Crop.CODEC);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

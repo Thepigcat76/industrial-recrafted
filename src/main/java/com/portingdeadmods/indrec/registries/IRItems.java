@@ -55,6 +55,7 @@ public final class IRItems {
     public static final DeferredItem<Item> TIN_CAN = ITEMS.registerSimpleItem("tin_can");
     public static final DeferredItem<TinCanWithFoodItem> TIN_CAN_FOOD = ITEMS.registerItem("tin_can_food", TinCanWithFoodItem::defaultItem);
     public static final DeferredItem<Item> FUSE = ITEMS.registerSimpleItem("fuse");
+    public static final DeferredItem<CropSticksItem> CROP_STICKS = ITEMS.registerItem("crop_sticks", CropSticksItem::new);
 
     /* Coal is way too useful lol */
     public static final DeferredItem<Item> COAL_BALL = ITEMS.registerSimpleItem("coal_ball");

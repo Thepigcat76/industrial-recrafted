@@ -54,6 +54,7 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .create();
         sheetBlock(IRBlocks.STICKY_RESIN_SHEET.get());
         sheetBlock(IRBlocks.RUBBER_SHEET.get());
+        simpleBlock(IRBlocks.CROP.get(), models().getExistingFile(modLoc("block/crop")));
 
         simpleBlock(IRBlocks.TIN_BLOCK.get());
         simpleBlock(IRBlocks.URANIUM_BLOCK.get());

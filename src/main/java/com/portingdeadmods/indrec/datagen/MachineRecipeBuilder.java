@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.datagen;
 
-import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;

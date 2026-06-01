@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.impl.recipes.layouts.*;
+import com.portingdeadmods.indrec.content.recipes.layouts.*;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import net.minecraft.resources.ResourceLocation;
 

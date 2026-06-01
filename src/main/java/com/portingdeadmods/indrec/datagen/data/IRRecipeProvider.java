@@ -1,18 +1,18 @@
 package com.portingdeadmods.indrec.datagen.data;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.impl.recipes.components.EnumRecipeComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.energy.EnergyOutputComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.fluids.FluidInputComponent;
-import com.portingdeadmods.indrec.impl.recipes.layouts.CanningMachineRecipeLayout;
+import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
+import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyOutputComponent;
+import com.portingdeadmods.indrec.content.recipes.components.fluids.FluidInputComponent;
+import com.portingdeadmods.indrec.content.recipes.layouts.CanningMachineRecipeLayout;
 import com.portingdeadmods.indrec.registries.*;
 import com.portingdeadmods.indrec.tags.IRTags;
-import com.portingdeadmods.indrec.impl.recipes.components.energy.EnergyInputComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.TimeComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.items.ItemInputComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.items.ItemInputListComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.items.ItemOutputComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.items.ItemOutputListComponent;
+import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
+import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputComponent;
+import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputListComponent;
+import com.portingdeadmods.indrec.content.recipes.components.items.ItemOutputComponent;
+import com.portingdeadmods.indrec.content.recipes.components.items.ItemOutputListComponent;
 import com.portingdeadmods.indrec.datagen.MachineRecipeBuilder;
 import com.portingdeadmods.indrec.tags.CTags;
 import com.portingdeadmods.indrec.utils.ItemStackBuilder;
@@ -39,7 +39,6 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 import static com.portingdeadmods.indrec.IndustrialRecrafted.rl;
 

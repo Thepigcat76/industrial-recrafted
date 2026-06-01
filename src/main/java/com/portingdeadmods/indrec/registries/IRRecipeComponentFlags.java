@@ -1,10 +1,10 @@
 package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.impl.recipes.flags.FluidInputComponentFlag;
-import com.portingdeadmods.indrec.impl.recipes.flags.FluidOutputComponentFlag;
-import com.portingdeadmods.indrec.impl.recipes.flags.ItemInputComponentFlag;
-import com.portingdeadmods.indrec.impl.recipes.flags.ItemOutputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.flags.FluidInputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.flags.FluidOutputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.flags.ItemOutputComponentFlag;
 import com.portingdeadmods.indrec.api.recipes.RecipeFlagType;
 
 public final class IRRecipeComponentFlags {

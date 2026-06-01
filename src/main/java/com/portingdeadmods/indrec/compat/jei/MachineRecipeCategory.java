@@ -1,12 +1,12 @@
 package com.portingdeadmods.indrec.compat.jei;
 
 import com.portingdeadmods.indrec.client.screens.widgets.JEIEnergyBarWidget;
-import com.portingdeadmods.indrec.impl.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
-import com.portingdeadmods.indrec.impl.recipes.components.energy.EnergyInputComponent;
-import com.portingdeadmods.indrec.impl.recipes.components.TimeComponent;
-import com.portingdeadmods.indrec.impl.recipes.flags.ItemInputComponentFlag;
-import com.portingdeadmods.indrec.impl.recipes.flags.ItemOutputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
+import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.content.recipes.flags.ItemOutputComponentFlag;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.api.capabilities.EnergyStorageWrapper;

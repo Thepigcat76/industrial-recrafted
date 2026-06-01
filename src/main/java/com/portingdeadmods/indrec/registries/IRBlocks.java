@@ -1,7 +1,9 @@
 package com.portingdeadmods.indrec.registries;
 
+import com.ibm.icu.impl.CalendarCache;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blocks.*;
+import com.portingdeadmods.indrec.content.blocks.CropBlock;
 import com.portingdeadmods.indrec.content.worldgen.IRTreeGrowers;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterBlocks;
 import net.minecraft.sounds.SoundEvents;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 import java.util.Set;
@@ -114,6 +117,13 @@ public final class IRBlocks {
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE)));
     public static final DeferredBlock<Block> DEEPSLATE_IRIDIUM_ORE = BLOCKS.registerWithItem("deepslate_iridium_ore",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE)));
+    public static final DeferredBlock<CropBlock> CROP = BLOCKS.registerBlockWithItem("crop", CropBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.CROP)
+                    .pushReaction(PushReaction.DESTROY));
 
     static {
         CUSTOM_ITEM_MODELS = Set.of(

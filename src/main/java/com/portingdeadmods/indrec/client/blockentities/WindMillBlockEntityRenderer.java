@@ -3,6 +3,7 @@ package com.portingdeadmods.indrec.client.blockentities;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
+import com.portingdeadmods.indrec.IndustrialRecraftedClient;
 import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -21,7 +22,7 @@ public class WindMillBlockEntityRenderer implements BlockEntityRenderer<WindMill
 
     public WindMillBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.modelRenderer = context.getBlockRenderDispatcher().getModelRenderer();
-        this.windMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialRecrafted.WINDMILL_BLADE_MODEL);
+        this.windMillBladeModel = Minecraft.getInstance().getModelManager().getModel(IndustrialRecraftedClient.WINDMILL_BLADE_MODEL);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class WindMillBlockEntityRenderer implements BlockEntityRenderer<WindMill
             // --- Apply rotation (spin blades) ---
             poseStack.mulPose(Axis.YP.rotationDegrees(be.getIndependentAngle(partialTicks)));
 
-            // --- Center model for rendering ---
+            // --- Center models for rendering ---
             poseStack.translate(-0.5, -0.5, -0.5);
 
             poseStack.translate(0, 1, 0);

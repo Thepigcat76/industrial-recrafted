@@ -2,15 +2,12 @@ package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
-import com.portingdeadmods.indrec.api.energy.TieredEnergy;
-import com.portingdeadmods.indrec.impl.networks.EnergyNetwork;
-import com.portingdeadmods.indrec.impl.networks.EnergyTransportHandler;
+import com.portingdeadmods.indrec.content.networks.EnergyNetwork;
+import com.portingdeadmods.indrec.content.networks.EnergyTransportHandler;
 import com.thepigcat.transportlib.TransportLib;
 import com.thepigcat.transportlib.api.TransferSpeed;
 import com.thepigcat.transportlib.api.TransportNetwork;
 import com.thepigcat.transportlib.impl.TransportNetworkImpl;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
