@@ -4,6 +4,7 @@ import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.datagen.assets.IRBlockStateProvider;
 import com.portingdeadmods.indrec.datagen.assets.IREnUsLangProvider;
 import com.portingdeadmods.indrec.datagen.assets.IRItemModelProvider;
+import com.portingdeadmods.indrec.datagen.assets.IRRuRuLangProvider;
 import com.portingdeadmods.indrec.datagen.data.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -31,6 +32,7 @@ public final class EMDataGatherer {
         generator.addProvider(event.includeClient(), new IRBlockStateProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new IRItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new IREnUsLangProvider(packOutput));
+        generator.addProvider(event.includeClient(), new IRRuRuLangProvider(packOutput));
 
         IRTagsProvider.createTagProviders(generator, packOutput, lookupProvider, existingFileHelper, event.includeServer());
         generator.addProvider(event.includeServer(), new IRRecipeProvider(packOutput, lookupProvider));
