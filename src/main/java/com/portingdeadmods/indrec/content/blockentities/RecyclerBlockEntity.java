@@ -55,6 +55,11 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvi
     }
 
     @Override
+    protected void onRecipeComplete() {
+        this.getItemHandler().extractItem(0, 1, false);
+    }
+
+    @Override
     public IItemHandler getItemHandlerOnSide(Direction direction) {
         return this.exposedItemHandler;
     }
