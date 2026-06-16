@@ -18,7 +18,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.MenuProvider;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -77,7 +80,11 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
                         TieredEnergy energy = new TieredEnergy(min, this.getEuStorage().getEnergyTier());
                         int remainder = IRNetworks.ENERGY.get().transport(serverLevel, this.worldPosition, energy, outputDirection)
                                 .energy();
-                        thisEnergyStorage.forceDrainEnergy(min - remainder, false);
+                        int drained = thisEnergyStorage.forceDrainEnergy(min - remainder, false);
+                        if (drained > 0) {
+                            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(this.worldPosition),
+                                    new SetEnergyPayload(this.worldPosition, thisEnergyStorage.getEnergyStored()));
+                        }
                     }
                 }
             }
