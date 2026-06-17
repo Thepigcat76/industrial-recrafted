@@ -95,10 +95,16 @@ public abstract class ElectricDiggerItem extends DiggerItem implements EnergyIte
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
         Player player = miningEntity instanceof Player player0 ? player0 : null;
-        if (canWork(stack, player)) {
-            EnergyHandler energyStorage = getEnergyCap(stack);
+        if (requireEnergyToWork(stack, player)) {
             int energyUsage = getEnergyUsage(stack, player);
-            energyStorage.drainEnergy(energyUsage, false);
+            EnergyHandler batterySource = findActiveBatteryEnergy(player);
+            if (batterySource != null && batterySource.getEnergyStored() >= energyUsage) {
+                batterySource.drainEnergy(energyUsage, false);
+            } else if (canWork(stack, player)) {
+                getEnergyCap(stack).drainEnergy(energyUsage, false);
+            } else {
+                return false;
+            }
         }
         return true;
 
@@ -107,12 +113,29 @@ public abstract class ElectricDiggerItem extends DiggerItem implements EnergyIte
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity p_40995_, LivingEntity entity) {
         Player player = entity instanceof Player player0 ? player0 : null;
-        if (canWork(stack, player)) {
-            EnergyHandler energyStorage = getEnergyCap(stack);
+        if (requireEnergyToWork(stack, player)) {
             int energyUsage = (int) (getEnergyUsage(stack, player) * 1.5f);
-            energyStorage.drainEnergy(energyUsage, false);
+            EnergyHandler batterySource = findActiveBatteryEnergy(player);
+            if (batterySource != null && batterySource.getEnergyStored() >= energyUsage) {
+                batterySource.drainEnergy(energyUsage, false);
+            } else if (canWork(stack, player)) {
+                getEnergyCap(stack).drainEnergy(energyUsage, false);
+            }
         }
         return true;
+    }
+
+    protected static EnergyHandler findActiveBatteryEnergy(@Nullable Player player) {
+        if (player == null) return null;
+        for (ItemStack itemStack : player.getInventory().items) {
+            if (itemStack.isEmpty() || !(itemStack.getItem() instanceof com.portingdeadmods.indrec.content.items.electric.BatteryItem)) continue;
+            if (!itemStack.getOrDefault(IRDataComponents.ACTIVE, false)) continue;
+            EnergyHandler handler = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
+            if (handler != null && handler.getEnergyStored() > 0) {
+                return handler;
+            }
+        }
+        return null;
     }
 
     @Override

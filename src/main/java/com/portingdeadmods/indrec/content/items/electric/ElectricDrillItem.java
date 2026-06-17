@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.content.items.electric;
 
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.energy.items.ElectricDiggerItem;
+import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
@@ -84,7 +85,11 @@ public class ElectricDrillItem extends ElectricDiggerItem {
         if (this.hasAoeMining && ItemUtils.isActive(stack) && miningEntity instanceof Player player) {
             BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
             if (!player.isShiftKeyDown()) {
-                this.mine3x3(player, pos, stack, hitResult.getDirection(), getEnergyCap(stack).getEnergyStored(), this.getEnergyUsage(stack, miningEntity));
+                EnergyHandler batterySource = findActiveBatteryEnergy(player);
+                int drillEnergy = getEnergyCap(stack).getEnergyStored();
+                int batteryEnergy = batterySource != null ? batterySource.getEnergyStored() : 0;
+                int availableEnergy = Math.max(drillEnergy, batteryEnergy);
+                this.mine3x3(player, pos, stack, hitResult.getDirection(), availableEnergy, this.getEnergyUsage(stack, miningEntity));
             }
         }
         return super.mineBlock(stack, level, state, pos, miningEntity);
@@ -96,14 +101,29 @@ public class ElectricDrillItem extends ElectricDiggerItem {
 
         Iterable<BlockPos> blocksToMine = get3x3MiningArea(pos, hitFace);
 
+        EnergyHandler batterySource = miningEntity instanceof Player player ? findActiveBatteryEnergy(player) : null;
+
         boolean drainedFirst = true;
         for (BlockPos targetPos : blocksToMine) {
-            if (blocksToBreak > 0 && canMine(level, targetPos, level.getBlockState(targetPos)) && this.canWork(stack, miningEntity)) {
+            if (blocksToBreak > 0 && canMine(level, targetPos, level.getBlockState(targetPos))) {
+                boolean hasEnergy;
+                if (batterySource != null && batterySource.getEnergyStored() >= costPerBlock) {
+                    hasEnergy = true;
+                } else {
+                    hasEnergy = this.canWork(stack, miningEntity);
+                }
+
+                if (!hasEnergy) break;
+
                 level.destroyBlock(targetPos, true);
                 --blocksToBreak;
 
                 if (!drainedFirst) {
-                    this.consumeEnergy(stack, miningEntity);
+                    if (batterySource != null && batterySource.getEnergyStored() >= costPerBlock) {
+                        batterySource.drainEnergy(costPerBlock, false);
+                    } else {
+                        this.consumeEnergy(stack, miningEntity);
+                    }
                 } else {
                     drainedFirst = false;
                 }
