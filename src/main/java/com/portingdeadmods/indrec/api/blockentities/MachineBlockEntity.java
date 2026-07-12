@@ -66,7 +66,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     protected boolean burnt;
     private boolean removedByWrench;
     protected Set<Direction> spreadDirections;
-    private boolean syncEnergyThisTick;
+    protected boolean syncEnergyThisTick;
 
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
@@ -122,9 +122,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                         int filled = euHandler.fillEnergy(amountPerBlock, false);
                         if (filled > 0) {
                             this.syncEnergyThisTick = true;
+                            getEuStorage().forceDrainEnergy(filled, false);
+                            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition.relative(cache.context())), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
                         }
-                        getEuStorage().forceDrainEnergy(filled, false);
-                        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition.relative(cache.context())), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
                         //level.sendBlockUpdated(getBlockPos().relative(cache.context()), getBlockState(), getBlockState(), 3);
                     }
 

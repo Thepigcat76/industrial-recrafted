@@ -100,7 +100,9 @@ public class EnergyTransportHandler implements TransportingHandler<TieredEnergy>
                     }
                 }
                 int filled = euHandler.fillEnergy(value.energy(), false);
-                PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(interactorPos), new SetEnergyPayload(interactorPos, euHandler.getEnergyStored()));
+                if (filled > 0) {
+                    PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(interactorPos), new SetEnergyPayload(interactorPos, euHandler.getEnergyStored()));
+                }
                 return this.remove(value, new TieredEnergy(filled, value.tier()));
             }
 

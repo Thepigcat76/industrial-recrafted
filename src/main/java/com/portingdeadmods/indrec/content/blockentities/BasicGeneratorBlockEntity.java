@@ -8,6 +8,7 @@ import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.menus.BasicGeneratorMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRTranslations;
@@ -17,7 +18,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.ChunkPos;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -123,6 +127,11 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
         }
 
         GeneratorBlockEntity.transportEnergy(level, worldPosition, this.getEuStorage());
+
+        if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(worldPosition),
+                    new SetEnergyPayload(worldPosition, this.getEuStorage().getEnergyStored()));
+        }
     }
 
     @Override
