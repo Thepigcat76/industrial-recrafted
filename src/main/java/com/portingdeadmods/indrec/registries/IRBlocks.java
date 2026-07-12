@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
-import com.ibm.icu.impl.CalendarCache;
+import com.portingdeadmods.indrec.IRFeatureFlags;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blocks.*;
 import com.portingdeadmods.indrec.content.blocks.CropBlock;
@@ -119,6 +119,7 @@ public final class IRBlocks {
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE)));
     public static final DeferredBlock<CropBlock> CROP = BLOCKS.registerBlockWithItem("crop", CropBlock::new,
             BlockBehaviour.Properties.of()
+                    .requiredFeatures(IRFeatureFlags.EXPERIMENTAL)
                     .mapColor(MapColor.PLANT)
                     .noCollission()
                     .instabreak()

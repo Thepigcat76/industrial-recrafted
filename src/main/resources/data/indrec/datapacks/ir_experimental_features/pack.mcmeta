@@ -1,0 +1,11 @@
+{
+  "features": {
+    "enabled": [
+      "indrec:experimental"
+    ]
+  },
+  "pack": {
+    "description": "Enable experimental Industrial Recrafted Features. These might be lacking functionality or might not even work at all",
+    "pack_format": 48
+  }
+}

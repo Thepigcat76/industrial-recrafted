@@ -7,6 +7,8 @@ import com.portingdeadmods.indrec.content.blockentities.CropBlockEntity;
 import com.portingdeadmods.indrec.registries.IRBlockEntityTypes;
 import com.portingdeadmods.portingdeadlibs.utils.BlockUtils;
 import net.minecraft.core.*;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +32,7 @@ import java.util.stream.Stream;
 
 public class CropBlock extends BaseEntityBlock {
     public CropBlock(Properties properties) {
-        super(properties);
+        super(properties.randomTicks());
     }
 
     @Override
@@ -92,6 +95,24 @@ public class CropBlock extends BaseEntityBlock {
 
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
+
+//    @Override
+//    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+//        if (level.isAreaLoaded(pos, 1)) {
+//            if (level.getRawBrightness(pos, 0) >= 9) {
+//                CropBlockEntity cropBE = BlockUtils.getBE(CropBlockEntity.class, level, pos);
+//                int i = cropBE.getAge();
+//                if (i < cropBE.getMaxAge()) {
+//                    float f = getGrowthSpeed(state, level, pos);
+//                    if (CommonHooks.canCropGrow(level, pos, state, random.nextInt((int)(25.0F / f) + 1) == 0)) {
+//                        level.setBlock(pos, this.getStateForAge(i + 1), 2);
+//                        CommonHooks.fireCropGrowPost(level, pos, state);
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {

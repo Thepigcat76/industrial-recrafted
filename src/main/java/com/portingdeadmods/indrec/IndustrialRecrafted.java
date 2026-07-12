@@ -17,7 +17,11 @@ import com.portingdeadmods.portingdeadlibs.utils.capabilities.CapabilityRegistra
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
@@ -98,9 +102,6 @@ public final class IndustrialRecrafted {
         }
     }
 
-    private void addFeaturePacks(AddPackFindersEvent event) {
-    }
-
     private void registerRegistries(NewRegistryEvent event) {
         event.register(IRRegistries.ENERGY_TIER);
     }
@@ -118,6 +119,15 @@ public final class IndustrialRecrafted {
 
     private void registerDataMaps(RegisterDataMapTypesEvent event) {
         event.register(IRDataMaps.MATTER_FABRICATOR_AMPLIFIERS);
+    }
+
+    private void addFeaturePacks(AddPackFindersEvent event) {
+        event.addPackFinders(rl("data/indrec/datapacks/ir_experimental_features"),
+                PackType.SERVER_DATA,
+                Component.literal("Industrial Recrafted: Experimental Features"),
+                PackSource.FEATURE,
+                false,
+                Pack.Position.TOP);
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event) {

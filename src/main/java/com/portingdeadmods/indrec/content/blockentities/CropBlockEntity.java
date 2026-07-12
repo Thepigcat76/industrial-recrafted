@@ -19,6 +19,8 @@ import java.util.Optional;
 
 public class CropBlockEntity extends BlockEntity {
     private Holder<Crop> crop;
+    private int age;
+    private int maxAge;
 
     public CropBlockEntity(BlockPos pos, BlockState blockState) {
         super(IRBlockEntityTypes.CROP.get(), pos, blockState);
@@ -26,6 +28,10 @@ public class CropBlockEntity extends BlockEntity {
 
     public void plant(Holder<Crop> crop) {
         this.crop = crop;
+        if (this.crop != null) {
+            this.age = 0;
+            this.maxAge = crop.value().stages();
+        }
     }
 
     public Holder<Crop> getCrop() {
@@ -57,5 +63,13 @@ public class CropBlockEntity extends BlockEntity {
             tag.putString("crop", crop.getKey().location().toString());
         }
 
+    }
+
+    public int getAge() {
+        return this.age;
+    }
+
+    public int getMaxAge() {
+        return this.maxAge;
     }
 }
