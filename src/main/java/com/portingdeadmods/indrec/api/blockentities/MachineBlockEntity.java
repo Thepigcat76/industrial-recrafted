@@ -234,6 +234,8 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
                 }
 
+                this.onRecipeComplete();
+
                 if (this.cachedRecipe == null) {
                     setActive(false);
                 }
@@ -277,6 +279,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         if (MachineBlock.isActive(getBlockState()) != active) {
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PDLBlockStateProperties.ACTIVE, active));
         }
+    }
+
+    protected void onRecipeComplete() {
     }
 
     protected boolean hasProgressFinished() {
