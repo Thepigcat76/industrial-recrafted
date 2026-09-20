@@ -112,7 +112,7 @@ dependencies {
 
     implementation "com.github.Porting-Dead-Mods:Porting-Dead-Libs:${pdl_version}"
 
-    implementation "curse.maven:transport-lib-1438695:7572351"
+    implementation "curse.maven:transport-lib-1438695:8418550"
 }
 
 def parts = pdl_version.tokenize('.')

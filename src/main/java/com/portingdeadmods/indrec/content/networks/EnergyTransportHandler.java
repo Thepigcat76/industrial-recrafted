@@ -81,7 +81,7 @@ public class EnergyTransportHandler implements TransportingHandler<TieredEnergy>
     }
 
     @Override
-    public TieredEnergy receive(ServerLevel level, BlockPos interactorPos, Direction direction, TieredEnergy value) {
+    public TieredEnergy receive(ServerLevel level, BlockPos interactorPos, boolean simulate, Direction direction, TieredEnergy value) {
         BlockEntity blockEntity = level.getBlockEntity(interactorPos);
 
         if (blockEntity != null) {

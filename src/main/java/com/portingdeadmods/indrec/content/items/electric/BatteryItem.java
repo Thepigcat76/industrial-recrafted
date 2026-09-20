@@ -63,18 +63,25 @@ public class BatteryItem extends SimpleEnergyItem {
     @Override
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
         if (pEntity instanceof Player player && pStack.getOrDefault(IRDataComponents.ACTIVE, false)) {
+            if (pLevel.getGameTime() % 3 != 0) return;
             EnergyHandler batteryHandler = getEnergyCap(pStack);
+            if (batteryHandler.getEnergyStored() <= 0) return;
             for (ItemStack itemStack : player.getInventory().items) {
-                if (pLevel.getGameTime() % 3 == 0) {
-                    EnergyHandler energyStorage = getEnergyCap(itemStack);
-                    if (energyStorage != null && !pStack.equals(itemStack)) {
-                        int drained = batteryHandler.drainEnergy(getEnergyTier().maxOutput(), false);
+                if (pStack.equals(itemStack)) continue;
+                EnergyHandler energyStorage = getEnergyCap(itemStack);
+                if (energyStorage != null) {
+                    int canAccept = energyStorage.fillEnergy(getEnergyTier().maxOutput(), true);
+                    if (canAccept > 0) {
+                        int drained = batteryHandler.drainEnergy(canAccept, false);
                         energyStorage.fillEnergy(drained, false);
-                    } else {
-                        IEnergyStorage feEnergyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
-                        if (feEnergyStorage == null) continue;
-
-                        feEnergyStorage.receiveEnergy(getEnergyTier().maxOutput(), false);
+                    }
+                } else {
+                    IEnergyStorage feEnergyStorage = itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
+                    if (feEnergyStorage == null) continue;
+                    int canAccept = feEnergyStorage.receiveEnergy(getEnergyTier().maxOutput(), true);
+                    if (canAccept > 0) {
+                        int drained = batteryHandler.drainEnergy(canAccept, false);
+                        feEnergyStorage.receiveEnergy(drained, false);
                     }
                 }
             }
