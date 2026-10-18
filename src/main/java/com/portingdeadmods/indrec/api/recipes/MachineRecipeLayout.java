@@ -44,6 +44,7 @@ public abstract class MachineRecipeLayout<R extends MachineRecipe & Recipe<?>> {
         this.recipeType = recipeType;
     }
 
+
     public MachineRecipeLayout(ResourceLocation id, BiFunction<ResourceLocation, Map<String, RecipeComponent>, R> recipeFactory) {
         this(id, null, recipeFactory);
     }
