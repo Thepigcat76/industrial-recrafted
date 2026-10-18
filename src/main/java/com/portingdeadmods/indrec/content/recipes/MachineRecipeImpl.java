@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-public class MachineRecipeImpl implements MachineRecipe<MachineRecipeInput>, PDLRecipe<MachineRecipeInput> {
+public class MachineRecipeImpl implements MachineRecipe, PDLRecipe<MachineRecipe.MachineRecipeInput> {
     private RecipeSerializer<? extends MachineRecipeImpl> serializer;
     private RecipeType<? extends MachineRecipeImpl> type;
     private MachineRecipeLayout<MachineRecipeImpl> layout;

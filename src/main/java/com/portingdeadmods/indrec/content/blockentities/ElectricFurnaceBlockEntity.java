@@ -1,26 +1,35 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.ElectricFurnaceMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
+import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +60,9 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     @Override
     protected void onEuChanged(int oldAmount) {
+        if (!level.isClientSide)
+            this.syncEnergyThisTick = true;
+            //PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(worldPosition), new SetEnergyPayload(worldPosition, this.getEuStorage().getEnergyStored()));
     }
 
     @Override
@@ -67,10 +79,16 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     @Override
     public void tickRecipe() {
+        if (!this.level.isClientSide && this.level.getGameTime() % 30 == 0) {
+            syncProgress();
+        }
+
         if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
             if (this.progress < this.getMaxProgress()) {
                 this.progress += this.progressIncrement;
-                this.getEuStorage().forceDrainEnergy(3, false);
+                if (!this.level.isClientSide) {
+                    this.getEuStorage().forceDrainEnergy(3, false);
+                }
 
                 setActive(true);
                 this.playMachineSound();
@@ -92,6 +110,29 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
         }
     }
 
+    private void syncProgress() {
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.level, new ChunkPos(this.worldPosition), new SetProgressPayload(this.worldPosition, this.progress, this.maxProgress));
+    }
+
+    @Override
+    public ResourceLocation getRecipeId() {
+        return this.cachedRecipe.id();
+    }
+
+    @Override
+    public boolean hasCachedRecipe() {
+        return this.cachedRecipe != null;
+    }
+
+    @Override
+    public void setCachedRecipe(RecipeHolder<?> recipe) {
+        super.setCachedRecipe(recipe);
+
+        if (recipe != null && recipe.value() instanceof SmeltingRecipe smeltingRecipe) {
+            this.cachedRecipe = new RecipeHolder<>(recipe.id(), smeltingRecipe);
+        }
+    }
+
     @Override
     protected void playMachineSound() {
     }
@@ -103,6 +144,7 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new ElectricFurnaceMenu(i, inventory, this);
     }
 }

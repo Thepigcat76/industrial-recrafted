@@ -1,12 +1,8 @@
 package com.portingdeadmods.indrec.content.recipes.layouts;
 
-import com.portingdeadmods.indrec.api.recipes.RecipeComponent;
-import com.portingdeadmods.indrec.api.recipes.RecipeComponentFlag;
-import com.portingdeadmods.indrec.api.recipes.RecipeFlagType;
+import com.portingdeadmods.indrec.api.recipes.*;
 import com.portingdeadmods.indrec.data.components.CannedFood;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
-import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
@@ -46,7 +42,7 @@ public class CanningMachineRecipeLayout extends MachineRecipeLayout<MachineRecip
     }
 
     @Override
-    public boolean matches(MachineRecipeImpl recipe, MachineRecipeInput input, Level level) {
+    public boolean matches(MachineRecipeImpl recipe, MachineRecipe.MachineRecipeInput input, Level level) {
         Variant variant = this.getVariant(recipe);
         if (variant == Variant.FOOD_CANNING) {
             if (input.getItem(0).has(DataComponents.FOOD) || input.getItem(1).has(DataComponents.FOOD)) {
@@ -61,7 +57,7 @@ public class CanningMachineRecipeLayout extends MachineRecipeLayout<MachineRecip
     }
 
     @Override
-    public ItemStack createResultItem(MachineRecipeImpl recipe, @Nullable MachineRecipeInput input, HolderLookup.Provider provider) {
+    public ItemStack createResultItem(MachineRecipeImpl recipe, @Nullable MachineRecipe.MachineRecipeInput input, HolderLookup.Provider provider) {
         if (this.getVariant(recipe) == Variant.FOOD_CANNING) {
             if (input != null) {
                 ResourceKey<Item> inputItem;

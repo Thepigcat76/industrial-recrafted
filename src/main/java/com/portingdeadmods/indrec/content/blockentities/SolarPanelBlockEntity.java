@@ -4,8 +4,8 @@ import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.SolarPanelMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRTranslations;
@@ -52,8 +52,8 @@ public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuPro
     }
 
     @Override
-    protected @NotNull MachineRecipeInput createRecipeInput() {
-        return new MachineRecipeInput();
+    protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
+        return new MachineRecipe.MachineRecipeInput();
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.GeothermalGeneratorMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRRecipeLayouts;
@@ -44,7 +44,7 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
                     default -> throw new IllegalStateException("No slot 3");
                 }));
         this.addHandler(Capabilities.FluidHandler.BLOCK, HandlerUtils.newFluidTank(
-                (tank, fluid) -> level.getRecipeManager().getRecipeFor(IRRecipeLayouts.GEOTHERMAL_GENERATOR.getRecipeType(), new MachineRecipeInput(fluid), level).isPresent(),
+                (tank, fluid) -> level.getRecipeManager().getRecipeFor(IRRecipeLayouts.GEOTHERMAL_GENERATOR.getRecipeType(), new MachineRecipe.MachineRecipeInput(fluid), level).isPresent(),
                 tank -> IRConfig.geothermalGeneratorFluidCapacity,
                 this::onFluidsChanged,
                 1
@@ -84,8 +84,8 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
     }
 
     @Override
-    protected @NotNull MachineRecipeInput createRecipeInput() {
-        return new MachineRecipeInput(this.getFluidHandler().getFluidInTank(0));
+    protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
+        return new MachineRecipe.MachineRecipeInput(this.getFluidHandler().getFluidInTank(0));
     }
 
     @Override

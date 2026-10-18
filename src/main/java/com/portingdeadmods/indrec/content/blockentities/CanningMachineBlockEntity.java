@@ -2,8 +2,8 @@ package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.CanningMachineMenu;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.*;
@@ -47,8 +47,8 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
     }
 
     @Override
-    protected @NotNull MachineRecipeInput createRecipeInput() {
-        return new MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0), this.getItemHandler().getStackInSlot(1)));
+    protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
+        return new MachineRecipe.MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0), this.getItemHandler().getStackInSlot(1)));
     }
 
     @Override

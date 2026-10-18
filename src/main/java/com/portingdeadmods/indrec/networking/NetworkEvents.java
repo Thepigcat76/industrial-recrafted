@@ -4,6 +4,7 @@ import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.networking.bidirectional.ExampleBidirectionalPayload;
 import com.portingdeadmods.indrec.networking.clientbound.ExampleClientboundPayload;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
+import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
 import com.portingdeadmods.indrec.networking.serverbound.ExampleServerboundPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpdateInputPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,11 +19,6 @@ public class NetworkEvents {
         final PayloadRegistrar registrar = event.registrar(IndustrialRecrafted.MODID);
 
         registrar.playToServer(
-                ExampleServerboundPayload.TYPE,
-                ExampleServerboundPayload.STREAM_CODEC,
-                ExampleServerboundPayload::exampleServerboundAction
-        );
-        registrar.playToServer(
                 UpdateInputPayload.TYPE,
                 UpdateInputPayload.STREAM_CODEC,
                 UpdateInputPayload::handle
@@ -32,17 +28,10 @@ public class NetworkEvents {
                 SetEnergyPayload.STREAM_CODEC,
                 SetEnergyPayload::handle
         );
-
         registrar.playToClient(
-                ExampleClientboundPayload.TYPE,
-                ExampleClientboundPayload.STREAM_CODEC,
-                ExampleClientboundPayload::exampleClientboundAction
-        );
-
-        registrar.playBidirectional(
-                ExampleBidirectionalPayload.TYPE,
-                ExampleBidirectionalPayload.STREAM_CODEC,
-                ExampleBidirectionalPayload::exampleBidirectionalAction
+                SetProgressPayload.TYPE,
+                SetProgressPayload.STREAM_CODEC,
+                SetProgressPayload::handle
         );
     }
 }

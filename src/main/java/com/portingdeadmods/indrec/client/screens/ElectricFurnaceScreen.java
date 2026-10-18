@@ -24,8 +24,6 @@ public class ElectricFurnaceScreen extends MachineScreen<ElectricFurnaceMenu> {
 
     @Override
     protected void init() {
-        super.init();
-
         this.imageHeight = 186;
         this.inventoryLabelY = this.imageHeight - 94;
         super.init();
@@ -42,7 +40,7 @@ public class ElectricFurnaceScreen extends MachineScreen<ElectricFurnaceMenu> {
 
         float progress;
         if (this.menu.blockEntity.getCachedSmeltingRecipe() != null) {
-            progress = (float) this.menu.blockEntity.getProgress() / this.menu.blockEntity.getMaxProgress();
+            progress = (float) this.menu.getProgress() / this.menu.getMaxProgress();
         } else {
             progress = 0;
         }

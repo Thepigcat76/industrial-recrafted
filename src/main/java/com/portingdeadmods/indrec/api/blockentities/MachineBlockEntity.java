@@ -6,9 +6,9 @@ import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.capabilities.StorageChangedListener;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.ChargingSlot;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeInput;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
@@ -30,9 +30,11 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -60,13 +62,16 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     protected final IRMachine machine;
     private RedstoneSignalType redstoneSignalType = RedstoneSignalType.IGNORED;
     private int redstoneSignalStrength;
-    protected MachineRecipeImpl cachedRecipe;
+    protected RecipeHolder<MachineRecipeImpl> cachedRecipe;
+    private ResourceLocation loadedRecipe;
     protected float progress;
+    protected float maxProgress;
     protected float progressIncrement;
     protected boolean burnt;
     private boolean removedByWrench;
     protected Set<Direction> spreadDirections;
     protected boolean syncEnergyThisTick;
+    protected MachineContainerData containerData;
 
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
@@ -75,14 +80,19 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.chargingSlots = new ArrayList<>();
         this.progressIncrement = 1F;
         this.spreadDirections = Set.of(Direction.values());
+        this.containerData = new MachineContainerData();
     }
 
     public MachineRecipeLayout<?> getRecipeLayout() {
         return this.machine.getRecipeLayout();
     }
 
-    public MachineRecipeImpl getCachedRecipe() {
+    public @Nullable RecipeHolder<MachineRecipeImpl> getCachedRecipe() {
         return cachedRecipe;
+    }
+
+    public boolean hasCachedRecipe() {
+        return cachedRecipe != null;
     }
 
     @Override
@@ -151,9 +161,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return 0;
     }
 
-    protected @NotNull MachineRecipeInput createRecipeInput() {
-        if (this.getItemHandler() == null) return new MachineRecipeInput();
-        return new MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0)));
+    protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
+        if (this.getItemHandler() == null) return new MachineRecipe.MachineRecipeInput();
+        return new MachineRecipe.MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0)));
     }
 
     protected void onItemsChanged(int slot) {
@@ -184,41 +194,41 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected void tickRecipe() {
-        //if (!this.level.isClientSide()) {
-        if (this.cachedRecipe != null) {
+        if (this.hasCachedRecipe()) {
+            MachineRecipeImpl recipe = this.cachedRecipe.value();
             if (this.hasProgressFinished()) {
                 this.progress = 0;
                 RegistryAccess provider = this.level.registryAccess();
-                ItemStack resultItem = this.cachedRecipe.assemble(this.createRecipeInput(), provider);
-                FluidStack resultFluid = this.cachedRecipe.assembleResultFluid(this.createRecipeInput(), provider);
+                ItemStack resultItem = recipe.assemble(this.createRecipeInput(), provider);
+                FluidStack resultFluid = recipe.assembleResultFluid(this.createRecipeInput(), provider);
 
-                int resultEnergy = this.cachedRecipe.assembleResultEnergy(this.createRecipeInput(), provider);
-                ItemOutputComponentFlag itemOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
-                FluidOutputComponentFlag fluidOutput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
+                int resultEnergy = recipe.assembleResultEnergy(this.createRecipeInput(), provider);
+                ItemOutputComponentFlag itemOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
+                FluidOutputComponentFlag fluidOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
 
-                ItemInputComponentFlag itemInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
-                FluidInputComponentFlag fluidInput = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
+                ItemInputComponentFlag itemInput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
+                FluidInputComponentFlag fluidInput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
 
-                boolean hasResultEnergy = this.cachedRecipe.hasResultEnergy(provider);
-                boolean hasResultItem = this.cachedRecipe.hasResultItem(provider);
-                boolean hasResultFluid = this.cachedRecipe.hasResultFluid(provider);
+                boolean hasResultEnergy = recipe.hasResultEnergy(provider);
+                boolean hasResultItem = recipe.hasResultItem(provider);
+                boolean hasResultFluid = recipe.hasResultFluid(provider);
 
                 if (hasResultEnergy) {
                     this.getEuStorage().forceFillEnergy(resultEnergy, false);
                 }
 
-                if (!level.isClientSide()) {
-                    if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
-                        List<ItemStack> outputs = itemOutput.getOutputs();
-                        for (int i = 0; i < outputs.size(); i++) {
-                            ItemStack output = outputs.get(i);
-                            if (itemOutput.isOutputted(this.level.random, i)) {
-                                this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
-                            }
+                //if (!level.isClientSide()) {
+                if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
+                    List<ItemStack> outputs = itemOutput.getOutputs();
+                    for (int i = 0; i < outputs.size(); i++) {
+                        ItemStack output = outputs.get(i);
+                        if (itemOutput.isOutputted(this.level.random, i)) {
+                            this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
                         }
-                        this.updateData();
                     }
+                    this.updateData();
                 }
+                //}
 
                 if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
                     this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
@@ -242,10 +252,10 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
             } else {
                 boolean canRun = false;
 
-                EnergyInputComponent inputComponent = this.cachedRecipe.getComponent(EnergyInputComponent.TYPE);
+                EnergyInputComponent inputComponent = recipe.getComponent(EnergyInputComponent.TYPE);
                 if (inputComponent != null) {
-                    int energy = inputComponent.energy() / this.cachedRecipe.getComponent(TimeComponent.TYPE).time();
-                    int drained = this.getEuStorage().forceDrainEnergy(energy, false);
+                    int energy = inputComponent.energy() / recipe.getComponent(TimeComponent.TYPE).time();
+                    int drained = this.getEuStorage().forceDrainEnergy(energy, this.level.isClientSide());
 
                     if (drained == energy) {
                         canRun = true;
@@ -285,7 +295,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected boolean hasProgressFinished() {
-        return this.cachedRecipe != null && (this.getProgress() >= this.getMaxProgress() || !this.cachedRecipe.hasProgress());
+        return this.hasCachedRecipe() && (this.getProgress() >= this.getMaxProgress() || !this.cachedRecipe.value().hasProgress());
     }
 
     protected int getAmountPerBlock() {
@@ -343,7 +353,11 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     public int getMaxProgress() {
-        return this.cachedRecipe != null && this.cachedRecipe.hasProgress() ? this.cachedRecipe.getComponent(TimeComponent.TYPE).time() : 0;
+        return (int) this.maxProgress;
+    }
+
+    private int getRecipeTime(MachineRecipe recipe) {
+        return recipe.hasProgress() ? recipe.getComponent(TimeComponent.TYPE).time() : 0;
     }
 
     public boolean shouldSpreadEnergy() {
@@ -402,7 +416,11 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         super.onLoad();
 
         this.initCapCache();
-        this.refreshCachedRecipe();
+
+        if (this.loadedRecipe != null) {
+            this.level.getRecipeManager().byKey(this.loadedRecipe).ifPresent(this::setCachedRecipe);
+        }
+
     }
 
     @Override
@@ -418,6 +436,22 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return redstoneSignalStrength;
     }
 
+    public ResourceLocation getRecipeId() {
+        return this.cachedRecipe.id();
+    }
+
+    public void setCachedRecipe(RecipeHolder<?> recipe) {
+        if (recipe == null) {
+            this.cachedRecipe = null;
+        } else if (recipe.value() instanceof MachineRecipeImpl machineRecipe) {
+            this.cachedRecipe = new RecipeHolder<>(recipe.id(), machineRecipe);
+        }
+    }
+
+    public void setMaxProgress(float maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
     @Override
     protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadData(tag, provider);
@@ -426,6 +460,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.redstoneSignalStrength = tag.getInt("signal_strength");
         this.redstoneSignalType = RedstoneSignalType.CODEC.decode(NbtOps.INSTANCE, tag.get("redstone_signal")).result().orElse(Pair.of(RedstoneSignalType.IGNORED, new CompoundTag())).getFirst();
         this.progress = tag.getFloat("progress");
+        if (tag.contains("current_recipe")) {
+            this.loadedRecipe = ResourceLocation.parse(tag.getString("current_recipe"));
+        }
     }
 
     @Override
@@ -435,6 +472,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         tag.putBoolean("burnt", this.burnt);
         tag.putFloat("progress", this.progress);
         tag.putInt("signal_strength", this.redstoneSignalStrength);
+        if (this.hasCachedRecipe()) {
+            tag.putString("current_recipe", this.getRecipeId().toString());
+        }
         Optional<Tag> tag1 = RedstoneSignalType.CODEC.encodeStart(NbtOps.INSTANCE, this.redstoneSignalType).result();
         tag1.ifPresent(value -> {
             tag.put("redstone_signal", value);
@@ -451,18 +491,19 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     private void refreshCachedRecipe() {
-        MachineRecipeInput recipeInput = this.createRecipeInput();
+        MachineRecipe.MachineRecipeInput recipeInput = this.createRecipeInput();
         if (this.getRecipeLayout() != null) {
             RecipeType<MachineRecipeImpl> recipeType = (RecipeType<MachineRecipeImpl>) this.getRecipeLayout().getRecipeType();
-            MachineRecipeImpl recipe = this.level.getRecipeManager().getRecipeFor(recipeType, recipeInput, this.level)
-                    .map(RecipeHolder::value)
+            RecipeHolder<MachineRecipeImpl> recipeHolder = this.level.getRecipeManager().getRecipeFor(recipeType, recipeInput, this.level)
                     .orElse(null);
             RegistryAccess provider = this.level.registryAccess();
-            if (recipe != null) {
+            if (recipeHolder != null) {
+                MachineRecipeImpl recipe = recipeHolder.value();
                 if (recipe.hasResultItem(provider)) {
                     if (!forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot(), recipe.assemble(recipeInput, provider).copy(), true, i -> {
                     }).isEmpty()) {
-                        this.cachedRecipe = null;
+                        this.setCachedRecipe(null);
+                        this.setMaxProgress(0);
                         return;
                     }
                 }
@@ -470,21 +511,29 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
                     FluidStack resultFluid = recipe.assembleResultFluid(recipeInput, provider);
                     if (forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.SIMULATE, i -> {
                     }) != resultFluid.getAmount()) {
-                        this.cachedRecipe = null;
+                        this.setCachedRecipe(null);
+                        this.setMaxProgress(0);
                         return;
                     }
                 }
                 if (recipe.hasResultEnergy(provider)) {
                     int resultEnergy = recipe.assembleResultEnergy(recipeInput, provider);
                     if (this.getEuStorage().forceFillEnergy(resultEnergy, true) != resultEnergy) {
-                        this.cachedRecipe = null;
+                        this.setCachedRecipe(null);
+                        this.setMaxProgress(0);
                         return;
                     }
                 }
             }
-            this.cachedRecipe = recipe;
+            this.setCachedRecipe(recipeHolder);
+            if (recipeHolder != null) {
+                this.setMaxProgress(this.getRecipeTime(recipeHolder.value()));
+            } else {
+                this.setMaxProgress(0);
+            }
         } else {
-            this.cachedRecipe = null;
+            this.setCachedRecipe(null);
+            this.setMaxProgress(0);
         }
     }
 
@@ -526,4 +575,33 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return filled;
     }
 
+    public void setProgess(float progress) {
+        this.progress = progress;
+    }
+
+    protected class MachineContainerData implements ContainerData {
+        @Override
+        public int get(int i) {
+            return switch (i) {
+                case 0 -> (int) MachineBlockEntity.this.progress;
+                case 1 -> MachineBlockEntity.this.getMaxProgress();
+                default -> -1;
+            };
+        }
+
+        @Override
+        public void set(int i, int i1) {
+            switch (i) {
+                case 0 -> MachineBlockEntity.this.progress = i1;
+                case 1 -> MachineBlockEntity.this.maxProgress = i1;
+                default -> throw new UnsupportedOperationException();
+            }
+            ;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    }
 }
