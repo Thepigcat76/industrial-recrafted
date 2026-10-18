@@ -2,13 +2,13 @@ package com.portingdeadmods.indrec.client.items;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
-import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
 import com.portingdeadmods.indrec.content.items.electric.ElectricChainsawItem;
 import com.portingdeadmods.indrec.content.items.electric.ElectricDrillItem;
 import com.portingdeadmods.indrec.content.items.electric.ElectricJetpackItem;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;

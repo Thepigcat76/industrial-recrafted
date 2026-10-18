@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.data.maps;
 
-import com.mojang.serialization.Codec;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;

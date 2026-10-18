@@ -5,7 +5,6 @@ import com.portingdeadmods.indrec.content.blockentities.NuclearReactorBlockEntit
 import com.portingdeadmods.indrec.registries.IRMachines;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.NotNull;
 
 public class NuclearReactorMenu extends MachineMenu<NuclearReactorBlockEntity> {

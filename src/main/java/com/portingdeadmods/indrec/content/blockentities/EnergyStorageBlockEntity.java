@@ -1,7 +1,6 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.IRCapabilities;
-import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.TieredEnergy;
@@ -9,6 +8,7 @@ import com.portingdeadmods.indrec.content.blocks.CableBlock;
 import com.portingdeadmods.indrec.content.menus.BatteryBoxMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerWrapper;
+import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IRNetworks;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.indrec.utils.BlockUtils;
@@ -18,15 +18,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.MenuProvider;
-import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

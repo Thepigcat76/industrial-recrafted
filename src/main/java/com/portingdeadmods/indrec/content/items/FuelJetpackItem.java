@@ -20,7 +20,6 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
-import javax.swing.plaf.ToolTipUI;
 import java.util.List;
 import java.util.function.IntSupplier;
 

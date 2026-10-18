@@ -1,10 +1,10 @@
 package com.portingdeadmods.indrec.content.items.electric;
 
 import com.portingdeadmods.indrec.IRConfig;
-import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.items.SimpleEnergyItem;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import net.minecraft.ChatFormatting;

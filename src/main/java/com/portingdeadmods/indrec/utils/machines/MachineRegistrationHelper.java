@@ -1,7 +1,6 @@
 package com.portingdeadmods.indrec.utils.machines;
 
 import com.portingdeadmods.indrec.registries.IRBlocks;
-import com.portingdeadmods.indrec.registries.IRItems;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;

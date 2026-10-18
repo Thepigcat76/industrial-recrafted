@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.api.fluid;
 
-import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.portingdeadlibs.api.data.PDLDataComponents;
 import com.portingdeadmods.portingdeadlibs.api.items.IFluidItem;

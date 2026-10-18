@@ -3,8 +3,6 @@ package com.portingdeadmods.indrec.impl.energy;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 
-import java.util.function.Supplier;
-
 public class EnergyHandlerWrapper {
     protected final EnergyHandler handler;
 

@@ -7,7 +7,6 @@ import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRFluids;
 import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.core.registries.BuiltInRegistries;

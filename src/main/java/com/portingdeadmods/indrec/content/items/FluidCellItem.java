@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.items;
 
-import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.fluid.SimpleFluidItem;
 import com.portingdeadmods.indrec.registries.IRItems;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -22,7 +21,9 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FlowingFluid;

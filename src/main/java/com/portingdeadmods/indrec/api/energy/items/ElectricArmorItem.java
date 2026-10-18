@@ -1,16 +1,19 @@
 package com.portingdeadmods.indrec.api.energy.items;
 
-import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.impl.energy.ComponentEuStorage;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.utils.ItemBarUtils;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

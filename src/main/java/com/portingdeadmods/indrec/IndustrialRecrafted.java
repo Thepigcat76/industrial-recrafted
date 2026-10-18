@@ -1,13 +1,14 @@
 package com.portingdeadmods.indrec;
 
+import com.mojang.logging.LogUtils;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
-import com.portingdeadmods.indrec.data.maps.IRDataMaps;
 import com.portingdeadmods.indrec.content.recipes.RegisterRecipeLayoutEvent;
 import com.portingdeadmods.indrec.content.worldgen.IRPlacerTypes;
+import com.portingdeadmods.indrec.data.maps.IRDataMaps;
 import com.portingdeadmods.indrec.impl.energy.ItemEnergyHandlerWrapper;
 import com.portingdeadmods.indrec.registries.*;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
@@ -30,6 +31,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -37,16 +42,12 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.registries.*;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
 
 import java.util.Map;
 

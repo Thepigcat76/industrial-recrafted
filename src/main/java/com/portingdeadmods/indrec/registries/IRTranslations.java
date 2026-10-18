@@ -6,8 +6,6 @@ import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslation;
 import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslationRegister;
 import com.portingdeadmods.portingdeadlibs.api.translations.TranslatableConstant;
 
-import java.util.HashMap;
-
 public final class IRTranslations {
     public static final DeferredTranslationRegister TRANSLATIONS = DeferredTranslationRegister.createTranslations(IndustrialRecrafted.MODID);
 

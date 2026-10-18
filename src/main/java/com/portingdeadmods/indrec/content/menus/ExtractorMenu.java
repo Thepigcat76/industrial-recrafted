@@ -5,7 +5,6 @@ import com.portingdeadmods.indrec.content.blockentities.ExtractorBlockEntity;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.SimpleContainerData;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;

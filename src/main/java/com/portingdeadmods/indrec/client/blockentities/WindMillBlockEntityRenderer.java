@@ -2,7 +2,6 @@ package com.portingdeadmods.indrec.client.blockentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.IndustrialRecraftedClient;
 import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
 import net.minecraft.client.Minecraft;

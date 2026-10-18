@@ -16,7 +16,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 

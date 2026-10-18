@@ -2,9 +2,9 @@ package com.portingdeadmods.indrec.client.screens;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
-import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
 import com.portingdeadmods.indrec.content.menus.BasicGeneratorMenu;
+import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.client.screens.widgets.EnergyBarWidget;
 import com.portingdeadmods.portingdeadlibs.client.screens.widgets.RedstonePanelWidget;

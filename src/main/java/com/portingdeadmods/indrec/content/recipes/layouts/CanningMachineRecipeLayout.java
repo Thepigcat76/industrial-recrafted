@@ -1,15 +1,15 @@
 package com.portingdeadmods.indrec.content.recipes.layouts;
 
 import com.portingdeadmods.indrec.api.recipes.*;
-import com.portingdeadmods.indrec.data.components.CannedFood;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
-import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
+import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputListComponent;
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemOutputComponent;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
+import com.portingdeadmods.indrec.data.components.CannedFood;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;

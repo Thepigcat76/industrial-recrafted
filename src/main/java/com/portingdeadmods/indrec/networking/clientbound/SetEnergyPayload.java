@@ -3,7 +3,6 @@ package com.portingdeadmods.indrec.networking.clientbound;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
-import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

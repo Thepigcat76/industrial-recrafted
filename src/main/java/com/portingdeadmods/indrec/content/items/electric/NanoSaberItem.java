@@ -1,10 +1,10 @@
 package com.portingdeadmods.indrec.content.items.electric;
 
 import com.portingdeadmods.indrec.IRConfig;
-import com.portingdeadmods.indrec.registries.IRDataComponents;
-import com.portingdeadmods.indrec.api.energy.items.ElectricSwordItem;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.energy.items.ElectricSwordItem;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.indrec.utils.ItemUtils;
@@ -18,7 +18,10 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;

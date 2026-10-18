@@ -1,7 +1,7 @@
 package com.portingdeadmods.indrec.content.items.electric;
 
-import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.SimpleEnergyItem;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
 import net.minecraft.world.entity.Entity;

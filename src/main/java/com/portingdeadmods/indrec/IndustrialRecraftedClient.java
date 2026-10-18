@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec;
 
-import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.api.fluid.SimpleFluidItem;
 import com.portingdeadmods.indrec.client.blockentities.CropBlockEntityRenderer;
 import com.portingdeadmods.indrec.client.blockentities.WaterMillBlockEntityRenderer;
@@ -12,8 +11,6 @@ import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
 import com.portingdeadmods.indrec.registries.*;
 import com.thepigcat.transportlib.client.debug.TransportNetworkRenderer;
-import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -22,10 +19,7 @@ import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -43,7 +37,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.model.DynamicFluidContainerModel;
 import net.neoforged.neoforge.common.NeoForge;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Mod(value = IndustrialRecrafted.MODID, dist = Dist.CLIENT)
 public final class IndustrialRecraftedClient {

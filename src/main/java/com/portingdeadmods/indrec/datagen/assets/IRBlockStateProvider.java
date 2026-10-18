@@ -5,7 +5,6 @@ import com.portingdeadmods.indrec.api.blocks.PipeBlock;
 import com.portingdeadmods.indrec.content.blocks.RubberTreeResinHoleBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.datagen.ModelBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;

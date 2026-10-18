@@ -1,11 +1,8 @@
 package com.portingdeadmods.indrec.networking;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.networking.bidirectional.ExampleBidirectionalPayload;
-import com.portingdeadmods.indrec.networking.clientbound.ExampleClientboundPayload;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
-import com.portingdeadmods.indrec.networking.serverbound.ExampleServerboundPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpdateInputPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

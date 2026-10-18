@@ -1,9 +1,7 @@
 package com.portingdeadmods.indrec.networking.clientbound;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
-import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

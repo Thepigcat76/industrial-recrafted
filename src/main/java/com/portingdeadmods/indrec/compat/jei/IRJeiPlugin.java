@@ -1,8 +1,8 @@
 package com.portingdeadmods.indrec.compat.jei;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
+import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRRecipeLayouts;
 import mezz.jei.api.IModPlugin;

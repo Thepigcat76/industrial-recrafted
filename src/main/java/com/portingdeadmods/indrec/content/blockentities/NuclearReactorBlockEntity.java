@@ -3,7 +3,6 @@ package com.portingdeadmods.indrec.content.blockentities;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 

@@ -1,9 +1,9 @@
 package com.portingdeadmods.indrec.impl.energy;
 
-import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
-import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
+import com.portingdeadmods.indrec.registries.IRDataComponents;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Supplier;
