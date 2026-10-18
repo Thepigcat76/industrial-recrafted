@@ -186,6 +186,8 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     protected void onEuChanged(int oldAmount) {
         //this.updateData();
 
+        if (!level.isClientSide)
+            this.syncEnergyThisTick = true;
         setChanged();
         this.refreshCachedRecipe();
     }

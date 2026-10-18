@@ -57,7 +57,6 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
     protected void onEuChanged(int oldAmount) {
         if (!level.isClientSide)
             this.syncEnergyThisTick = true;
-        //PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(worldPosition), new SetEnergyPayload(worldPosition, this.getEuStorage().getEnergyStored()));
     }
 
     @Override
