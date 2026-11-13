@@ -1,8 +1,12 @@
 package com.portingdeadmods.indrec.utils;
 
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
@@ -15,6 +19,10 @@ public final class BlockUtils {
         int nextDirectionIndex = (currentDirectionIndex + 1) % directions.size();
         Direction nextDirection = directions.get(nextDirectionIndex);
         return state.setValue(prop, nextDirection);
+    }
+
+    public static void playBurnSound(Level level, BlockPos pos) {
+        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
     }
 
     public static int calcRedstoneFromEnergy(EnergyHandler energyStorage) {

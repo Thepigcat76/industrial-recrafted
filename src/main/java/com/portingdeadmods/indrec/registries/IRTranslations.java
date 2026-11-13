@@ -34,6 +34,40 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> ENERGY_AMOUNT = TOOLTIP_CATEGORY.registerWithDefault("energy.amount", "%d");
     public static final DeferredTranslation<TranslatableConstant> ENERGY_AMOUNT_WITH_CAPACITY = TOOLTIP_CATEGORY.registerWithDefault("energy.amount_with_capacity", "%s/%s");
 
+    public static final DeferredTranslation<TranslatableConstant> SEED_BAG_CROP = TOOLTIP_CATEGORY.registerWithDefault("seed_bag.crop", "Crop: ");
+    public static final DeferredTranslation<TranslatableConstant> SEED_BAG_UNKNOWN_CROP = TOOLTIP_CATEGORY.registerWithDefault("seed_bag.unknown_crop", "<unknown>");
+
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_CROP = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.crop", "Crop: ");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_UNKNOWN_CROP = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.unknown_crop", "<unknown>");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_STAGE = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.stage", "Stage: ");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_STAGE_VALUE = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.stage_value", "%d/%d");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_DROPS = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.drops", "Drops:");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_DROP_AVERAGE = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.drop_average", "(avg %s)");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_BLOCK_BELOW_SOIL = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.block_below_soil", "Block Below Soil:");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_SOIL = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.soil", "Soil:");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_LIGHT = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.light", "Light: ");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_LIGHT_EXACT = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.light_exact", "%d");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_LIGHT_MIN = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.light_min", "%d+");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_LIGHT_RANGE = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.light_range", "%d-%d");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_LIGHT_CURRENT = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.light_current", "(current %d)");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_HINT = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.hint", "Hold right-click to analyze");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_ANALYZING = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.analyzing", "Analyzing... %d%%");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_TAB_GENERAL = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.tab.general", "General");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_TAB_REQUIREMENTS = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.tab.requirements", "Requirements");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_TAB_HINT = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.tab.hint", "Sneak + Scroll to switch tabs");
+    public static final DeferredTranslation<TranslatableConstant> CROP_CROSSBREEDING = GENERAL_CATEGORY.registerWithDefault("crop_crossbreeding", "Crop Crossbreeding");
+    public static final DeferredTranslation<TranslatableConstant> CROP_CROSSBREEDING_CAN_SPREAD = TOOLTIP_CATEGORY.registerWithDefault("crop_crossbreeding.can_spread", "Can spread onto the crossbreed sticks");
+    public static final DeferredTranslation<TranslatableConstant> CROP_CROSSBREEDING_CHANCE = TOOLTIP_CATEGORY.registerWithDefault("crop_crossbreeding.chance", "Chance: %s%%");
+    public static final DeferredTranslation<TranslatableConstant> CROP_MUTATION = GENERAL_CATEGORY.registerWithDefault("crop_mutation", "Crop Mutation");
+    public static final DeferredTranslation<TranslatableConstant> CROP_MUTATION_CHANCE = TOOLTIP_CATEGORY.registerWithDefault("crop_mutation.chance", "Chance per random tick: %s%%");
+    public static final DeferredTranslation<TranslatableConstant> CROP_INTERACTION = GENERAL_CATEGORY.registerWithDefault("crop_interaction", "Crop Interaction");
+    public static final DeferredTranslation<TranslatableConstant> CROP_INTERACTION_REMAINDER = TOOLTIP_CATEGORY.registerWithDefault("crop_interaction.remainder", "Leaves: %s");
+    public static final DeferredTranslation<TranslatableConstant> CROP_INTERACTION_NOT_CONSUMED = TOOLTIP_CATEGORY.registerWithDefault("crop_interaction.not_consumed", "Item is not consumed");
+    public static final DeferredTranslation<TranslatableConstant> CROP_KEEPS_AGE = TOOLTIP_CATEGORY.registerWithDefault("crop.keeps_age", "Keeps the growth stage");
+    public static final DeferredTranslation<TranslatableConstant> CROP_RESETS_AGE = TOOLTIP_CATEGORY.registerWithDefault("crop.resets_age", "Resets the growth stage");
+    public static final DeferredTranslation<TranslatableConstant> CROP_ANALYZER_NOT_ENOUGH_ENERGY = TOOLTIP_CATEGORY.registerWithDefault("crop_analyzer.not_enough_energy", "Not enough energy to analyze");
+    public static final DeferredTranslation<TranslatableConstant> MACHINE_BURNT = TOOLTIP_CATEGORY.registerWithDefault("machine_burnt", "This machine is burnt out. Right-Click it with a Fuse to repair it");
+
     public static final DeferredTranslation<TranslatableConstant> FLUID_TYPE = TOOLTIP_CATEGORY.registerWithDefault("fluid.type", "Fluid: ");
     public static final DeferredTranslation<TranslatableConstant> FLUID_STORED = TOOLTIP_CATEGORY.registerWithDefault("fluid.stored", "Stored: ");
     public static final DeferredTranslation<TranslatableConstant> FLUID_AMOUNT = TOOLTIP_CATEGORY.registerWithDefault("fluid.amount", "%d");
@@ -61,6 +95,7 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> BASIC_GENERATOR = MENUS_CATEGORY.registerWithDefault("basic_generator", "Basic Generator");
     public static final DeferredTranslation<TranslatableConstant> GEOTHERMAL_GENERATOR = MENUS_CATEGORY.registerWithDefault("geothermal_generator", "Geothermal Generator");
     public static final DeferredTranslation<TranslatableConstant> ELECTRIC_FURNACE = MENUS_CATEGORY.registerWithDefault("electric_furnace", "Electric Furnace");
+    public static final DeferredTranslation<TranslatableConstant> CROP_MANAGER = MENUS_CATEGORY.registerWithDefault("crop_manager", "Crop Manager");
     public static final DeferredTranslation<TranslatableConstant> BASIC_SOLAR_PANEL = MENUS_CATEGORY.registerWithDefault("basic_solar_panel", "Basic Solar Panel");
     public static final DeferredTranslation<TranslatableConstant> COMPRESSOR = MENUS_CATEGORY.registerWithDefault("compressor", "Compressor");
     public static final DeferredTranslation<TranslatableConstant> MACERATOR = MENUS_CATEGORY.registerWithDefault("macerator", "Macerator");

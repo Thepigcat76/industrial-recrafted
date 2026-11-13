@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import com.portingdeadmods.indrec.registries.IRDamageTypes;
 import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import net.minecraft.core.HolderLookup;
@@ -22,5 +23,6 @@ public class IRDatapackEntriesProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.CONFIGURED_FEATURE, IRWorldgenProvider::bootstrapConfiguredFeatures)
             .add(Registries.PLACED_FEATURE, IRWorldgenProvider::bootstrapPlacedFeatures)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, IRBiomeModifiers::bootstrapBiomeModifiers)
-            .add(IRRegistries.CROP, IRCropsProvider::bootstrap);
+            .add(IRRegistries.CROP, IRCropsProvider::bootstrap)
+            .add(Registries.DAMAGE_TYPE, IRDamageTypes::bootstrap);
 }

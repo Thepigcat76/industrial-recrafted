@@ -70,28 +70,12 @@ public interface EnergyHandler {
         return energyFilled;
     }
 
-    /**
-     * @return the amount of energy currently stored
-     */
     int getEnergyStored();
 
-    /**
-     * Sets the energy currently stored to the provided amount
-     *
-     * @param value the new amount of energy
-     */
     void setEnergyStored(int value);
 
-    /**
-     * @return the maximum amount of energy that can be stored
-     */
     int getEnergyCapacity();
 
-    /**
-     * Sets the maximum amount of energy that can be stored to the provided value
-     *
-     * @param value the new maximum amount of energy that can be stored
-     */
     void setEnergyCapacity(int value);
 
     default int getMaxInput() {
@@ -100,6 +84,10 @@ public interface EnergyHandler {
 
     default int getMaxOutput() {
         return getEnergyTier().maxOutput();
+    }
+
+    default boolean isValidTier(EnergyTier energyTier) {
+        return this.getEnergyTier().order() - energyTier.order() <= EnergyTier.MAX_TIER_DIFFERENCE;
     }
 
     default boolean canFillEnergy() {

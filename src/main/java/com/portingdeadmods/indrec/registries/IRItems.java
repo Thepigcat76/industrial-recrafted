@@ -3,6 +3,9 @@ package com.portingdeadmods.indrec.registries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.items.*;
 import com.portingdeadmods.indrec.content.items.electric.*;
+import com.portingdeadmods.indrec.content.items.upgrades.EnergyUpgradeItem;
+import com.portingdeadmods.indrec.content.items.upgrades.OverclockerUpgradeItem;
+import com.portingdeadmods.indrec.content.items.upgrades.TransformerUpgradeItem;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLDeferredRegisterItems;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -27,16 +30,17 @@ public final class IRItems {
     public static final DeferredItem<ElectricDrillItem> ADVANCED_DRILL = ITEMS.registerItem("advanced_drill", ElectricDrillItem::advancedItem);
     public static final DeferredItem<ElectricChainsawItem> BASIC_CHAINSAW = ITEMS.registerItem("basic_chainsaw", ElectricChainsawItem::basicItem);
     public static final DeferredItem<ElectricChainsawItem> ADVANCED_CHAINSAW = ITEMS.registerItem("advanced_chainsaw", ElectricChainsawItem::advancedItem);
+    public static final DeferredItem<CropAnalyzerItem> CROP_ANALYZER = ITEMS.registerItem("crop_analyzer", CropAnalyzerItem::defaultItem);
     /* Electric Armor */
     public static final DeferredItem<NanoArmorItem> NANO_HELMET = ITEMS.registerItem("nano_helmet", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.HELMET));
-    public static final DeferredItem<Item> NANO_CHESTPLATE = ITEMS.registerItem("nano_chestplate", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredItem<Item> NANO_LEGGINGS = ITEMS.registerItem("nano_leggings", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.LEGGINGS));
-    public static final DeferredItem<Item> NANO_BOOTS = ITEMS.registerItem("nano_boots", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.BOOTS));
+    public static final DeferredItem<NanoArmorItem> NANO_CHESTPLATE = ITEMS.registerItem("nano_chestplate", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.CHESTPLATE));
+    public static final DeferredItem<NanoArmorItem> NANO_LEGGINGS = ITEMS.registerItem("nano_leggings", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.LEGGINGS));
+    public static final DeferredItem<NanoArmorItem> NANO_BOOTS = ITEMS.registerItem("nano_boots", props -> NanoArmorItem.defaultItem(props, ArmorItem.Type.BOOTS));
 
-    public static final DeferredItem<Item> QUANTUM_HELMET = ITEMS.registerItem("quantum_helmet", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.HELMET));
-    public static final DeferredItem<Item> QUANTUM_CHESTPLATE = ITEMS.registerItem("quantum_chestplate", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.CHESTPLATE));
-    public static final DeferredItem<Item> QUANTUM_LEGGINGS = ITEMS.registerItem("quantum_leggings", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.LEGGINGS));
-    public static final DeferredItem<Item> QUANTUM_BOOTS = ITEMS.registerItem("quantum_boots", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.BOOTS));
+    public static final DeferredItem<QuantumArmorItem> QUANTUM_HELMET = ITEMS.registerItem("quantum_helmet", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.HELMET));
+    public static final DeferredItem<QuantumArmorItem> QUANTUM_CHESTPLATE = ITEMS.registerItem("quantum_chestplate", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.CHESTPLATE));
+    public static final DeferredItem<QuantumArmorItem> QUANTUM_LEGGINGS = ITEMS.registerItem("quantum_leggings", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.LEGGINGS));
+    public static final DeferredItem<QuantumArmorItem> QUANTUM_BOOTS = ITEMS.registerItem("quantum_boots", props -> QuantumArmorItem.defaultItem(props, ArmorItem.Type.BOOTS));
 
     public static final DeferredItem<FuelJetpackItem> JETPACK = ITEMS.registerItem("jetpack", FuelJetpackItem::defaultItem);
     public static final DeferredItem<ElectricJetpackItem> ELECTRIC_JETPACK = ITEMS.registerItem("electric_jetpack", ElectricJetpackItem::defaultItem);
@@ -44,6 +48,11 @@ public final class IRItems {
     /* Circuits */
     public static final DeferredItem<Item> BASIC_CIRCUIT = ITEMS.registerSimpleItem("basic_circuit");
     public static final DeferredItem<Item> ADVANCED_CIRCUIT = ITEMS.registerSimpleItem("advanced_circuit");
+
+    /* Upgrades */
+    public static final DeferredItem<OverclockerUpgradeItem> OVERCLOCKER_UPGRADE = ITEMS.registerItem("overclocker_upgrade", OverclockerUpgradeItem::new);
+    public static final DeferredItem<EnergyUpgradeItem> ENERGY_UPGRADE = ITEMS.registerItem("energy_upgrade", EnergyUpgradeItem::new);
+    public static final DeferredItem<TransformerUpgradeItem> TRANSFORMER_UPGRADE = ITEMS.registerItem("transformer_upgrade", TransformerUpgradeItem::new);
 
     /* Batteries */
     public static final DeferredItem<BatteryItem> REDSTONE_BATTERY = ITEMS.registerItem("redstone_battery", BatteryItem::batteryItem);
@@ -57,7 +66,7 @@ public final class IRItems {
     public static final DeferredItem<Item> FUSE = ITEMS.registerSimpleItem("fuse");
     public static final DeferredItem<CropSticksItem> CROP_STICKS = ITEMS.registerItem("crop_sticks", CropSticksItem::new);
 
-    /* Coal is way too useful lol */
+    /* Coal */
     public static final DeferredItem<Item> COAL_BALL = ITEMS.registerSimpleItem("coal_ball");
     public static final DeferredItem<Item> COMPRESSED_COAL_BALL = ITEMS.registerSimpleItem("compressed_coal_ball");
     public static final DeferredItem<Item> GRAPHENE = ITEMS.registerSimpleItem("graphene");
@@ -69,11 +78,11 @@ public final class IRItems {
     public static final DeferredItem<ScrapBoxItem> SCRAP_BOX = ITEMS.registerItem("scrap_box", ScrapBoxItem::new);
     public static final DeferredItem<Item> UU_MATTER = ITEMS.registerSimpleItem("uu_matter");
 
-    /* Plant stuff - mmmmm yummy */
+    /* Plants */
     public static final DeferredItem<Item> PLANT_BALL = ITEMS.registerSimpleItem("plant_ball");
 
     /* Rubber */
-    public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("stick_resin");
+    public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");
     public static final DeferredItem<Item> RUBBER = ITEMS.registerSimpleItem("rubber");
 
     /* Reactor */
@@ -87,6 +96,8 @@ public final class IRItems {
     public static final DeferredItem<Item> RAW_IRIDIUM = ITEMS.registerSimpleItem("raw_iridium");
     /* Ingots */
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("tin_ingot");
+    public static final DeferredItem<Item> TIN_NUGGET = ITEMS.registerSimpleItem("tin_nugget");
+    public static final DeferredItem<Item> COPPER_NUGGET = ITEMS.registerSimpleItem("copper_nugget");
     public static final DeferredItem<Item> REFINED_IRON_INGOT = ITEMS.registerSimpleItem("refined_iron_ingot");
     public static final DeferredItem<Item> BRONZE_INGOT = ITEMS.registerSimpleItem("bronze_ingot");
     public static final DeferredItem<Item> IRIDIUM_INGOT = ITEMS.registerSimpleItem("iridium_ingot");

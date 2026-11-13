@@ -1,5 +1,7 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
+import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
+import com.portingdeadmods.portingdeadlibs.PortingDeadLibs;
 import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
@@ -19,11 +21,17 @@ public class IRRuRuLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.IGNORED, "Игнорируется");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.LOW_SIGNAL, "Слабый сигнал");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.HIGH_SIGNAL, "Сильный сигнал");
+
         addItem(IRItems.RAW_TIN, "Необработанное олово");
         addItem(IRItems.RAW_URANIUM, "Необработанный уран");
         addItem(IRItems.RAW_IRIDIUM, "Необработанный иридий");
 
         addItem(IRItems.TIN_INGOT, "Оловянный слиток");
+        addItem(IRItems.TIN_NUGGET, "Оловянный самородок");
+        addItem(IRItems.COPPER_NUGGET, "Медный самородок");
         addItem(IRItems.REFINED_IRON_INGOT, "Очищенное железо");
         addItem(IRItems.URANIUM_INGOT, "Очищенный уран");
         addItem(IRItems.BRONZE_INGOT, "Бронзовый слиток");
@@ -45,6 +53,9 @@ public class IRRuRuLangProvider extends LanguageProvider {
 
         addItem(IRItems.BASIC_CIRCUIT, "Электросхема");
         addItem(IRItems.ADVANCED_CIRCUIT, "Улучшенная электросхема");
+        addItem(IRItems.OVERCLOCKER_UPGRADE, "Улучшение «Разгон»");
+        addItem(IRItems.ENERGY_UPGRADE, "Улучшение «Энергия»");
+        addItem(IRItems.TRANSFORMER_UPGRADE, "Улучшение «Трансформатор»");
 
         addItem(IRItems.WRENCH, "Гаечный ключ");
         addItem(IRItems.TREETAP, "Краник");
@@ -164,6 +175,20 @@ public class IRRuRuLangProvider extends LanguageProvider {
         addBlock(IRBlocks.STRIPPED_RUBBER_TREE_WOOD, "Древесина гевеи");
         addBlock(IRBlocks.RUBBER_TREE_LEAVES, "Листва гевеи");
         addBlock(IRBlocks.RUBBER_TREE_SAPLING, "Саженец гевеи");
+        addBlock(IRBlocks.GOLDEN_DANDELION, "Золотой одуванчик");
+        addBlock(IRBlocks.IRON_VINES, "Железные лозы");
+        addBlock(IRBlocks.TIN_BLOSSOM, "Оловянный цветок");
+        addBlock(IRBlocks.COPRIUM, "Куприум");
+        addBlock(IRBlocks.EXPOSED_COPRIUM, "Потемневший куприум");
+        addBlock(IRBlocks.WEATHERED_COPRIUM, "Состаренный куприум");
+        addBlock(IRBlocks.OXIDIZED_COPRIUM, "Окисленный куприум");
+        addBlock(IRBlocks.WAXED_COPRIUM, "Вощёный куприум");
+        addBlock(IRBlocks.WAXED_EXPOSED_COPRIUM, "Вощёный потемневший куприум");
+        addBlock(IRBlocks.WAXED_WEATHERED_COPRIUM, "Вощёный состаренный куприум");
+        addBlock(IRBlocks.WAXED_OXIDIZED_COPRIUM, "Вощёный окисленный куприум");
+        add("death.attack." + IndustrialRecrafted.MODID + ".iron_vines", "%1$s напоролся на железные лозы");
+        add("death.attack." + IndustrialRecrafted.MODID + ".iron_vines.player", "%1$s напоролся на железные лозы, сражаясь с %2$s");
+        addBlock(IRBlocks.ENDER_LILY, "Лилия Края");
         addBlock(IRBlocks.RUBBER_TREE_PLANKS, "Доски");
         addBlock(IRBlocks.RUBBER_TREE_DOOR, "Дверь");
         addBlock(IRBlocks.RUBBER_TREE_TRAPDOOR, "Люк");
@@ -254,5 +279,10 @@ public class IRRuRuLangProvider extends LanguageProvider {
 
     private void translate(DeferredTranslation<TranslatableConstant> key, String val) {
         add(key.key(), val);
+    }
+
+    // The redstone panel of Porting Dead Libs shows the selected signal type with these keys
+    private void addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType signalType, String translation) {
+        this.add("redstone_signal_type." + PortingDeadLibs.MODID + "." + signalType.getSerializedName(), translation);
     }
 }

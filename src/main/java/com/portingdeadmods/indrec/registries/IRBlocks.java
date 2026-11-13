@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
+import net.minecraft.world.effect.MobEffects;
 import com.portingdeadmods.indrec.IRFeatureFlags;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.blocks.*;
@@ -39,7 +40,6 @@ public final class IRBlocks {
             .sound(SoundType.WOOL)
             .mapColor(MapColor.COLOR_BLACK)
             .strength(0.8f);
-    // CABLES
     public static final DeferredBlock<CableBlock> TIN_CABLE = BLOCKS.registerWithItem("tin_cable",
             () -> new CableBlock(CABLE_BLOCK_PROPS, 6, IREnergyTiers.LOW));
     public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.registerWithItem("copper_cable",
@@ -103,6 +103,47 @@ public final class IRBlocks {
             () -> new FenceGateBlock(RUBBER_WOOD_TYPE, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE_GATE)));
     public static final DeferredBlock<SlabBlock> RUBBER_TREE_SLAB = BLOCKS.registerWithItem("rubber_tree_slab",
             () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB)));
+    public static final DeferredBlock<FlowerBlock> GOLDEN_DANDELION = BLOCKS.registerWithItem("golden_dandelion",
+            () -> new FlowerBlock(MobEffects.SATURATION, 0.35F, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final DeferredBlock<IronVinesBlock> IRON_VINES = BLOCKS.registerWithItem("iron_vines",
+            () -> new IronVinesBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .sound(SoundType.METAL)
+                    .strength(3.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    // Offset like flowers, the shape is dynamic so the collision follows the offset
+                    .offsetType(BlockBehaviour.OffsetType.XZ)
+                    .dynamicShape()
+                    .pushReaction(PushReaction.DESTROY)));
+    // Same as iron vines, but without the offset
+    public static final DeferredBlock<MetalPlantBlock> TIN_BLOSSOM = BLOCKS.registerWithItem("tin_blossom",
+            () -> new MetalPlantBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .sound(SoundType.METAL)
+                    .strength(3.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)));
+    // Plants like flowers, only the sound is the one of copper blocks. They oxidize like copper blocks, see the data maps
+    public static final DeferredBlock<WeatheringCopriumBlock> COPRIUM = BLOCKS.registerWithItem("coprium",
+            () -> new WeatheringCopriumBlock(WeatheringCopper.WeatherState.UNAFFECTED, copriumProperties(MapColor.COLOR_ORANGE)));
+    public static final DeferredBlock<WeatheringCopriumBlock> EXPOSED_COPRIUM = BLOCKS.registerWithItem("exposed_coprium",
+            () -> new WeatheringCopriumBlock(WeatheringCopper.WeatherState.EXPOSED, copriumProperties(MapColor.TERRACOTTA_LIGHT_GRAY)));
+    public static final DeferredBlock<WeatheringCopriumBlock> WEATHERED_COPRIUM = BLOCKS.registerWithItem("weathered_coprium",
+            () -> new WeatheringCopriumBlock(WeatheringCopper.WeatherState.WEATHERED, copriumProperties(MapColor.WARPED_STEM)));
+    public static final DeferredBlock<WeatheringCopriumBlock> OXIDIZED_COPRIUM = BLOCKS.registerWithItem("oxidized_coprium",
+            () -> new WeatheringCopriumBlock(WeatheringCopper.WeatherState.OXIDIZED, copriumProperties(MapColor.WARPED_NYLIUM)));
+    public static final DeferredBlock<MetalPlantBlock> WAXED_COPRIUM = BLOCKS.registerWithItem("waxed_coprium",
+            () -> new MetalPlantBlock(copriumProperties(MapColor.COLOR_ORANGE)));
+    public static final DeferredBlock<MetalPlantBlock> WAXED_EXPOSED_COPRIUM = BLOCKS.registerWithItem("waxed_exposed_coprium",
+            () -> new MetalPlantBlock(copriumProperties(MapColor.TERRACOTTA_LIGHT_GRAY)));
+    public static final DeferredBlock<MetalPlantBlock> WAXED_WEATHERED_COPRIUM = BLOCKS.registerWithItem("waxed_weathered_coprium",
+            () -> new MetalPlantBlock(copriumProperties(MapColor.WARPED_STEM)));
+    public static final DeferredBlock<MetalPlantBlock> WAXED_OXIDIZED_COPRIUM = BLOCKS.registerWithItem("waxed_oxidized_coprium",
+            () -> new MetalPlantBlock(copriumProperties(MapColor.WARPED_NYLIUM)));
+    public static final DeferredBlock<EnderLilyBlock> ENDER_LILY = BLOCKS.registerWithItem("ender_lily",
+            () -> new EnderLilyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_OF_THE_VALLEY).mapColor(MapColor.COLOR_PURPLE)));
     public static final DeferredBlock<TntBlock> NUKE = BLOCKS.registerBlockWithItem("nuke", TntBlock::new);
 
     public static final DeferredBlock<Block> TIN_ORE = BLOCKS.registerWithItem("tin_ore",
@@ -117,18 +158,21 @@ public final class IRBlocks {
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE)));
     public static final DeferredBlock<Block> DEEPSLATE_IRIDIUM_ORE = BLOCKS.registerWithItem("deepslate_iridium_ore",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE)));
-    public static final DeferredBlock<CropBlock> CROP = BLOCKS.registerBlockWithItem("crop", CropBlock::new,
+    public static final DeferredBlock<CropBlock> CROP = BLOCKS.registerBlock("crop", CropBlock::new,
             BlockBehaviour.Properties.of()
-                    .requiredFeatures(IRFeatureFlags.EXPERIMENTAL)
                     .mapColor(MapColor.PLANT)
                     .noCollission()
                     .instabreak()
-                    .sound(SoundType.CROP)
+                    .sound(SoundType.BAMBOO_WOOD)
                     .pushReaction(PushReaction.DESTROY));
+
+    private static BlockBehaviour.Properties copriumProperties(MapColor mapColor) {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION).mapColor(mapColor).sound(SoundType.COPPER);
+    }
 
     static {
         CUSTOM_ITEM_MODELS = Set.of(
-                RUBBER_TREE_FENCE, RUBBER_TREE_TRAPDOOR, RUBBER_TREE_BUTTON, RUBBER_TREE_SAPLING, RUBBER_TREE_DOOR, REINFORCED_DOOR, RUBBER_SHEET, STICKY_RESIN_SHEET, TIN_CABLE, COPPER_CABLE, GOLD_CABLE, HV_CABLE, GLASS_FIBRE_CABLE, BURNT_CABLE, IRMachines.BATTERY_BOX.getBlockSupplier(), IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier()
+                RUBBER_TREE_FENCE, RUBBER_TREE_TRAPDOOR, RUBBER_TREE_BUTTON, RUBBER_TREE_SAPLING, GOLDEN_DANDELION, IRON_VINES, TIN_BLOSSOM, COPRIUM, EXPOSED_COPRIUM, WEATHERED_COPRIUM, OXIDIZED_COPRIUM, WAXED_COPRIUM, WAXED_EXPOSED_COPRIUM, WAXED_WEATHERED_COPRIUM, WAXED_OXIDIZED_COPRIUM, ENDER_LILY, RUBBER_TREE_DOOR, REINFORCED_DOOR, RUBBER_SHEET, STICKY_RESIN_SHEET, TIN_CABLE, COPPER_CABLE, GOLD_CABLE, HV_CABLE, GLASS_FIBRE_CABLE, BURNT_CABLE, IRMachines.BATTERY_BOX.getBlockSupplier(), IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier()
         );
     }
 

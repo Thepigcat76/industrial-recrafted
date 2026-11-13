@@ -7,6 +7,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,8 @@ public interface MachineRecipe {
     int getMaxProgress();
 
     record MachineRecipeInput(List<ItemStack> items, List<FluidStack> fluids) implements RecipeInput {
+        public static final MachineRecipeInput EMPTY = new MachineRecipeInput(Collections.emptyList(), Collections.emptyList());
+
         public MachineRecipeInput(List<ItemStack> items) {
             this(items, List.of());
         }
@@ -58,10 +61,6 @@ public interface MachineRecipe {
 
         public MachineRecipeInput(ItemStack item) {
             this(List.of(item));
-        }
-
-        public MachineRecipeInput() {
-            this(List.of());
         }
 
         @Override

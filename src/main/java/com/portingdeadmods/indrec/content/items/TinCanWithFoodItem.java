@@ -19,7 +19,9 @@ public class TinCanWithFoodItem extends Item {
     }
 
     public static TinCanWithFoodItem defaultItem(Properties properties) {
-        return new TinCanWithFoodItem(properties.food(IRFoodProperties.TIN_CAN).component(IRDataComponents.CANNED_FOOD, new CannedFood(Items.AIR.builtInRegistryHolder().getKey())));
+        return new TinCanWithFoodItem(properties
+                .food(IRFoodProperties.TIN_CAN)
+                .component(IRDataComponents.CANNED_FOOD, new CannedFood(Items.AIR.builtInRegistryHolder().getKey())));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
@@ -41,7 +40,7 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
                 .slots(2)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> item.getBurnTime(RecipeType.SMELTING) > 0;
-                    case 1 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 1 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Basic Generator");
                 })
                 .onChange(this::onItemsChanged));
@@ -80,7 +79,7 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
 //    }
 
     public void onItemsChanged(int slot) {
-        //this.updateData();
+        super.onItemsChanged(slot);
 
         IItemHandler itemHandler = this.getItemHandler();
         if (itemHandler != null) {
@@ -95,34 +94,41 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
     }
 
     @Override
-    public void tick() {
-        super.tick();
-
-        if (this.getRedstoneSignalType().isActive(this.getRedstoneSignalStrength())) {
-            EnergyHandler energyStorage = this.getEuStorage();
-            if (this.burnTime > 0) {
-                if (!level.isClientSide()) {
-                    int filled = energyStorage.forceFillEnergy(getGenerationAmount(), false);
-                    if (filled > 0) {
-                        this.burnTime--;
-                    }
+    protected void tickRecipe() {
+        EnergyHandler energyStorage = this.getEuStorage();
+        if (this.burnTime > 0) {
+            if (!level.isClientSide()) {
+                int filled = energyStorage.forceFillEnergy(getGenerationAmount(), false);
+                if (filled > 0) {
+                    this.burnTime--;
                 }
-                setActive(true);
-            } else {
-                setActive(false);
-                this.maxBurnTime = 0;
-                IItemHandler itemHandler = getItemHandler();
-                ItemStack stack = itemHandler.getStackInSlot(0);
-                int burnTime = stack.getBurnTime(RecipeType.SMELTING);
-                if (burnTime > 0) {
-                    this.burnTime = burnTime;
-                    this.maxBurnTime = burnTime;
-                    itemHandler.extractItem(0, 1, false);
-                }
-
             }
+            setActive(true);
+        } else {
+            setActive(false);
+            this.maxBurnTime = 0;
+            IItemHandler itemHandler = getItemHandler();
+            ItemStack stack = itemHandler.getStackInSlot(0);
+            int burnTime = stack.getBurnTime(RecipeType.SMELTING);
+            if (burnTime > 0) {
+                this.burnTime = burnTime;
+                this.maxBurnTime = burnTime;
+                itemHandler.extractItem(0, 1, false);
+            }
+
         }
 
+        this.outputEnergy();
+    }
+
+    // Stops burning fuel, but the stored energy still gets sent out
+    @Override
+    protected void tickRedstoneDisabled() {
+        super.tickRedstoneDisabled();
+        this.outputEnergy();
+    }
+
+    private void outputEnergy() {
         GeneratorBlockEntity.transportEnergy(level, worldPosition, this.getEuStorage());
 
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
@@ -153,6 +159,7 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new BasicGeneratorMenu(i, inventory, this);
     }
 }

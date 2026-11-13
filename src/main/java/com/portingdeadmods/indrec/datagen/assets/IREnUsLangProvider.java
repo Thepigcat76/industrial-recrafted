@@ -1,11 +1,18 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
+import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
+import com.portingdeadmods.portingdeadlibs.PortingDeadLibs;
+import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
+import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.registries.*;
+import com.portingdeadmods.portingdeadlibs.api.config.PDLConfig;
+import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 import java.util.function.Supplier;
@@ -19,11 +26,46 @@ public class IREnUsLangProvider extends LanguageProvider {
     protected void addTranslations() {
         IRTranslations.TRANSLATIONS.getDefaultTranslations().forEach(this::add);
 
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.IGNORED, "Ignored");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.LOW_SIGNAL, "Low Signal");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.HIGH_SIGNAL, "High Signal");
+        //PDLConfigHelper.generateConfigNames(IRConfig.class, IndustrialRecrafted.MODID, this::add);
+
+        addCrop("stick_reed", "Stick Reed");
+        addCrop("wheat", "Wheat");
+        addCrop("beetroots", "Beetroots");
+        addCrop("carrots", "Carrots");
+        addCrop("potatoes", "Potatoes");
+        addCrop("weed", "Weed");
+        addCrop("melon", "Melon");
+        addCrop("pumpkin", "Pumpkin");
+        addCrop("golden_dandelion", "Golden Dandelion");
+        addCrop("iron_vines", "Iron Vines");
+        addCrop("tin_blossom", "Tin Blossom");
+        addCrop("coprium", "Coprium");
+        addCrop("exposed_coprium", "Exposed Coprium");
+        addCrop("weathered_coprium", "Weathered Coprium");
+        addCrop("oxidized_coprium", "Oxidized Coprium");
+        addCrop("waxed_coprium", "Waxed Coprium");
+        addCrop("wither_rose", "Wither Rose");
+        addCrop("dandelion", "Dandelion");
+        addCrop("poppy", "Poppy");
+        addCrop("ender_lily", "Ender Lily");
+        addCrop("nether_wart", "Nether Wart");
+        addCrop("red_mushroom", "Red Mushroom");
+        addCrop("brown_mushroom", "Brown Mushroom");
+
+        // The crop sticks item is a block item of the crop block, so they share their name
+        addBlock(IRBlocks.CROP, "Crop Sticks");
+        addItem(IRItems.CROP_ANALYZER, "Crop Analyzer");
+
         addItem(IRItems.RAW_TIN, "Raw Tin");
         addItem(IRItems.RAW_URANIUM, "Raw Uranium");
         addItem(IRItems.RAW_IRIDIUM, "Raw Iridium");
 
         addItem(IRItems.TIN_INGOT, "Tin Ingot");
+        addItem(IRItems.TIN_NUGGET, "Tin Nugget");
+        addItem(IRItems.COPPER_NUGGET, "Copper Nugget");
         addItem(IRItems.REFINED_IRON_INGOT, "Refined Iron Ingot");
         addItem(IRItems.URANIUM_INGOT, "Uranium Ingot");
         addItem(IRItems.BRONZE_INGOT, "Bronze Ingot");
@@ -45,6 +87,9 @@ public class IREnUsLangProvider extends LanguageProvider {
 
         addItem(IRItems.BASIC_CIRCUIT, "Basic Circuit");
         addItem(IRItems.ADVANCED_CIRCUIT, "Advanced Circuit");
+        addItem(IRItems.OVERCLOCKER_UPGRADE, "Overclocker Upgrade");
+        addItem(IRItems.ENERGY_UPGRADE, "Energy Upgrade");
+        addItem(IRItems.TRANSFORMER_UPGRADE, "Transformer Upgrade");
 
         addItem(IRItems.WRENCH, "Wrench");
         addItem(IRItems.TREETAP, "Treetap");
@@ -112,6 +157,11 @@ public class IREnUsLangProvider extends LanguageProvider {
         addBlock(IRBlocks.MACHINE_FRAME, "Machine Frame");
         addBlock(IRBlocks.ADVANCED_MACHINE_FRAME, "Advanced Machine Frame");
 
+        addBlock(IRMachines.LOW_TRANSFORMER.getBlockSupplier(), "Low Transformer");
+        addBlock(IRMachines.MEDIUM_TRANSFORMER.getBlockSupplier(), "Medium Transformer");
+        addBlock(IRMachines.HIGH_TRANSFORMER.getBlockSupplier(), "High Transformer");
+        addBlock(IRMachines.EXTREME_TRANSFORMER.getBlockSupplier(), "Extreme Transformer");
+
         addBlock(IRMachines.BATTERY_BOX.getBlockSupplier(), "Battery Box");
         addBlock(IRMachines.BASIC_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Basic Energy Storage Unit");
         addBlock(IRMachines.ADVANCED_ENERGY_STORAGE_UNIT.getBlockSupplier(), "Advanced Energy Storage Unit");
@@ -119,6 +169,7 @@ public class IREnUsLangProvider extends LanguageProvider {
         addBlock(IRMachines.NUCLEAR_REACTOR.getBlockSupplier(), "Nuclear Reactor");
         addBlock(IRMachines.MATTER_FABRICATOR.getBlockSupplier(), "Matter Fabricator");
         addBlock(IRBlocks.NUCLEAR_REACTOR_CHAMBER, "Nuclear Reactor Chamber");
+        addBlock(IRMachines.CROP_MANAGER.getBlockSupplier(), "Crop Manager");
 
         addBlock(IRBlocks.TIN_CABLE, "Tin Cable");
         addBlock(IRBlocks.COPPER_CABLE, "Copper Cable");
@@ -164,6 +215,20 @@ public class IREnUsLangProvider extends LanguageProvider {
         addBlock(IRBlocks.STRIPPED_RUBBER_TREE_WOOD, "Rubber Tree Stripped Wood");
         addBlock(IRBlocks.RUBBER_TREE_LEAVES, "Rubber Tree Leaves");
         addBlock(IRBlocks.RUBBER_TREE_SAPLING, "Rubber Tree Sapling");
+        addBlock(IRBlocks.GOLDEN_DANDELION, "Golden Dandelion");
+        addBlock(IRBlocks.IRON_VINES, "Iron Vines");
+        addBlock(IRBlocks.TIN_BLOSSOM, "Tin Blossom");
+        addBlock(IRBlocks.COPRIUM, "Coprium");
+        addBlock(IRBlocks.EXPOSED_COPRIUM, "Exposed Coprium");
+        addBlock(IRBlocks.WEATHERED_COPRIUM, "Weathered Coprium");
+        addBlock(IRBlocks.OXIDIZED_COPRIUM, "Oxidized Coprium");
+        addBlock(IRBlocks.WAXED_COPRIUM, "Waxed Coprium");
+        addBlock(IRBlocks.WAXED_EXPOSED_COPRIUM, "Waxed Exposed Coprium");
+        addBlock(IRBlocks.WAXED_WEATHERED_COPRIUM, "Waxed Weathered Coprium");
+        addBlock(IRBlocks.WAXED_OXIDIZED_COPRIUM, "Waxed Oxidized Coprium");
+        add("death.attack." + IndustrialRecrafted.MODID + ".iron_vines", "%1$s was impaled on Iron Vines");
+        add("death.attack." + IndustrialRecrafted.MODID + ".iron_vines.player", "%1$s was impaled on Iron Vines while fighting %2$s");
+        addBlock(IRBlocks.ENDER_LILY, "Ender Lily");
         addBlock(IRBlocks.RUBBER_TREE_PLANKS, "Rubber Tree Planks");
         addBlock(IRBlocks.RUBBER_TREE_DOOR, "Rubber Tree Door");
         addBlock(IRBlocks.RUBBER_TREE_TRAPDOOR, "Rubber Tree Trapdoor");
@@ -186,6 +251,10 @@ public class IREnUsLangProvider extends LanguageProvider {
 
     }
 
+    private void addCrop(String path, String val) {
+        add(Crop.getTranslationKey(ResourceKey.create(IRRegistries.CROP, IndustrialRecrafted.rl(path))), val);
+    }
+
     private void addFluid(PDLFluid key, String val) {
         add("fluid." + IndustrialRecrafted.MODID + "." + key.getName(), val);
         add("fluid_type." + IndustrialRecrafted.MODID + "." + key.getName(), val);
@@ -195,4 +264,8 @@ public class IREnUsLangProvider extends LanguageProvider {
         add("energy_tier." + IndustrialRecrafted.MODID + "." + IRRegistries.ENERGY_TIER.getKey(key.get()).getPath(), val);
     }
 
+    // The redstone panel of Porting Dead Libs shows the selected signal type with these keys
+    private void addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType signalType, String translation) {
+        this.add("redstone_signal_type." + PortingDeadLibs.MODID + "." + signalType.getSerializedName(), translation);
+    }
 }

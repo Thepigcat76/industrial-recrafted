@@ -109,9 +109,9 @@ public abstract class PipeBlock extends Block {
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
         int connectionIndex = facingDirection.ordinal();
         BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
-        if (canConnectToPipe(facingBlockState) || (blockEntity != null && canConnectTo(blockEntity))) {
+        if (canConnectToPipe(facingBlockState) || (blockEntity != null && canConnectTo(blockEntity, facingDirection))) {
             return blockState.setValue(CONNECTION[connectionIndex], true);
-        } else if (facingBlockState.isEmpty()) {
+        } else if (facingBlockState.isEmpty() || blockEntity != null) {
             return blockState.setValue(CONNECTION[connectionIndex], false);
         }
 
@@ -131,7 +131,7 @@ public abstract class PipeBlock extends Block {
             BlockPos facingBlockPos = blockPos.relative(direction);
             BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
 
-            if (blockEntity != null && canConnectTo(blockEntity)) {
+            if (blockEntity != null && canConnectTo(blockEntity, direction)) {
                 blockState = blockState.setValue(CONNECTION[connectionIndex], true);
             }
         }
@@ -151,5 +151,8 @@ public abstract class PipeBlock extends Block {
 
     public abstract boolean canConnectToPipe(BlockState connectTo);
 
-    public abstract boolean canConnectTo(@Nullable BlockEntity connectTo);
+    /**
+     * @param direction the direction from the pipe towards {@code connectTo}
+     */
+    public abstract boolean canConnectTo(@Nullable BlockEntity connectTo, Direction direction);
 }

@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
@@ -27,19 +26,15 @@ public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuPro
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(1)
                 .validator((slot, item) -> {
-                    if (slot == 0) return item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    if (slot == 0) return this.isValidChargingItem(item);
                     throw new IllegalArgumentException("Non existent slot " + slot + "on Solar Panel");
                 })
                 .onChange(this::onItemsChanged));
     }
 
     @Override
-    protected void onItemsChanged(int slot) {
-    }
-
-    @Override
     public void tickRecipe() {
-        if (level.isDay() && level.canSeeSky(this.worldPosition.above())) {
+        if (!level.isClientSide() && level.isDay() && level.canSeeSky(this.worldPosition.above())) {
             this.getEuStorage().forceFillEnergy(this.getGenerationAmount(), false);
         }
 
@@ -47,13 +42,8 @@ public class SolarPanelBlockEntity extends MachineBlockEntity implements MenuPro
     }
 
     @Override
-    protected void onEuChanged(int oldAmount) {
-        this.updateData();
-    }
-
-    @Override
     protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
-        return new MachineRecipe.MachineRecipeInput();
+        return MachineRecipe.MachineRecipeInput.EMPTY;
     }
 
     @Override

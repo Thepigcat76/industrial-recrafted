@@ -21,11 +21,6 @@ public class WindMillBlockEntity extends MachineBlockEntity implements Generator
     }
 
     @Override
-    protected void onEuChanged(int oldAmount) {
-        this.updateData();
-    }
-
-    @Override
     public void tick() {
         super.tick();
 

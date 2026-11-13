@@ -13,4 +13,8 @@ public interface ItemInputComponentFlag extends RecipeComponentFlag {
 
     boolean test(List<ItemStack> items, boolean strict);
 
+    default boolean isSpecial() {
+        return false;
+    }
+
 }

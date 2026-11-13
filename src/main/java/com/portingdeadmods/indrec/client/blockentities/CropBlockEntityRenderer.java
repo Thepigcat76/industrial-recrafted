@@ -37,7 +37,7 @@ public class CropBlockEntityRenderer extends PDLBERenderer<CropBlockEntity> {
         if (crop != null) {
             Crop.Models models = crop.value().models();
             if (models instanceof Crop.Models.ForAge(Map<String, ResourceLocation> modelsForAge)) {
-                ResourceLocation resourceLocation = modelsForAge.get("age=0");
+                ResourceLocation resourceLocation = modelsForAge.get("age=" + blockEntity.getAge());
                 ModelResourceLocation modeLocation = ModelResourceLocation.standalone(resourceLocation);
                 BakedModel model = modelManager.getModel(modeLocation);
                 this.context.getBlockRenderDispatcher().getModelRenderer().renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.CUTOUT), blockEntity.getBlockState(), model, 255, 255, 255, packedLight, packedOverlay, ModelData.EMPTY, RenderType.CUTOUT);
@@ -49,7 +49,7 @@ public class CropBlockEntityRenderer extends PDLBERenderer<CropBlockEntity> {
                         .orElse(null) instanceof IntegerProperty p ? p : null);
                 BlockState newState = state;
                 if (ageProp != null) {
-                    newState = state.setValue(ageProp, crop.value().stages());
+                    newState = state.setValue(ageProp, blockEntity.getAge());
                 }
                 this.context.getBlockRenderDispatcher().renderSingleBlock(newState, poseStack, bufferSource, packedLight, packedOverlay, ModelData.EMPTY, RenderType.CUTOUT);
             }

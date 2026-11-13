@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.CompressorMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
@@ -20,18 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-public class CompressorBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class CompressorBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public CompressorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.COMPRESSOR, blockPos, blockState);
+        this.addUpgradeItemHandler(UpgradeBlockEntity.DEFAULT_UPGRADE_SLOTS);
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> true;
                     case 1 -> false;
-                    case 2 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 2 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Compressor");
                 })
                 .onChange(this::onItemsChanged));
@@ -50,6 +51,7 @@ public class CompressorBlockEntity extends MachineBlockEntity implements MenuPro
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new CompressorMenu(i, inventory, this);
     }
 }

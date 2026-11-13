@@ -2,11 +2,14 @@ package com.portingdeadmods.indrec.api.blocks;
 
 import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.blocks.EnergyTierBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRMachines;
+import com.portingdeadmods.indrec.registries.IRTranslations;
+import com.portingdeadmods.indrec.utils.EnergyHelper;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
@@ -88,6 +91,14 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         registerDefaultState(defaultState);
     }
 
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MachineBlockEntity be) {
+            be.updateRedstoneSignalStrength();
+        }
+    }
+
     public static boolean isActive(BlockState state) {
         return state.hasProperty(PDLBlockStateProperties.ACTIVE) && state.getValue(PDLBlockStateProperties.ACTIVE);
     }
@@ -142,9 +153,19 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         MachineBlockEntity be = BlockUtils.getBE(MachineBlockEntity.class, level, pos);
         if (be != null && be.isBurnt() && stack.is(IRItems.FUSE)) {
-            stack.shrink(1);
+            if (!player.isCreative()) {
+                stack.shrink(1);
+            }
             be.setBurnt(false);
             level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.5f, 0.75f);
+            return ItemInteractionResult.SUCCESS;
+        }
+        // Burnt machines can't be opened either. If the upgrade doesn't fit this falls through to opening the machine
+        if (be instanceof UpgradeBlockEntity upgradeBE && !be.isBurnt() && upgradeBE.insertUpgrade(stack, level.isClientSide())) {
+            if (!level.isClientSide()) {
+                stack.consume(1, player);
+            }
+            level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS);
             return ItemInteractionResult.SUCCESS;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
@@ -156,11 +177,14 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
         if (be != null && !be.isBurnt()) {
             return super.useWithoutItem(state, level, pos, player, hitResult);
         }
+        if (be != null && !level.isClientSide()) {
+            player.displayClientMessage(IRTranslations.MACHINE_BURNT.component().withStyle(ChatFormatting.RED), true);
+        }
         return InteractionResult.FAIL;
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         Builder builder1 = IRMachine.MACHINE_BLOCK_BUILDER.get();
 
         if (builder1.rotatable) {
@@ -206,13 +230,6 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
-
-        BlockUtils.getBE(MachineBlockEntity.class, level, pos).initCapCache();
-    }
-
-    @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         if (this.activatable && isActive(state)) {
             return 7;
@@ -238,20 +255,30 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
 
-        TooltipUtils.addEnergyTierTooltip(tooltipComponents, this.getEnergyTier());
+        addEnergyTierTooltip(tooltipComponents);
 
         if (!tooltipFlag.hasShiftDown()) {
             tooltipComponents.add(Component.literal("Hold SHIFT for more information").withStyle(ChatFormatting.GRAY));
         } else {
-            tooltipComponents.add(Component.literal("%sCapacity:%s %s EU".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.machine.getEnergyCapacity()))).withStyle(ChatFormatting.GOLD));
+            appendEnergyInfoTooltip(tooltipComponents);
+        }
+    }
 
-            if (this.machine.allowInsertEnergy()) {
-                tooltipComponents.add(Component.literal("%sMax In:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.getEnergyTier().maxInput()))).withStyle(ChatFormatting.GREEN));
-            }
+    protected void addEnergyTierTooltip(List<Component> tooltipComponents) {
+        TooltipUtils.addEnergyTierTooltip(tooltipComponents, this.getEnergyTier());
+    }
 
-            if (this.machine.allowExtractEnergy()) {
-                tooltipComponents.add(Component.literal("%sMax Out:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, TooltipUtils.formatEnergy(this.getEnergyTier().maxOutput()))).withStyle(ChatFormatting.GREEN));
-            }
+    protected void appendEnergyInfoTooltip(List<Component> tooltipComponents) {
+        if (this.machine.canStoreEnergy()) {
+            tooltipComponents.add(Component.literal("%sCapacity:%s %s EU".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, EnergyHelper.formatEnergy(this.machine.getEnergyCapacity()))).withStyle(ChatFormatting.GOLD));
+        }
+
+        if (this.machine.allowInsertEnergy()) {
+            tooltipComponents.add(Component.literal("%sMax In:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, EnergyHelper.formatEnergy(this.getEnergyTier().maxInput()))).withStyle(ChatFormatting.GREEN));
+        }
+
+        if (this.machine.allowExtractEnergy()) {
+            tooltipComponents.add(Component.literal("%sMax Out:%s %s EU/t".formatted(ChatFormatting.GRAY, ChatFormatting.RESET, EnergyHelper.formatEnergy(this.getEnergyTier().maxOutput()))).withStyle(ChatFormatting.GREEN));
         }
     }
 

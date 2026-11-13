@@ -1,0 +1,6 @@
+{
+  "parent": "indrec:block/weed_base",
+  "textures": {
+    "texture": "indrec:block/crops/weed_stage_0"
+  }
+}

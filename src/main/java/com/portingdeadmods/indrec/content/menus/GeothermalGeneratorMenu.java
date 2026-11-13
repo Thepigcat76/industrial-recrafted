@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class GeothermalGeneratorMenu extends MachineMenu<GeothermalGeneratorBlockEntity> {
     public GeothermalGeneratorMenu(int containerId, @NotNull Inventory inv, @NotNull GeothermalGeneratorBlockEntity blockEntity) {
         super(IRMachines.GEOTHERMAL_GENERATOR.getMenuType(), containerId, inv, blockEntity);
-        // do stuff
         IItemHandler handler = blockEntity.getItemHandler();
         this.addSlot(new SlotItemHandler(handler, 0, 70, 20));
         this.addSlot(new SlotItemHandler(handler, 1, 70, 64));

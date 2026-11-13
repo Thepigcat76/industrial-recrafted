@@ -20,18 +20,20 @@ import java.util.List;
 import java.util.Locale;
 
 public final class TooltipUtils {
-    private static final DecimalFormat DF;
-
-    public static String formatEnergy(int energy) {
-        return DF.format(energy);
+    /**
+     * Formats a chance (0-1) as a percentage with at most one decimal, e.g. 0.65 -> "65", 0.125 -> "12.5".
+     * Floats like 0.65f aren't exact, so multiplying them directly shows many digits
+     */
+    public static String formatChance(float chance) {
+        return new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(Locale.ROOT)).format(chance * 100);
     }
 
     public static void addEnergyTooltip(List<Component> tooltip, ItemStack itemStack) {
         EnergyHandler energyStorage = itemStack.getCapability(IRCapabilities.ENERGY_ITEM);
         if (energyStorage != null) {
 
-            String energyStored = formatEnergy(energyStorage.getEnergyStored());
-            String energyCapacity = formatEnergy(energyStorage.getEnergyCapacity());
+            String energyStored = EnergyHelper.formatEnergy(energyStorage.getEnergyStored());
+            String energyCapacity = EnergyHelper.formatEnergy(energyStorage.getEnergyCapacity());
             tooltip.add(
                     IRTranslations.ENERGY_STORED.component()
                             .withStyle(ChatFormatting.GRAY)
@@ -101,15 +103,6 @@ public final class TooltipUtils {
                 .append(IRTranslations.FLUID_UNIT.component()
                         .withStyle(ChatFormatting.WHITE)));
 
-    }
-
-    static {
-        DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ROOT);
-        sym.setGroupingSeparator(',');
-
-        DF = new DecimalFormat("#,###", sym);
-        DF.setGroupingSize(3);
-        DF.setGroupingUsed(true);
     }
 
 }

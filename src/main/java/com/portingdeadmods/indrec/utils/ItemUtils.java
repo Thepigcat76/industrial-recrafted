@@ -1,6 +1,7 @@
 package com.portingdeadmods.indrec.utils;
 
 import com.portingdeadmods.indrec.registries.IRDataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
+import org.jetbrains.annotations.Nullable;
 
 import static net.neoforged.neoforge.items.ItemHandlerHelper.insertItemStacked;
 
@@ -16,10 +18,17 @@ public final class ItemUtils {
         return stack.getOrDefault(IRDataComponents.ACTIVE, false);
     }
 
-    public static boolean toggleActive(ItemStack stack) {
+    public static boolean toggleActive(@Nullable Player player, ItemStack stack) {
+        return toggleActive(player, stack, true);
+    }
+
+    public static boolean toggleActive(@Nullable Player player, ItemStack stack, boolean displayMessage) {
         if (stack.has(IRDataComponents.ACTIVE)) {
             boolean active = ItemUtils.isActive(stack);
             stack.set(IRDataComponents.ACTIVE, !active);
+            if (displayMessage && player != null) {
+                player.displayClientMessage(Component.literal("Toggled ").append(stack.getDisplayName()).append(": " + (!active ? "Active" : "Inactive")), true);
+            }
             return !active;
         }
         return false;
@@ -39,18 +48,14 @@ public final class ItemUtils {
         IItemHandler inventory = new PlayerMainInvWrapper(player.getInventory());
         Level level = player.level();
 
-        // try adding it into the inventory
         ItemStack remainder = stack;
-        // insert into preferred slot first
         if (preferredSlot >= 0 && preferredSlot < inventory.getSlots()) {
             remainder = inventory.insertItem(preferredSlot, stack, false);
         }
-        // then into the inventory in general
         if (!remainder.isEmpty()) {
             remainder = insertItemStacked(inventory, remainder, false);
         }
 
-        // drop remaining itemstack into the level
         if (!remainder.isEmpty() && !level.isClientSide) {
             ItemEntity entityitem = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
             entityitem.setPickUpDelay(40);

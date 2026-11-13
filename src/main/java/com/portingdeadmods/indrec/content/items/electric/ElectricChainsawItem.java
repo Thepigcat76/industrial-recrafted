@@ -60,7 +60,7 @@ public class ElectricChainsawItem extends ElectricDiggerItem {
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand interactionHand) {
         ItemStack stack = player.getItemInHand(interactionHand);
         if (this.hasTreeCutter && player.isShiftKeyDown()) {
-            boolean active = ItemUtils.toggleActive(stack);
+            boolean active = ItemUtils.toggleActive(player, stack);
             player.displayClientMessage(IRTranslations.TOGGLED_TREE_CUTTER.component(active ? IRTranslations.ON.component().getString() : IRTranslations.OFF.component().getString()).withStyle(ChatFormatting.GRAY), true);
             return InteractionResultHolder.success(stack);
         }

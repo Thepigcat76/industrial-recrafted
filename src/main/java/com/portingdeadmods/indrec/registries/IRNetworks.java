@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
+import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import com.portingdeadmods.indrec.content.networks.EnergyNetwork;
 import com.portingdeadmods.indrec.content.networks.EnergyTransportHandler;
 import com.thepigcat.transportlib.TransportLib;

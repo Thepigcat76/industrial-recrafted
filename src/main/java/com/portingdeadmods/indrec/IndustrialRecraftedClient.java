@@ -5,6 +5,9 @@ import com.portingdeadmods.indrec.client.blockentities.CropBlockEntityRenderer;
 import com.portingdeadmods.indrec.client.blockentities.WaterMillBlockEntityRenderer;
 import com.portingdeadmods.indrec.client.blockentities.WindMillBlockEntityRenderer;
 import com.portingdeadmods.indrec.client.items.IRItemProperties;
+import com.portingdeadmods.indrec.client.items.MiningLaserClientExtensions;
+import com.portingdeadmods.indrec.client.overlays.CropAnalyzerOverlay;
+import com.portingdeadmods.indrec.client.particles.LaserBeamParticle;
 import com.portingdeadmods.indrec.client.screens.*;
 import com.portingdeadmods.indrec.content.blockentities.WaterMillBlockEntity;
 import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
@@ -31,9 +34,13 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.model.DynamicFluidContainerModel;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -51,9 +58,13 @@ public final class IndustrialRecraftedClient {
         modEventBus.addListener(this::registerMenuScreens);
         modEventBus.addListener(this::onClientSetup);
         modEventBus.addListener(this::registerItemColor);
+        modEventBus.addListener(this::registerGuiLayers);
         modEventBus.addListener(this::registerEntityRenderers);
         modEventBus.addListener(this::registerAdditionalModels);
+        modEventBus.addListener(this::registerParticleProviders);
+        modEventBus.addListener(this::registerClientExtensions);
         NeoForge.EVENT_BUS.addListener(TransportNetworkRenderer::renderNetworkNodes);
+        NeoForge.EVENT_BUS.addListener(CropAnalyzerOverlay::onMouseScroll);
 
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
@@ -68,6 +79,7 @@ public final class IndustrialRecraftedClient {
         event.register(IRMachines.RECYCLER.getMenuType(), RecyclerScreen::new);
         event.register(IRMachines.CANNING_MACHINE.getMenuType(), CanningMachineScreen::new);
         event.register(IRMachines.BASIC_SOLAR_PANEL.getMenuType(), SolarPanelScreen::new);
+        event.register(IRMachines.CROP_MANAGER.getMenuType(), CropManagerScreen::new);
         event.register(IRMachines.BATTERY_BOX.getMenuType(), BatteryBoxScreen::new);
         event.register(IRMachines.MATTER_FABRICATOR.getMenuType(), MatterFabricatorScreen::new);
     }
@@ -75,6 +87,14 @@ public final class IndustrialRecraftedClient {
     private void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
         event.register(WINDMILL_BLADE_MODEL);
         event.register(WATERMILL_BLADE_MODEL);
+    }
+
+    private void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(IRParticleTypes.LASER_BEAM.get(), LaserBeamParticle.Provider::new);
+    }
+
+    private void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new MiningLaserClientExtensions(), IRItems.MINING_LASER.get());
     }
 
     private void onClientSetup(FMLClientSetupEvent event) {
@@ -110,6 +130,10 @@ public final class IndustrialRecraftedClient {
                 ItemProperties.register(item, IRItemProperties.BATTERY_STAGE_KEY, IRItemProperties::getBatteryStage);
             }
         }
+    }
+
+    private void registerGuiLayers(RegisterGuiLayersEvent event) {
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR, IndustrialRecrafted.rl("crop_analyzer"), new CropAnalyzerOverlay());
     }
 
     private void registerItemColor(RegisterColorHandlersEvent.Item event) {

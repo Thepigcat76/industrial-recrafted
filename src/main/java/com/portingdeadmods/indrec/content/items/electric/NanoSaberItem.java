@@ -60,8 +60,7 @@ public class NanoSaberItem extends ElectricSwordItem {
         ItemStack stack = player.getItemInHand(interactionHand);
         EnergyHandler energyStorage = getEnergyCap(stack);
         if (player.isShiftKeyDown() && energyStorage.getEnergyStored() > 0) {
-            ItemUtils.toggleActive(stack);
-            // TODO: Display message?
+            ItemUtils.toggleActive(player, stack);
             stack.set(DataComponents.ATTRIBUTE_MODIFIERS, createAttributes(stack));
             return InteractionResultHolder.success(stack);
         }

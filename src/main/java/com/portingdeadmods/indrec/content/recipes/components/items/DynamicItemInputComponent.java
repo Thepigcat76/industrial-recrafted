@@ -46,4 +46,9 @@ public class DynamicItemInputComponent implements RecipeComponent, ItemInputComp
     public boolean test(List<ItemStack> items, boolean strict) {
         return this.testFunction.test(items, strict);
     }
+
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
 }

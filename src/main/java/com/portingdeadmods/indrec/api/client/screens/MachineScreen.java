@@ -21,7 +21,19 @@ public abstract class MachineScreen<T extends MachineMenu<?>> extends PDLAbstrac
 
     @Override
     protected void init() {
+        // Widgets get created again whenever the screen is resized
+        this.panelWidgets.clear();
         super.init();
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
+        for (Rect2i bounds : this.getBounds()) {
+            if (bounds.contains((int) mouseX, (int) mouseY)) {
+                return false;
+            }
+        }
+        return super.hasClickedOutside(mouseX, mouseY, guiLeft, guiTop, mouseButton);
     }
 
     public void addPanelWidget(PanelWidget widget) {

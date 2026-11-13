@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.client.screens;
 
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
+import com.portingdeadmods.indrec.client.screens.widgets.IREnergyBarWidget;
 import com.portingdeadmods.indrec.content.menus.BatteryBoxMenu;
 import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.registries.IRTranslations;
@@ -26,8 +27,9 @@ public class BatteryBoxScreen extends MachineScreen<BatteryBoxMenu> {
         this.imageHeight = 186;
         this.inventoryLabelY = this.imageHeight - 94;
         super.init();
-        EnergyBarWidget energyBarWidget = addRenderableOnly(
-                new EnergyBarWidget(this.leftPos + (this.imageWidth - 12) / 2, this.topPos + 28, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString(), true)
+        IREnergyBarWidget energyBarWidget = addRenderableOnly(
+                new IREnergyBarWidget(this.leftPos + (this.imageWidth - 12) / 2, this.topPos + 28,12, 48, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString())
+                        .setHasBorder(true)
         );
         addPanelWidget(new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2));
         //addRenderableOnly(new BatterySlotWidget(this.leftPos + (this.imageWidth - 16) / 2, this.topPos + 14 + energyBarWidget.getHeight() + 5));

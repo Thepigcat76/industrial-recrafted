@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.ExtractorMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
@@ -23,18 +23,19 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public ExtractorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.EXTRACTOR, blockPos, blockState);
+        this.addUpgradeItemHandler(UpgradeBlockEntity.DEFAULT_UPGRADE_SLOTS);
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(4)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> true;
                     case 1, 2 -> false;
-                    case 3 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 3 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Extractor");
                 })
                 .onChange(this::onItemsChanged));
@@ -43,34 +44,11 @@ public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProv
 
     @Override
     protected void playMachineSound() {
-        if (this.progress % 12 == 0) {
+        // Not based on the progress, which skips over exact values when overclocked
+        if (this.level.getGameTime() % 12 == 0) {
             this.level.playSound(null, worldPosition, IRSoundEvents.EXTRACTOR.get(), SoundSource.BLOCKS, 0.08f, 1f);
         }
     }
-
-//    @Override
-//    public void tickRecipe() {
-//        if (!this.level.isClientSide()) {
-//            if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
-//                if (this.progress < this.getMaxProgress()) {
-//                    this.progress++;
-//                    this.getEuStorage().forceDrainEnergy(3, false);
-//                    setActive(true);
-//                } else {
-//                    this.progress = 0;
-//                    ItemStack resultItem = this.cachedRecipe.getResultItem(this.level.registryAccess());
-//                    int inputCount = this.cachedRecipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT).getIngredients().getFirst().count();
-//                    forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, resultItem.copy(), false, this::onItemsChanged);
-//                    this.getItemHandler().extractItem(0, inputCount, false);
-//                    setActive(false);
-//                }
-//            } else if (this.progress != 0) {
-//                this.progress = 0;
-//                this.updateData();
-//                setActive(false);
-//            }
-//        }
-//    }
 
     @Override
     public IItemHandler getItemHandlerOnSide(Direction direction) {
@@ -84,6 +62,7 @@ public class ExtractorBlockEntity extends MachineBlockEntity implements MenuProv
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new ExtractorMenu(i, inventory, this);
     }
 

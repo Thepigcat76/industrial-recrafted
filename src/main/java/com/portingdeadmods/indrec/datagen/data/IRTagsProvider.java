@@ -1,9 +1,15 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.data.tags.TagsProvider;
+import com.portingdeadmods.indrec.registries.IRDamageTypes;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRBlocks;
+import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.tags.CTags;
 import com.portingdeadmods.indrec.tags.IRTags;
@@ -21,6 +27,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -48,10 +55,12 @@ public class IRTagsProvider {
             CTags.ItemTags.TAGS.forEach(this::addTag);
             IRTags.ItemTags.TAGS.forEach(this::addTag);
 
-            tag(ItemTags.PLANKS)
-                    .add(IRBlocks.RUBBER_TREE_PLANKS.asItem());
+            tag(ItemTags.HOES).add(IRItems.ELECTRIC_HOE.get());
+
+            tag(ItemTags.PLANKS).add(IRBlocks.RUBBER_TREE_PLANKS.asItem());
 
             tag(ItemTags.SAPLINGS).add(IRBlocks.RUBBER_TREE_SAPLING.asItem());
+            tag(ItemTags.SMALL_FLOWERS).add(IRBlocks.GOLDEN_DANDELION.asItem(), IRBlocks.ENDER_LILY.asItem());
 
             tag(ItemTags.LOGS_THAT_BURN)
                     .add(IRBlocks.RUBBER_TREE_LOG.asItem())
@@ -78,8 +87,10 @@ public class IRTagsProvider {
                 .add(IRBlocks.BRONZE_BLOCK.get())
                 .add(IRBlocks.URANIUM_BLOCK.get())
                 .add(IRBlocks.NUCLEAR_REACTOR_CHAMBER.get())
+                .add(IRBlocks.IRON_VINES.get())
+                .add(IRBlocks.TIN_BLOSSOM.get())
                 .addAll(IRMachines.HELPER.getMachines().stream()
-                        .filter(m -> m != IRMachines.BATTERY_BOX)
+                        .filter(m -> m != IRMachines.BATTERY_BOX && m != IRMachines.LOW_TRANSFORMER)
                         .map(IRMachine::getBlock)
                         .toList())
                 .build();
@@ -96,6 +107,7 @@ public class IRTagsProvider {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             IRTags.BlockTags.TAGS.forEach(this::addTag);
+            CTags.BlockTags.TAGS.forEach(this::addTag);
 
             this.tag(IRTags.BlockTags.WRENCHABLE)
                     .add(IRBlocks.TIN_CABLE.get())
@@ -116,6 +128,7 @@ public class IRTagsProvider {
 
             this.tag(BlockTags.NEEDS_STONE_TOOL)
                     .add(IRMachines.BATTERY_BOX.getBlock())
+                    .add(IRMachines.LOW_TRANSFORMER.getBlock())
                     .add(STONE_PICKAXE_MINEABLE.toArray(Block[]::new));
             this.tag(BlockTags.NEEDS_IRON_TOOL).add(IRON_PICKAXE_MINEABLE.toArray(Block[]::new));
             this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -123,13 +136,18 @@ public class IRTagsProvider {
                     .add(IRON_PICKAXE_MINEABLE.toArray(Block[]::new));
 
             this.tag(BlockTags.MINEABLE_WITH_AXE)
-                    .add(IRMachines.BATTERY_BOX.getBlock());
+                    .add(IRMachines.BATTERY_BOX.getBlock())
+                    .add(IRMachines.LOW_TRANSFORMER.getBlock());
 
             tag(BlockTags.PLANKS)
                     .add(IRBlocks.RUBBER_TREE_PLANKS.get());
 
             tag(BlockTags.SAPLINGS)
                     .add(IRBlocks.RUBBER_TREE_SAPLING.get());
+
+            tag(BlockTags.SMALL_FLOWERS)
+                    .add(IRBlocks.GOLDEN_DANDELION.get())
+                    .add(IRBlocks.ENDER_LILY.get());
 
             tag(BlockTags.LOGS_THAT_BURN)
                     .add(IRBlocks.RUBBER_TREE_RESIN_HOLE.get())
@@ -172,6 +190,21 @@ public class IRTagsProvider {
                 entry.ifLeft(tag::add);
                 entry.ifRight(tag::addTag);
             }
+        }
+    }
+
+    public static class DamageTypesProvider extends TagsProvider<DamageType> {
+        /**
+         * @param provider has to contain the mod's damage types, use the registry provider of the datapack entries provider
+         */
+        public DamageTypesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, Registries.DAMAGE_TYPE, provider, IndustrialRecrafted.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            // Like the stalagmite damage type, so feather falling reduces it
+            tag(DamageTypeTags.IS_FALL).add(IRDamageTypes.IRON_VINES);
         }
     }
 

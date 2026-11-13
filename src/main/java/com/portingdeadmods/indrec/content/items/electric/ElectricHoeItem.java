@@ -8,6 +8,7 @@ import com.portingdeadmods.indrec.impl.energy.ComponentEuStorage;
 import com.portingdeadmods.indrec.impl.energy.EnergyTierImpl;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;
+import com.portingdeadmods.indrec.utils.CropHarvestUtils;
 import com.portingdeadmods.indrec.utils.ItemBarUtils;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
 import net.minecraft.core.BlockPos;
@@ -16,12 +17,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbilities;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -72,10 +75,24 @@ public class ElectricHoeItem extends HoeItem implements EnergyItem, ElectricCons
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        if (!level.isClientSide() && state.getDestroySpeed(level, pos) != 0 && canWork(stack, miningEntity)) {
+            consumeEnergy(stack, miningEntity);
+        }
+        return true;
+    }
+
+    @Override
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
         ItemStack itemInHand = context.getItemInHand();
+
+        // Vanilla and other crop-like blocks. Industrial crops are harvested in the industrial crop block's useItemOn, which runs before this
+        if (CropHarvestUtils.isHarvestable(level.getBlockState(blockpos))) {
+            return CropHarvestUtils.tryHarvest(level, blockpos, itemInHand, context.getPlayer(), context.getHand());
+        }
+
         BlockState toolModifiedState = level.getBlockState(blockpos).getToolModifiedState(context, ItemAbilities.HOE_TILL, false);
         Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, changeIntoState(toolModifiedState));
 

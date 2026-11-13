@@ -3,35 +3,22 @@ package com.portingdeadmods.indrec.registries;
 
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blocks.MachineBlock;
+import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.content.blockentities.*;
+import com.portingdeadmods.indrec.content.blocks.TransformerBlock;
 import com.portingdeadmods.indrec.content.menus.*;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.indrec.utils.machines.MachineRegistrationHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.apache.commons.lang3.function.TriFunction;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public final class IRMachines {
     public static final MachineRegistrationHelper HELPER = new MachineRegistrationHelper(IRBlocks.BLOCKS, IRItems.ITEMS, IRBlockEntityTypes.BLOCK_ENTITY_TYPES, IRMenuTypes.MENU_TYPES);
 
-    public static final IRMachine BASIC_GENERATOR = HELPER.registerMachine("basic_generator", IRMachine.builder(IREnergyTiers.LOW)
-            .block(MachineBlock::new, MachineBlock.builder()
-                    .activatable()
-                    .rotatableHorizontal()
-                    .ticking()
-            )
-            .energy(() -> IRConfig.basicGeneratorEnergyCapacity, false, true)
-            .blockEntity(BasicGeneratorBlockEntity::new)
-            .menu(BasicGeneratorMenu::new));
-    public static final IRMachine GEOTHERMAL_GENERATOR = HELPER.registerMachine("geothermal_generator", IRMachine.builder(IREnergyTiers.MEDIUM)
-            .block(MachineBlock::new, MachineBlock.builder()
-                    .activatable()
-                    .rotatableHorizontal()
-                    .ticking()
-            )
-            .energy(() -> IRConfig.geothermalGeneratorEnergyCapacity, false, true)
-            .recipeLayout(IRRecipeLayouts.GEOTHERMAL_GENERATOR)
-            .blockEntity(GeothermalGeneratorBlockEntity::new)
-            .menu(GeothermalGeneratorMenu::new));
     public static final IRMachine ELECTRIC_FURNACE = HELPER.registerMachine("electric_furnace", IRMachine.builder(IREnergyTiers.LOW)
             .block(MachineBlock::new, MachineBlock.builder()
                     .activatable()
@@ -49,6 +36,14 @@ public final class IRMachines {
             )
             .energy(() -> IRConfig.chargePadEnergyCapacity, true, false)
             .blockEntity(ChargePadBlockEntity::new));
+    public static final IRMachine CROP_MANAGER = HELPER.registerMachine("crop_manager", IRMachine.builder(IREnergyTiers.MEDIUM)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.cropManagerEnergyCapacity, true, false)
+            .blockEntity(CropManagerBlockEntity::new)
+            .menu(CropManagerMenu::new));
     public static final IRMachine COMPRESSOR = HELPER.registerMachine("compressor", IRMachine.builder(IREnergyTiers.LOW)
             .block(MachineBlock::new, MachineBlock.builder()
                     .activatable()
@@ -99,6 +94,15 @@ public final class IRMachines {
             .recipeLayout(IRRecipeLayouts.CANNING_MACHINE)
             .blockEntity(CanningMachineBlockEntity::new)
             .menu(CanningMachineMenu::new));
+    public static final IRMachine MATTER_FABRICATOR = HELPER.registerMachine("matter_fabricator", IRMachine.builder(IREnergyTiers.INSANE)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.matterFabricatorEnergyCapacity, true, false)
+            .blockEntity(MatterFabricatorBlockEntity::new)
+            .menu(MatterFabricatorMenu::new));
     public static final IRMachine BASIC_SOLAR_PANEL = HELPER.registerMachine("basic_solar_panel", IRMachine.builder(IREnergyTiers.LOW)
             .block(MachineBlock::new, MachineBlock.builder()
                     .activatable()
@@ -108,6 +112,52 @@ public final class IRMachines {
             .energy(() -> IRConfig.basicSolarPanelEnergyCapacity, false, true)
             .blockEntity(SolarPanelBlockEntity::new)
             .menu(SolarPanelMenu::new));
+    public static final IRMachine BASIC_GENERATOR = HELPER.registerMachine("basic_generator", IRMachine.builder(IREnergyTiers.LOW)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.basicGeneratorEnergyCapacity, false, true)
+            .blockEntity(BasicGeneratorBlockEntity::new)
+            .menu(BasicGeneratorMenu::new));
+    public static final IRMachine WATER_MILL = HELPER.registerMachine("water_mill", IRMachine.builder(IREnergyTiers.MEDIUM)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.waterMillEnergyCapacity, false, true)
+            .blockEntity(WaterMillBlockEntity::new)
+            .menu(WaterMillMenu::new));
+    public static final IRMachine GEOTHERMAL_GENERATOR = HELPER.registerMachine("geothermal_generator", IRMachine.builder(IREnergyTiers.MEDIUM)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.geothermalGeneratorEnergyCapacity, false, true)
+            .recipeLayout(IRRecipeLayouts.GEOTHERMAL_GENERATOR)
+            .blockEntity(GeothermalGeneratorBlockEntity::new)
+            .menu(GeothermalGeneratorMenu::new));
+    public static final IRMachine WIND_MILL = HELPER.registerMachine("wind_mill", IRMachine.builder(IREnergyTiers.HIGH)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.windMillEnergyCapacity, false, true)
+            .blockEntity(WindMillBlockEntity::new)
+            .menu(WindMillMenu::new));
+    public static final IRMachine NUCLEAR_REACTOR = HELPER.registerMachine("nuclear_reactor", IRMachine.builder(IREnergyTiers.EXTREME)
+            .block(MachineBlock::new, MachineBlock.builder()
+                    .activatable()
+                    .rotatableHorizontal()
+                    .ticking()
+            )
+            .energy(() -> IRConfig.nuclearReactorEnergyCapacity, true, false)
+            .blockEntity(NuclearReactorBlockEntity::new)
+            .menu(NuclearReactorMenu::new));
     public static final IRMachine BATTERY_BOX = HELPER.registerMachine("battery_box", IRMachine.builder(IREnergyTiers.LOW)
             .block(MachineBlock::new, MachineBlock.builder()
                     .properties(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS))
@@ -136,41 +186,41 @@ public final class IRMachines {
             .energy(() -> IRConfig.advancedEnergyStorageUnitEnergyCapacity, true, true)
             .blockEntity(EnergyStorageBlockEntity::new, () -> IRMachines.ADVANCED_ENERGY_STORAGE_UNIT)
             .menu(BatteryBoxMenu::new));
-    public static final IRMachine WATER_MILL = HELPER.registerMachine("water_mill", IRMachine.builder(IREnergyTiers.MEDIUM)
-            .block(MachineBlock::new, MachineBlock.builder()
+    public static final IRMachine LOW_TRANSFORMER = HELPER.registerMachine("low_transformer", IRMachine.builder(IREnergyTiers.LOW)
+            .block(makeTransformerBlock(IREnergyTiers.MEDIUM), MachineBlock.builder()
+                    .properties(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS))
                     .activatable()
-                    .rotatableHorizontal()
+                    .rotatable()
                     .ticking()
             )
-            .energy(() -> IRConfig.waterMillEnergyCapacity, false, true)
-            .blockEntity(WaterMillBlockEntity::new)
-            .menu(WaterMillMenu::new));
-    public static final IRMachine WIND_MILL = HELPER.registerMachine("wind_mill", IRMachine.builder(IREnergyTiers.HIGH)
-            .block(MachineBlock::new, MachineBlock.builder()
+            .energy(null, true, true)
+            .blockEntity(TransformerBlockEntity::new, () -> IRMachines.LOW_TRANSFORMER));
+    public static final IRMachine MEDIUM_TRANSFORMER = HELPER.registerMachine("medium_transformer", IRMachine.builder(IREnergyTiers.MEDIUM)
+            .block(makeTransformerBlock(IREnergyTiers.HIGH), MachineBlock.builder()
                     .activatable()
-                    .rotatableHorizontal()
+                    .rotatable()
                     .ticking()
             )
-            .energy(() -> IRConfig.windMillEnergyCapacity, false, true)
-            .blockEntity(WindMillBlockEntity::new)
-            .menu(WindMillMenu::new));
-    public static final IRMachine MATTER_FABRICATOR = HELPER.registerMachine("matter_fabricator", IRMachine.builder(IREnergyTiers.INSANE)
-            .block(MachineBlock::new, MachineBlock.builder()
+            .energy(null, true, true)
+            .blockEntity(TransformerBlockEntity::new, () -> IRMachines.MEDIUM_TRANSFORMER));
+    public static final IRMachine HIGH_TRANSFORMER = HELPER.registerMachine("high_transformer", IRMachine.builder(IREnergyTiers.HIGH)
+            .block(makeTransformerBlock(IREnergyTiers.EXTREME), MachineBlock.builder()
                     .activatable()
-                    .rotatableHorizontal()
+                    .rotatable()
                     .ticking()
             )
-            .energy(() -> IRConfig.matterFabricatorEnergyCapacity, true, false)
-            .blockEntity(MatterFabricatorBlockEntity::new)
-            .menu(MatterFabricatorMenu::new));
-    public static final IRMachine NUCLEAR_REACTOR = HELPER.registerMachine("nuclear_reactor", IRMachine.builder(IREnergyTiers.EXTREME)
-            .addToCreativeTab(false)
-            .block(MachineBlock::new, MachineBlock.builder()
+            .energy(null, true, true)
+            .blockEntity(TransformerBlockEntity::new, () -> IRMachines.HIGH_TRANSFORMER));
+    public static final IRMachine EXTREME_TRANSFORMER = HELPER.registerMachine("extreme_transformer", IRMachine.builder(IREnergyTiers.EXTREME)
+            .block(makeTransformerBlock(IREnergyTiers.INSANE), MachineBlock.builder()
                     .activatable()
-                    .rotatableHorizontal()
+                    .rotatable()
                     .ticking()
             )
-            .energy(() -> IRConfig.nuclearReactorEnergyCapacity, true, false)
-            .blockEntity(NuclearReactorBlockEntity::new)
-            .menu(NuclearReactorMenu::new));
+            .energy(null, true, true)
+            .blockEntity(TransformerBlockEntity::new, () -> IRMachines.EXTREME_TRANSFORMER));
+
+    public static @NotNull TriFunction<String, MachineBlock.Builder, Supplier<? extends EnergyTier>, MachineBlock> makeTransformerBlock(Supplier<? extends EnergyTier> higherTier) {
+        return (name, builder, inputTier) -> new TransformerBlock(name, builder, inputTier, higherTier);
+    }
 }

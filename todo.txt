@@ -1,0 +1,20 @@
+- Crop machines
+- The other crops
+    - Iron Vines
+    - Golden Dandelion
+    - Wither Rose
+    - Mushrooms
+    - Ender Lily
+    - Tin Blossom
+
+    - Coprium
+    - Stick Reed
+
+    - Glowstone, Redstone?
+    - Eye Blossom (26.*+)
+
+- Custom soils
+- Block Requirements
+- Light Requirements
+- Breeding Requirements
+- Mutations

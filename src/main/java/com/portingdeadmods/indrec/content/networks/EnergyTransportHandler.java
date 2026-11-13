@@ -89,17 +89,14 @@ public class EnergyTransportHandler implements TransportingHandler<TieredEnergy>
 
             if (euHandler != null) {
                 EnergyTier valueTier = value.tier();
-                EnergyTier handlerTier = euHandler.getEnergyTier();
-                int tierDiff = valueTier.order() - handlerTier.order();
-                if (valueTier.compareTo(handlerTier) < 0 && tierDiff > 1) {
-                    if (blockEntity instanceof MachineBlockEntity machineBE) {
-                        machineBE.setBurnt(true);
-                    }
+                if (!euHandler.isValidTier(valueTier)) {
+                    return value;
+                }
+
+                if (!simulate && blockEntity instanceof MachineBlockEntity machineBE && machineBE.tryBurn(euHandler, valueTier, value.energy())) {
+                    return value;
                 }
                 int filled = euHandler.fillEnergy(value.energy(), false);
-                if (filled > 0) {
-                    //PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(interactorPos), new SetEnergyPayload(interactorPos, euHandler.getEnergyStored()));
-                }
                 return this.remove(value, new TieredEnergy(filled, value.tier()));
             }
 

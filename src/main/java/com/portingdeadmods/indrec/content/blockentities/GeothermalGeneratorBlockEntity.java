@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
@@ -18,13 +17,12 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +38,7 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
                 .validator((slot, stack) -> switch (slot) {
                     case 0 -> stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
                     case 1 -> false;
-                    case 2 -> stack.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 2 -> this.isValidChargingItem(stack);
                     default -> throw new IllegalStateException("No slot 3");
                 }));
         this.addHandler(Capabilities.FluidHandler.BLOCK, HandlerUtils.newFluidTank(
@@ -53,34 +51,46 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
 
     @Override
     public void tick() {
-        super.tick();
-
-        IItemHandler itemHandler = getItemHandler();
-        ItemStack drainStack = itemHandler.getStackInSlot(0);
-        IFluidHandler itemFluidHandler = drainStack.getCapability(Capabilities.FluidHandler.ITEM);
-        if (itemFluidHandler != null) {
-            FluidStack fluidInBlockFluidHandler = this.getFluidHandler().getFluidInTank(0);
-            FluidStack fluidInItemFluidHandler = itemFluidHandler.getFluidInTank(0);
-            if (!fluidInItemFluidHandler.isEmpty() && this.getFluidHandler().isFluidValid(0, fluidInItemFluidHandler) && fluidInBlockFluidHandler.getAmount() + fluidInItemFluidHandler.getAmount() <= this.getFluidHandler().getTankCapacity(0)) {
-                int drainAmount = this.getFluidHandler().getTankCapacity(0) - fluidInBlockFluidHandler.getAmount();
-                FluidStack drained;
-                if (drainStack.getItem() instanceof BucketItem) {
-                    itemHandler.extractItem(0, 1, false);
-                    forceInsertItem((IItemHandlerModifiable) itemHandler, 1, new ItemStack(Items.BUCKET), false, this::onItemsChanged);
-                    drained = itemFluidHandler.getFluidInTank(0);
-                } else {
-                    drained = itemFluidHandler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
-                    if (itemFluidHandler.getFluidInTank(0).isEmpty()) {
-                        ItemStack extracted = itemHandler.extractItem(0, 1, false);
-                        forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, extracted, false, this::onItemsChanged);
-                    }
-                }
-                this.getFluidHandler().fill(drained, IFluidHandler.FluidAction.EXECUTE);
-            }
+        if (!level.isClientSide()) {
+            this.tickFluidInput();
         }
 
         GeneratorBlockEntity.transportEnergy(level, worldPosition, this.getEuStorage());
 
+        super.tick();
+    }
+
+    private void tickFluidInput() {
+        IItemHandler itemHandler = getItemHandler();
+        ItemStack inputStack = itemHandler.getStackInSlot(0);
+        if (inputStack.isEmpty()) return;
+
+        // Fluid item handlers (e.g. FluidHandlerItemStack) refuse to drain stacks with count > 1,
+        // so always operate on a single copied item and move it to the output slot afterwards
+        ItemStack singleItem = inputStack.copyWithCount(1);
+        IFluidHandlerItem itemFluidHandler = singleItem.getCapability(Capabilities.FluidHandler.ITEM);
+        if (itemFluidHandler == null) return;
+
+        IFluidHandler tank = this.getFluidHandler();
+        FluidStack contained = itemFluidHandler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
+        // Only empty the item if all of its fluid fits into the tank
+        if (contained.isEmpty() || !tank.isFluidValid(0, contained) || tank.fill(contained, IFluidHandler.FluidAction.SIMULATE) != contained.getAmount()) {
+            return;
+        }
+
+        FluidStack drained = itemFluidHandler.drain(contained, IFluidHandler.FluidAction.EXECUTE);
+        ItemStack emptyContainer = itemFluidHandler.getContainer();
+        IItemHandlerModifiable modifiableHandler = (IItemHandlerModifiable) itemHandler;
+        if (!emptyContainer.isEmpty() && !forceInsertItem(modifiableHandler, 1, emptyContainer, true, this::onItemsChanged).isEmpty()) {
+            // Output slot is full, wait until there is space for the empty container
+            return;
+        }
+
+        itemHandler.extractItem(0, 1, false);
+        if (!emptyContainer.isEmpty()) {
+            forceInsertItem(modifiableHandler, 1, emptyContainer, false, this::onItemsChanged);
+        }
+        tank.fill(drained, IFluidHandler.FluidAction.EXECUTE);
     }
 
     @Override
@@ -105,6 +115,7 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new GeothermalGeneratorMenu(i, inventory, this);
     }
 

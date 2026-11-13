@@ -37,7 +37,7 @@ public class ElectricJetpackItem extends AbstractJetpackItem implements EnergyIt
     }
 
     public static ElectricJetpackItem defaultItem(Properties properties) {
-        return new ElectricJetpackItem(properties, IRArmorMaterials.ELECTRIC_JETPACK, Type.CHESTPLATE, IREnergyTiers.MEDIUM, () -> IRConfig.jetpackEnergyUsage, () -> IRConfig.jetpackEnergyCapacity);
+        return new ElectricJetpackItem(properties.stacksTo(1), IRArmorMaterials.ELECTRIC_JETPACK, Type.CHESTPLATE, IREnergyTiers.MEDIUM, () -> IRConfig.jetpackEnergyUsage, () -> IRConfig.jetpackEnergyCapacity);
     }
 
     public float getJetpackStage(ItemStack stack) {

@@ -26,19 +26,14 @@ public class WaterMillBlockEntity extends MachineBlockEntity implements Generato
     }
 
     @Override
-    protected void onEuChanged(int oldAmount) {
-        this.updateData();
-    }
-
-    @Override
     public void tick() {
-        super.tick();
-
         float actualSpeed = (float) (getRawSpeed(this.fluidLevel) * 500f);
         chasingVelocity += ((actualSpeed * 10 / 3f) - chasingVelocity) * .25f;
         independentAngle += chasingVelocity;
 
         GeneratorBlockEntity.transportEnergy(this.level, this.worldPosition, this.getEuStorage());
+
+        super.tick();
     }
 
     @Override

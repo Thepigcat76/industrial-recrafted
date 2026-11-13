@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.CanningMachineMenu;
@@ -24,18 +24,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CanningMachineBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class CanningMachineBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public CanningMachineBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.CANNING_MACHINE, blockPos, blockState);
+        this.addUpgradeItemHandler(UpgradeBlockEntity.DEFAULT_UPGRADE_SLOTS);
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(4)
                 .validator((slot, item) -> switch (slot) {
                     case 0, 1 -> true;
                     case 2 -> false;
-                    case 3 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 3 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Canning Machine");
                 })
                 .onChange(this::onItemsChanged));
@@ -64,6 +65,7 @@ public class CanningMachineBlockEntity extends MachineBlockEntity implements Men
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new CanningMachineMenu(i, inventory, this);
     }
 

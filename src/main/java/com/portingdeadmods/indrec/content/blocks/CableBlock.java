@@ -4,10 +4,11 @@ import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blocks.PipeBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import com.portingdeadmods.indrec.api.energy.blocks.EnergyTierBlock;
 import com.portingdeadmods.indrec.registries.IRNetworks;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
-import com.portingdeadmods.portingdeadlibs.utils.capabilities.CapabilityUtils;
+import com.thepigcat.transportlib.api.NetworkNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,6 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
         return true;
     }
 
-    // TODO: Create nodes for connections to interactors
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
@@ -102,15 +102,18 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
 
     @Override
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
+        BlockState newState = super.updateShape(blockState, facingDirection, facingBlockState, level, blockPos, facingBlockPos);
         if (level instanceof ServerLevel serverLevel) {
             boolean interactorExists = IRNetworks.ENERGY.get().checkForInteractorAt(serverLevel, blockPos, facingDirection);
+            NetworkNode<TieredEnergy> node = IRNetworks.ENERGY.get().getNodeAt(serverLevel, blockPos);
             if (IRNetworks.ENERGY.get().hasInteractorAt(serverLevel, facingBlockPos) && !interactorExists) {
                 IRNetworks.ENERGY.get().removeInteractor(serverLevel, facingBlockPos);
-            } else if (interactorExists) {
+            } else if (interactorExists && (node == null || !node.hasInteractorConnection(facingDirection))) {
+                // Only for new connections, this also runs whenever a connected machine changes its block state
                 int connectionsAmount = 0;
                 Direction[] directions = new Direction[6];
                 for (Direction direction : Direction.values()) {
-                    boolean value = blockState.getValue(CONNECTION[direction.get3DDataValue()]);
+                    boolean value = newState.getValue(CONNECTION[direction.get3DDataValue()]);
                     if (value) {
                         directions[direction.get3DDataValue()] = direction;
                         connectionsAmount++;
@@ -120,7 +123,7 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
                 IRNetworks.ENERGY.get().addNode(serverLevel, blockPos, directions, connectionsAmount == 1);
             }
         }
-        return super.updateShape(blockState, facingDirection, facingBlockState, level, blockPos, facingBlockPos);
+        return newState;
     }
 
     @Override
@@ -168,9 +171,11 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
     }
 
     @Override
-    public boolean canConnectTo(BlockEntity connectTo) {
-        return connectTo.getLevel().getCapability(IRCapabilities.ENERGY_BLOCK, connectTo.getBlockPos(), null) != null
-                || CapabilityUtils.blockEntityCapability(Capabilities.EnergyStorage.BLOCK, connectTo) != null;
+    public boolean canConnectTo(BlockEntity connectTo, Direction direction) {
+        Level level = connectTo.getLevel();
+        BlockPos pos = connectTo.getBlockPos();
+        return level.getCapability(IRCapabilities.ENERGY_BLOCK, pos, connectTo.getBlockState(), connectTo, direction) != null
+                || level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, connectTo.getBlockState(), connectTo, direction) != null;
     }
 
     @Override

@@ -1,9 +1,10 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.content.menus.RecyclerMenu;
+import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.IRMachines;
@@ -22,31 +23,33 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public RecyclerBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.RECYCLER, blockPos, blockState);
+        this.addUpgradeItemHandler(UpgradeBlockEntity.DEFAULT_UPGRADE_SLOTS);
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> true;
                     case 1 -> false;
-                    case 2 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
-                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Compressor");
+                    case 2 -> this.isValidChargingItem(item);
+                    default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Recycler");
                 })
                 .onChange(this::onItemsChanged));
         this.exposedItemHandler = new LimitedItemHandler(this.getItemHandler(), IntSet.of(0), IntSet.of(1), IntSet.of(2));
     }
 
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         return IRTranslations.RECYCLER.component();
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.syncProgress();
         return new RecyclerMenu(i, inventory, this);
     }
 
@@ -56,7 +59,7 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvi
     }
 
     @Override
-    protected void onRecipeComplete() {
+    protected void handleSpecialItemInput(ItemInputComponentFlag itemInput) {
         this.getItemHandler().extractItem(0, 1, false);
     }
 

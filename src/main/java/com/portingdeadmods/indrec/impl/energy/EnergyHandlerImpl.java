@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class EnergyHandlerImpl implements EnergyHandler, StorageChangedListener, INBTSerializable<CompoundTag> {
     private int energy;
     private int capacity;
-    private final EnergyTier energyTier;
+    private EnergyTier energyTier;
     private Consumer<Integer> changedFunction = amount -> {};
 
     public EnergyHandlerImpl(Supplier<? extends EnergyTier> energyTier) {
@@ -30,6 +30,10 @@ public class EnergyHandlerImpl implements EnergyHandler, StorageChangedListener,
     @Override
     public EnergyTier getEnergyTier() {
         return this.energyTier;
+    }
+
+    public void setEnergyTier(EnergyTier energyTier) {
+        this.energyTier = energyTier;
     }
 
     @Override

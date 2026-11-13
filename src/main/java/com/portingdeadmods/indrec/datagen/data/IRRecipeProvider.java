@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import net.minecraft.world.item.ItemStack;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
@@ -11,6 +12,7 @@ import com.portingdeadmods.indrec.content.recipes.components.items.ItemInputList
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemOutputComponent;
 import com.portingdeadmods.indrec.content.recipes.components.items.ItemOutputListComponent;
 import com.portingdeadmods.indrec.content.recipes.layouts.CanningMachineRecipeLayout;
+import com.portingdeadmods.indrec.datagen.CropCrossbreedingRecipeBuilder;
 import com.portingdeadmods.indrec.datagen.MachineRecipeBuilder;
 import com.portingdeadmods.indrec.registries.*;
 import com.portingdeadmods.indrec.tags.CTags;
@@ -35,6 +37,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -131,7 +134,7 @@ public class IRRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput output0) {
+    protected void buildRecipes(@NotNull RecipeOutput output0) {
         RecipeOutput output = new IRRecipeOutput(output0);
 
         super.buildRecipes(output);
@@ -143,6 +146,8 @@ public class IRRecipeProvider extends RecipeProvider {
         extractingRecipes(output);
 
         canningRecipes(output);
+
+        cropCrossbreedingRecipes(output);
 
         electricToolCraftingRecipes(output);
 
@@ -170,11 +175,21 @@ public class IRRecipeProvider extends RecipeProvider {
 
         explosivesCraftingRecipes(output);
 
+        upgradesCraftingRecipes(output);
+
         componentsCraftingRecipes(output);
 
         energyStorageUnitCraftingRecipes(output);
 
+        transformerCraftingRecipes(output);
+
         uuMatterRecipes(output);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.CROP_STICKS, 2)
+                .requires(Tags.Items.RODS_WOODEN)
+                .requires(Tags.Items.RODS_WOODEN)
+                .unlockedBy("has_stick", has(Tags.Items.RODS_WOODEN))
+                .save(output);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.BRONZE_DUST, 3)
                 .requires(CTags.ItemTags.DUSTS_TIN)
@@ -244,6 +259,9 @@ public class IRRecipeProvider extends RecipeProvider {
         nineBlockStorageRecipes(output, RecipeCategory.MISC, IRItems.BRONZE_INGOT, RecipeCategory.BUILDING_BLOCKS, IRBlocks.BRONZE_BLOCK);
         nineBlockStorageRecipes(output, RecipeCategory.MISC, IRItems.URANIUM_INGOT, RecipeCategory.BUILDING_BLOCKS, IRBlocks.URANIUM_BLOCK);
         nineBlockStorageRecipes(output, RecipeCategory.MISC, IRItems.TIN_INGOT, RecipeCategory.BUILDING_BLOCKS, IRBlocks.TIN_BLOCK);
+        // Named like vanilla's iron nugget recipes, so the ingot recipe doesn't clash with other recipes for tin ingots
+        nineBlockStorageRecipesWithCustomPacking(output, RecipeCategory.MISC, IRItems.TIN_NUGGET, RecipeCategory.MISC, IRItems.TIN_INGOT, "tin_ingot_from_nuggets", "tin_ingot");
+        nineBlockStorageRecipesWithCustomPacking(output, RecipeCategory.MISC, IRItems.COPPER_NUGGET, RecipeCategory.MISC, Items.COPPER_INGOT, "copper_ingot_from_nuggets", "copper_ingot");
 
         oreSmelting(output, URANIUM_ORE_SMELTABLES, RecipeCategory.MISC, IRItems.URANIUM_INGOT, 0.7F, 200, "uranium_ingot");
         oreSmelting(output, TIN_ORE_SMELTABLES, RecipeCategory.MISC, IRItems.TIN_INGOT, 0.7F, 200, "tin_ingot");
@@ -309,13 +327,12 @@ public class IRRecipeProvider extends RecipeProvider {
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.CHARGE_PAD.asItem())
                 .pattern(" D ")
-                .pattern("BMB")
+                .pattern(" M ")
                 .pattern(" C ")
                 .define('D', IRItems.DENSE_COPPER_PLATE)
                 .define('M', IRBlocks.MACHINE_FRAME)
-                .define('B', IRItems.REDSTONE_BATTERY)
-                .define('C', IRItems.BASIC_CIRCUIT)
-                .unlockedBy("has_dense_copper_plate", has(IRItems.DENSE_COPPER_PLATE))
+                .define('C', IRItems.ENERGY_CRYSTAL)
+                .unlockedBy("has_energy_crystal", has(IRItems.ENERGY_CRYSTAL))
                 .save(output);
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.SCRAP)
@@ -323,6 +340,46 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_burnt_cable", has(IRBlocks.BURNT_CABLE))
                 .save(output);
 
+    }
+
+    private void transformerCraftingRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.LOW_TRANSFORMER.asItem(), 2)
+                .pattern(" A ")
+                .pattern("CPC")
+                .pattern(" A ")
+                .define('C', Tags.Items.INGOTS_COPPER)
+                .define('P', ItemTags.PLANKS)
+                .define('A', IRBlocks.COPPER_CABLE)
+                .unlockedBy("has_copper_cable", has(IRBlocks.COPPER_CABLE))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.MEDIUM_TRANSFORMER.asItem(), 2)
+                .pattern("A")
+                .pattern("M")
+                .pattern("A")
+                .define('M', IRBlocks.MACHINE_FRAME)
+                .define('A', IRBlocks.GOLD_CABLE)
+                .unlockedBy("has_gold_cable", has(IRBlocks.GOLD_CABLE))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.HIGH_TRANSFORMER.asItem(), 2)
+                .pattern(" A ")
+                .pattern("CME")
+                .pattern(" A ")
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .define('E', IRItems.ENERGY_CRYSTAL)
+                .define('M', IRBlocks.MACHINE_FRAME)
+                .define('A', IRBlocks.HV_CABLE)
+                .unlockedBy("has_copper_cable", has(IRBlocks.COPPER_CABLE))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.EXTREME_TRANSFORMER.asItem(), 2)
+                .pattern(" A ")
+                .pattern("CME")
+                .pattern(" A ")
+                .define('C', IRItems.ADVANCED_CIRCUIT)
+                .define('E', IRItems.LAPOTRON_CRYSTAL)
+                .define('M', IRBlocks.ADVANCED_MACHINE_FRAME)
+                .define('A', IRBlocks.GLASS_FIBRE_CABLE)
+                .unlockedBy("has_glass_fibre_cable", has(IRBlocks.GLASS_FIBRE_CABLE))
+                .save(output);
     }
 
     private void uuMatterRecipe(Consumer<ShapedRecipeBuilder> builderPattern, ItemLike result, int count, RecipeOutput output) {
@@ -338,7 +395,6 @@ public class IRRecipeProvider extends RecipeProvider {
     }
 
     private void uuMatterRecipes(RecipeOutput output) {
-
         // Ores
         uuMatterRecipe(builder -> builder
                 .pattern("UUU")
@@ -393,7 +449,7 @@ public class IRRecipeProvider extends RecipeProvider {
                 .pattern("U U")
                 .pattern("U U"), Blocks.OBSIDIAN, 16, output);
 
-         // Other items
+        // Other items
         uuMatterRecipe(builder -> builder
                 .pattern("U U")
                 .pattern("   ")
@@ -460,6 +516,33 @@ public class IRRecipeProvider extends RecipeProvider {
                 .define('C', IRBlocks.GLASS_FIBRE_CABLE)
                 .define('B', IRItems.LAPOTRON_CRYSTAL)
                 .unlockedBy("has_redstone_battery", has(IRItems.LAPOTRON_CRYSTAL))
+                .save(output);
+    }
+
+    private static void upgradesCraftingRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRItems.OVERCLOCKER_UPGRADE)
+                .pattern("WWW")
+                .pattern("ACA")
+                .define('W', DataComponentIngredient.of(false, PDLDataComponents.FLUID, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, 1000)), IRItems.FLUID_CELL))
+                .define('A', IRBlocks.COPPER_CABLE)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRItems.ENERGY_UPGRADE)
+                .pattern(" B ")
+                .pattern("ACA")
+                .define('B', IRItems.REDSTONE_BATTERY)
+                .define('A', IRBlocks.COPPER_CABLE)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRItems.TRANSFORMER_UPGRADE)
+                .pattern(" T ")
+                .pattern("ACA")
+                .define('T', IRMachines.MEDIUM_TRANSFORMER)
+                .define('A', IRBlocks.COPPER_CABLE)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .unlockedBy("has_basic_circuit", has(IRItems.BASIC_CIRCUIT))
                 .save(output);
     }
 
@@ -605,6 +688,18 @@ public class IRRecipeProvider extends RecipeProvider {
                 .define('M', IRBlocks.ADVANCED_MACHINE_FRAME)
                 .unlockedBy("has_advanced_machine_frame", has(IRBlocks.ADVANCED_MACHINE_FRAME))
                 .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IRMachines.CROP_MANAGER)
+                .pattern(" B ")
+                .pattern("HMS")
+                .pattern(" C ")
+                .define('B', IRItems.REDSTONE_BATTERY)
+                .define('H', Items.SHEARS)
+                .define('S', Tags.Items.SEEDS)
+                .define('M', IRBlocks.MACHINE_FRAME)
+                .define('C', IRItems.BASIC_CIRCUIT)
+                .unlockedBy("has_machine_frame", has(IRBlocks.MACHINE_FRAME))
+                .save(output);
     }
 
     private void reinforcedBlocksCraftingRecipes(RecipeOutput output) {
@@ -684,9 +779,9 @@ public class IRRecipeProvider extends RecipeProvider {
                 .save(output);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, IRItems.LAPOTRON_CRYSTAL)
-                .pattern("LAL")
                 .pattern("LEL")
                 .pattern("LAL")
+                .pattern("LEL")
                 .define('L', Tags.Items.GEMS_LAPIS)
                 .define('A', IRItems.ADVANCED_CIRCUIT)
                 .define('E', IRItems.ENERGY_CRYSTAL)
@@ -855,6 +950,31 @@ public class IRRecipeProvider extends RecipeProvider {
                 .requires(IRItems.TREETAP)
                 .unlockedBy("has_redstone_battery", has(IRItems.REDSTONE_BATTERY))
                 .save(output);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.CROP_ANALYZER.get())
+                .requires(IRItems.REDSTONE_BATTERY)
+                .requires(Items.PAPER)
+                .requires(Tags.Items.SEEDS)
+                .unlockedBy("has_redstone_battery", has(IRItems.REDSTONE_BATTERY))
+                .save(output);
+    }
+
+    private void cropCrossbreedingRecipes(RecipeOutput output) {
+        CropCrossbreedingRecipeBuilder.of(IRCrops.WHEAT, IRCrops.DANDELION, IRCrops.GOLDEN_DANDELION)
+                .chance(0.2f)
+                .save(output);
+        CropCrossbreedingRecipeBuilder.of(IRCrops.CARROTS, IRCrops.PUMPKIN, IRCrops.COPRIUM)
+                .chance(0.25f)
+                .save(output);
+        CropCrossbreedingRecipeBuilder.of(IRCrops.BEETROOTS, IRCrops.WITHER_ROSE, IRCrops.ENDER_LILY)
+                .chance(0.2f)
+                .save(output);
+        CropCrossbreedingRecipeBuilder.of(IRCrops.COPRIUM, IRCrops.IRON_VINES, IRCrops.TIN_BLOSSOM)
+                .chance(0.25f)
+                .save(output);
+        CropCrossbreedingRecipeBuilder.of(IRCrops.POTATOES, IRCrops.NETHER_WART, IRCrops.IRON_VINES)
+                .chance(0.2f)
+                .save(output);
     }
 
     private void canningRecipes(RecipeOutput output) {
@@ -923,6 +1043,34 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
                 .save(output, IndustrialRecrafted.rl("sticky_resin_from_log"));
+
+        this.extractorRecipe()
+                .component(new ItemInputComponent(IRBlocks.GOLDEN_DANDELION))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(Items.GOLD_NUGGET, 2), new ItemOutputComponent(Items.GOLD_NUGGET, 0.65f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("gold_nuggets_from_golden_dandelion"));
+
+        this.extractorRecipe()
+                .component(new ItemInputComponent(Items.WITHER_ROSE))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(Items.COAL, 2), new ItemOutputComponent(Items.COAL, 0.3f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("coal_from_wither_rose"));
+
+        this.extractorRecipe()
+                .component(new ItemInputComponent(IRBlocks.ENDER_LILY))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(Items.ENDER_PEARL, 0.7f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("ender_pearl_from_ender_lily"));
+
+        this.extractorRecipe()
+                .component(new ItemInputComponent(IRTags.ItemTags.COPRIUM))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(IRItems.COPPER_NUGGET, 7), new ItemOutputComponent(new ItemStack(IRItems.COPPER_NUGGET.get(), 3), 0.3f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("copper_nuggets_from_coprium"));
 
         this.extractorRecipe()
                 .component(new ItemInputComponent(Items.SUGAR_CANE))
@@ -1013,6 +1161,20 @@ public class IRRecipeProvider extends RecipeProvider {
                 .component(new TimeComponent(800))
                 .component(new EnergyInputComponent(3200))
                 .save(output, IndustrialRecrafted.rl("raw_iridium_from_deepslate_iridium_ore"));
+
+        this.maceratorRecipe()
+                .component(new ItemInputComponent(IRBlocks.IRON_VINES))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(Items.IRON_NUGGET, 4), new ItemOutputComponent(new ItemStack(Items.IRON_NUGGET, 3), 0.2f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("iron_nuggets_from_iron_vines"));
+
+        this.maceratorRecipe()
+                .component(new ItemInputComponent(IRBlocks.TIN_BLOSSOM))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(IRItems.TIN_NUGGET, 5), new ItemOutputComponent(new ItemStack(IRItems.TIN_NUGGET.get(), 2), 0.65f)))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("tin_nuggets_from_tin_blossom"));
     }
 
     private static void plantBallRecipe(TagKey<Item> plantTag, String group, RecipeOutput output) {

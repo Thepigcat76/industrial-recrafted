@@ -146,7 +146,14 @@ public class IRMachine implements ItemLike {
         return this.allowEnergyExtract;
     }
 
+    public boolean canStoreEnergy() {
+        return this.energyCapacity != null;
+    }
+
     public int getEnergyCapacity() {
+        if (this.energyCapacity == null) {
+            return 0;
+        }
         return this.energyCapacity.getAsInt();
     }
 

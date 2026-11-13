@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.compat.jei;
 
+import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.client.screens.widgets.JEIEnergyBarWidget;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
@@ -71,7 +72,7 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipeI
                     .setStandardSlotBackground();
             if (chance < 1f) {
                 slotBuilder.addRichTooltipCallback((view, tooltip) -> {
-                    tooltip.add(Component.literal("Chance " + chance * 100 + "%").withStyle(ChatFormatting.DARK_GRAY));
+                    tooltip.add(Component.literal("Chance " + TooltipUtils.formatChance(chance) + "%").withStyle(ChatFormatting.GRAY));
                 });
             }
         }
@@ -101,7 +102,7 @@ public class MachineRecipeCategory extends AbstractRecipeCategory<MachineRecipeI
                 }
                 if (chance < 1f) {
                     slotBuilder.addRichTooltipCallback((view, tooltip) -> {
-                        tooltip.add(Component.literal("Chance " + chance * 100 + "%").withStyle(ChatFormatting.DARK_GRAY));
+                        tooltip.add(Component.literal("Chance " + TooltipUtils.formatChance(chance) + "%").withStyle(ChatFormatting.GRAY));
                     });
                 }
             }

@@ -1,5 +1,7 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRLootTables;
@@ -28,6 +30,56 @@ public class IRMiscLootTableProvider implements LootTableSubProvider {
         generator.accept(IRLootTables.STICK_REED, LootTable.lootTable().withPool(LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .add(LootItem.lootTableItem(IRItems.STICKY_RESIN))));
+
+        generator.accept(IRLootTables.GOLDEN_DANDELION, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRBlocks.GOLDEN_DANDELION)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))));
+
+        generator.accept(IRLootTables.IRON_VINES, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRBlocks.IRON_VINES)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))));
+
+        generator.accept(IRLootTables.WITHER_ROSE, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.WITHER_ROSE)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))));
+
+        generator.accept(IRLootTables.DANDELION, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.DANDELION)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))));
+
+        generator.accept(IRLootTables.POPPY, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.POPPY)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))));
+
+        generator.accept(IRLootTables.RED_MUSHROOM, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.RED_MUSHROOM)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))));
+
+        generator.accept(IRLootTables.BROWN_MUSHROOM, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.BROWN_MUSHROOM)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))));
+
+        generator.accept(IRLootTables.ENDER_LILY, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRBlocks.ENDER_LILY)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))));
+
+        generator.accept(IRLootTables.TIN_BLOSSOM, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRBlocks.TIN_BLOSSOM)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 3))))));
+
+        generator.accept(IRLootTables.COPRIUM, LootTable.lootTable().withPool(LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(IRBlocks.COPRIUM)
+                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(2, 4))))));
 
         generator.accept(IRLootTables.SCRAP_BOX,
                 LootTable.lootTable().withPool(LootPool.lootPool()

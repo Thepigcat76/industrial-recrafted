@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
@@ -39,7 +38,7 @@ public class MatterFabricatorBlockEntity extends MachineBlockEntity implements M
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> item.getItemHolder().getData(IRDataMaps.MATTER_FABRICATOR_AMPLIFIERS) != null;
                     case 1 -> false;
-                    case 2 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 2 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Matter Fabricator");
                 })
                 .onChange(this::onItemsChanged));
@@ -48,6 +47,8 @@ public class MatterFabricatorBlockEntity extends MachineBlockEntity implements M
 
     @Override
     protected void onEuChanged(int oldAmount) {
+        super.onEuChanged(oldAmount);
+
         if (oldAmount == 0) {
             setActive(true);
         } else if (this.getEuStorage().getEnergyStored() <= 0) {
@@ -79,11 +80,6 @@ public class MatterFabricatorBlockEntity extends MachineBlockEntity implements M
             forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), 1, IRItems.UU_MATTER.toStack(), false, this::onItemsChanged);
         }
 
-    }
-
-    @Override
-    protected void onItemsChanged(int slot) {
-        this.setChanged();
     }
 
     @Override

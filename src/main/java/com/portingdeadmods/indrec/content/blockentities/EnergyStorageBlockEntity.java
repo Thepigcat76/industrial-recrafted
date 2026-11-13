@@ -1,6 +1,5 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.TieredEnergy;
@@ -29,7 +28,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
 
 public class EnergyStorageBlockEntity extends MachineBlockEntity implements MenuProvider {
     private final EnergyHandlerWrapper.NoFill outputEnergyHandler;
@@ -39,21 +37,15 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(2)
-                .validator((slot, item) -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null)
+                .validator((slot, item) -> this.isValidChargingItem(item))
                 .onChange(this::onItemsChanged));
 
         this.outputEnergyHandler = new EnergyHandlerWrapper.NoFill(this.getEuStorage());
-        this.spreadDirections = Set.of(this.getOutputDirection());
     }
 
     @Override
     public boolean shouldSpreadEnergy() {
         return true;
-    }
-
-    @Override
-    protected void onItemsChanged(int slot) {
-        //this.updateData();
     }
 
     public boolean supportsUpgrades() {
@@ -66,10 +58,12 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    protected void tickRecipe() {
+    }
 
-        if (!level.isClientSide()) {
+    @Override
+    public void tick() {
+        if (!level.isClientSide() && !this.isBurnt()) {
             if (this.getRedstoneSignalType().isActive(this.getRedstoneSignalStrength())) {
                 EnergyHandler thisEnergyStorage = this.getEuStorage();
                 if (level instanceof ServerLevel serverLevel) {
@@ -88,6 +82,8 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
                 }
             }
         }
+
+        super.tick();
     }
 
     private @NotNull Direction getOutputDirection() {
@@ -95,12 +91,8 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
     }
 
     @Override
-    public Set<Direction> getSpreadDirections() {
-        Direction outputDirection = this.getOutputDirection();
-        if (!this.spreadDirections.contains(outputDirection))
-            this.spreadDirections = Set.of(outputDirection);
-
-        return this.spreadDirections;
+    public boolean canSpreadEnergy(Direction direction) {
+        return direction == this.getOutputDirection();
     }
 
     @Override

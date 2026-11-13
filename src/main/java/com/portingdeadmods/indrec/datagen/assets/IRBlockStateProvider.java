@@ -1,7 +1,9 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blocks.PipeBlock;
+import com.portingdeadmods.indrec.content.blocks.CropBlock;
 import com.portingdeadmods.indrec.content.blocks.RubberTreeResinHoleBlock;
 import com.portingdeadmods.indrec.registries.IRBlocks;
 import com.portingdeadmods.indrec.registries.IRMachines;
@@ -53,7 +55,17 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 .create();
         sheetBlock(IRBlocks.STICKY_RESIN_SHEET.get());
         sheetBlock(IRBlocks.RUBBER_SHEET.get());
-        simpleBlock(IRBlocks.CROP.get(), models().getExistingFile(modLoc("block/crop")));
+        this.getVariantBuilder(IRBlocks.CROP.get()).forAllStates(state -> {
+                    if (state.getValue(CropBlock.CROSSBREED)) {
+                        return ConfiguredModel.builder()
+                                .modelFile(models().getExistingFile(modLoc("block/crop_crossbreed")))
+                                .build();
+                    }
+                    return ConfiguredModel.builder()
+                            .modelFile(models().getExistingFile(modLoc("block/crop")))
+                            .build();
+                }
+        );
 
         simpleBlock(IRBlocks.TIN_BLOCK.get());
         simpleBlock(IRBlocks.URANIUM_BLOCK.get());
@@ -65,6 +77,11 @@ public class IRBlockStateProvider extends BlockStateProvider {
         cableBlock(IRBlocks.HV_CABLE.get(), 8);
         cableBlock(IRBlocks.GLASS_FIBRE_CABLE.get(), 4);
         cableBlock(IRBlocks.BURNT_CABLE.get(), 4);
+
+        transformerBlock(IRMachines.LOW_TRANSFORMER.getBlock(), modLoc("block/battery_box"), modLoc("block/battery_box_top"));
+        transformerBlock(IRMachines.MEDIUM_TRANSFORMER.getBlock(), blockTexture(IRBlocks.MACHINE_FRAME.get()), modLoc("block/basic_energy_storage_unit_top"));
+        transformerBlock(IRMachines.HIGH_TRANSFORMER.getBlock(), blockTexture(IRBlocks.MACHINE_FRAME.get()), modLoc("block/high_transformer_top"));
+        transformerBlock(IRMachines.EXTREME_TRANSFORMER.getBlock(), blockTexture(IRBlocks.ADVANCED_MACHINE_FRAME.get()), modLoc("block/advanced_energy_storage_unit_top"));
 
         modelBuilder(IRMachines.BATTERY_BOX.getBlock())
                 .defaultTexture(modLoc("block/battery_box"))
@@ -113,6 +130,13 @@ public class IRBlockStateProvider extends BlockStateProvider {
         modelBuilder(IRBlocks.NUCLEAR_REACTOR_CHAMBER.get())
                 .defaultTexture(blockTexture(IRBlocks.ADVANCED_MACHINE_FRAME.get()))
                 .top(this::blockTexture)
+                .horizontalFacing()
+                .create();
+
+        modelBuilder(IRMachines.CROP_MANAGER.getBlock())
+                .defaultTexture(blockTexture(IRBlocks.MACHINE_FRAME.get()))
+                .sides(this::blockTextureSuffix, "_side")
+                //.top(this::blockTextureSuffix, "_top")
                 .horizontalFacing()
                 .create();
 
@@ -188,7 +212,6 @@ public class IRBlockStateProvider extends BlockStateProvider {
     }
 
 
-
     private void cableBlock(Block block, int width) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block);
         cableConnection(builder, block, width, Direction.DOWN, 0, 0);
@@ -239,9 +262,9 @@ public class IRBlockStateProvider extends BlockStateProvider {
 
     private void sheetBlock(Block block) {
         getVariantBuilder(block).forAllStates(state -> new ConfiguredModel[]{
-            new ConfiguredModel(state.getValue(BlockStateProperties.LAYERS) == 8
-                    ? models().cubeAll(name(block) + "_full", blockTexture(block))
-                    : sheetBlockModel(state.getBlock(), state.getValue(BlockStateProperties.LAYERS) * 2))
+                new ConfiguredModel(state.getValue(BlockStateProperties.LAYERS) == 8
+                        ? models().cubeAll(name(block) + "_full", blockTexture(block))
+                        : sheetBlockModel(state.getBlock(), state.getValue(BlockStateProperties.LAYERS) * 2))
         });
     }
 
@@ -249,6 +272,12 @@ public class IRBlockStateProvider extends BlockStateProvider {
         return models().withExistingParent(name(block) + height, "snow_height" + height)
                 .texture("texture", blockTexture(block))
                 .texture("particle", blockTexture(block));
+    }
+
+    private void transformerBlock(Block block, ResourceLocation eastWest, ResourceLocation top) {
+        ResourceLocation side = blockTextureSuffix(block, "_side");
+        directionalBlock(block, models().cube(name(block), blockTextureSuffix(block, "_bottom"), top, side, side, eastWest, eastWest)
+                .texture("particle", side));
     }
 
     private @NotNull ModelBuilder modelBuilder(Block block) {
@@ -267,6 +296,34 @@ public class IRBlockStateProvider extends BlockStateProvider {
                 mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
                 "cross",
                 blockTexture(IRBlocks.RUBBER_TREE_SAPLING.get(), "tree")
+        ).renderType("cutout"));
+        simpleBlock(IRBlocks.GOLDEN_DANDELION.get(), models().singleTexture(
+                name(IRBlocks.GOLDEN_DANDELION.get()),
+                mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
+                "cross",
+                blockTexture(IRBlocks.GOLDEN_DANDELION.get())
+        ).renderType("cutout"));
+        simpleBlock(IRBlocks.IRON_VINES.get(), models().singleTexture(
+                name(IRBlocks.IRON_VINES.get()),
+                mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
+                "cross",
+                modLoc(ModelProvider.BLOCK_FOLDER + "/crops/iron_vines_stage6")
+        ).renderType("cutout"));
+        simpleBlock(IRBlocks.TIN_BLOSSOM.get(), models().singleTexture(
+                name(IRBlocks.TIN_BLOSSOM.get()),
+                mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
+                "cross",
+                modLoc(ModelProvider.BLOCK_FOLDER + "/crops/tin_blossom_stage5")
+        ).renderType("cutout"));
+        copriumBlock(IRBlocks.COPRIUM.get(), IRBlocks.WAXED_COPRIUM.get());
+        copriumBlock(IRBlocks.EXPOSED_COPRIUM.get(), IRBlocks.WAXED_EXPOSED_COPRIUM.get());
+        copriumBlock(IRBlocks.WEATHERED_COPRIUM.get(), IRBlocks.WAXED_WEATHERED_COPRIUM.get());
+        copriumBlock(IRBlocks.OXIDIZED_COPRIUM.get(), IRBlocks.WAXED_OXIDIZED_COPRIUM.get());
+        simpleBlock(IRBlocks.ENDER_LILY.get(), models().singleTexture(
+                name(IRBlocks.ENDER_LILY.get()),
+                mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
+                "cross",
+                modLoc(ModelProvider.BLOCK_FOLDER + "/crops/ender_lily_stage7")
         ).renderType("cutout"));
         rubberTreeResinHole(IRBlocks.RUBBER_TREE_RESIN_HOLE);
         buttonBlock(IRBlocks.RUBBER_TREE_BUTTON.get(), blockTexture(IRBlocks.RUBBER_TREE_PLANKS.get(), "tree"));
@@ -359,4 +416,17 @@ public class IRBlockStateProvider extends BlockStateProvider {
         return key(block).getPath();
     }
 
+    /**
+     * The block uses the last crop stage of its variant, the waxed variant shares the model
+     */
+    private void copriumBlock(Block block, Block waxedBlock) {
+        ModelFile model = models().singleTexture(
+                name(block),
+                mcLoc(ModelProvider.BLOCK_FOLDER + "/cross"),
+                "cross",
+                modLoc(ModelProvider.BLOCK_FOLDER + "/crops/" + name(block) + "_stage_6")
+        ).renderType("cutout");
+        simpleBlock(block, model);
+        simpleBlock(waxedBlock, model);
+    }
 }

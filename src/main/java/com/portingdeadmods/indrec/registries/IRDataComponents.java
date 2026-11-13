@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.registries;
 
+import com.portingdeadmods.indrec.data.components.AnalyzedCropsComponent;
 import com.mojang.serialization.Codec;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.data.components.CannedFood;
@@ -16,8 +17,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-// Registry for minecraft's items data component system
-// entities and blockentities are handled in IRAttachmentTypes
 public final class IRDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, IndustrialRecrafted.MODID);
 
@@ -29,6 +28,8 @@ public final class IRDataComponents {
     public static final Supplier<DataComponentType<CannedFood>> CANNED_FOOD = registerDataComponentType("canned_food",
             () -> builder -> builder.persistent(CannedFood.CODEC)
                     .networkSynchronized(CannedFood.STREAM_CODEC));
+    public static final Supplier<DataComponentType<AnalyzedCropsComponent>> ANALYZED_CROPS = registerDataComponentType("analyzed_crops",
+            () -> builder -> builder.persistent(AnalyzedCropsComponent.CODEC).networkSynchronized(AnalyzedCropsComponent.STREAM_CODEC));
 
     // Data for capabilities
     public static final Supplier<DataComponentType<ComponentEuStorage>> ENERGY = registerDataComponentType("energy",

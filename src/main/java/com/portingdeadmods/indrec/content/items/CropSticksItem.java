@@ -1,10 +1,13 @@
 package com.portingdeadmods.indrec.content.items;
 
 import com.portingdeadmods.indrec.registries.IRBlocks;
+import com.portingdeadmods.indrec.tags.IRTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.Tags;
 
 public class CropSticksItem extends BlockItem {
     public CropSticksItem(Properties properties) {
@@ -13,6 +16,6 @@ public class CropSticksItem extends BlockItem {
 
     @Override
     protected boolean canPlace(BlockPlaceContext context, BlockState state) {
-        return super.canPlace(context, state) && context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite())).is(Blocks.FARMLAND);
+        return super.canPlace(context, state) && context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite())).is(IRTags.BlockTags.VALID_INDUSTRIAL_SOIL);
     }
 }

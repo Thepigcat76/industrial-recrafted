@@ -31,13 +31,11 @@ public class WaterMillBlockEntityRenderer implements BlockEntityRenderer<WaterMi
         poseStack.pushPose();
         {
             poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(-direction.toYRot())); // face correct direction
-            poseStack.mulPose(Axis.XP.rotationDegrees(90)); // orient blades upright
+            poseStack.mulPose(Axis.YP.rotationDegrees(-direction.toYRot()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90));
 
-            // --- Apply rotation (spin blades) ---
             poseStack.mulPose(Axis.YP.rotationDegrees(be.spinningDirection * be.getIndependentAngle(partialTicks)));
 
-            // --- Center models for rendering ---
             poseStack.translate(-0.5, -0.5, -0.5);
 
             poseStack.translate(0, 1, 0);

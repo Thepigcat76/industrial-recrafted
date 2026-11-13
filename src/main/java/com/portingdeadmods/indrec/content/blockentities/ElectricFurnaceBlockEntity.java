@@ -1,6 +1,6 @@
 package com.portingdeadmods.indrec.content.blockentities;
 
-import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.content.menus.ElectricFurnaceMenu;
 import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
@@ -28,18 +28,21 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
+    private static final int ENERGY_PER_TICK = 3;
+
     private RecipeHolder<SmeltingRecipe> cachedRecipe;
 
     public ElectricFurnaceBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.ELECTRIC_FURNACE, blockPos, blockState);
+        this.addUpgradeItemHandler(UpgradeBlockEntity.DEFAULT_UPGRADE_SLOTS);
         this.addMachineEuStorage(EnergyHandlerImpl.NoDrain::new, this::onEuChanged);
         this.addItemHandler(HandlerUtils::newItemStackHandler, builder -> builder
                 .slots(3)
                 .validator((slot, item) -> switch (slot) {
                     case 0 -> true;
                     case 1 -> false;
-                    case 2 -> item.getCapability(IRCapabilities.ENERGY_ITEM) != null;
+                    case 2 -> this.isValidChargingItem(item);
                     default -> throw new IllegalArgumentException("Non existent slot " + slot + "on Electric Furnace");
                 })
                 .onChange(this::onItemsChanged));
@@ -51,12 +54,6 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     public RecipeHolder<SmeltingRecipe> getCachedSmeltingRecipe() {
         return this.cachedRecipe;
-    }
-
-    @Override
-    protected void onEuChanged(int oldAmount) {
-        if (!level.isClientSide)
-            this.syncEnergyThisTick = true;
     }
 
     @Override
@@ -73,19 +70,15 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     @Override
     public void tickRecipe() {
-        if (!this.level.isClientSide && this.level.getGameTime() % 30 == 0) {
-            syncProgress();
-        }
-
-        if (this.cachedRecipe != null && this.getEuStorage().getEnergyStored() > 0) {
+        int energyPerTick = Math.round(ENERGY_PER_TICK * this.energyUsageMultiplier);
+        if (this.cachedRecipe != null && (this.progress >= this.getMaxProgress() || this.getEuStorage().getEnergyStored() >= energyPerTick)) {
             if (this.progress < this.getMaxProgress()) {
                 this.progress += this.progressIncrement;
                 if (!this.level.isClientSide) {
-                    this.getEuStorage().forceDrainEnergy(3, false);
+                    this.getEuStorage().forceDrainEnergy(energyPerTick, false);
                 }
 
-                setActive(true);
-                this.playMachineSound();
+                this.updateRunningState();
             } else {
                 this.progress = 0;
                 SmeltingRecipe recipe = this.cachedRecipe.value();
@@ -102,10 +95,6 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
             setChanged();
             setActive(false);
         }
-    }
-
-    private void syncProgress() {
-        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.level, new ChunkPos(this.worldPosition), new SetProgressPayload(this.worldPosition, this.progress, this.maxProgress));
     }
 
     @Override

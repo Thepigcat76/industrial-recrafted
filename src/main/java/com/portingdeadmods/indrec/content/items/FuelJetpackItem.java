@@ -34,7 +34,7 @@ public class FuelJetpackItem extends AbstractJetpackItem implements IFluidItem {
     }
 
     public static FuelJetpackItem defaultItem(Properties properties) {
-        return new FuelJetpackItem(properties, IRArmorMaterials.FUEL_JETPACK, Type.CHESTPLATE, () -> 1, () -> 1_000);
+        return new FuelJetpackItem(properties.stacksTo(1), IRArmorMaterials.FUEL_JETPACK, Type.CHESTPLATE, () -> 1, () -> 1_000);
     }
 
     @Override

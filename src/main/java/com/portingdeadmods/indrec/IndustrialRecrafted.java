@@ -11,6 +11,7 @@ import com.portingdeadmods.indrec.content.worldgen.IRPlacerTypes;
 import com.portingdeadmods.indrec.data.maps.IRDataMaps;
 import com.portingdeadmods.indrec.impl.energy.ItemEnergyHandlerWrapper;
 import com.portingdeadmods.indrec.registries.*;
+import com.portingdeadmods.portingdeadlibs.api.config.PDLConfig;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;
 import com.portingdeadmods.portingdeadlibs.api.data.PDLDataComponents;
 import com.portingdeadmods.portingdeadlibs.api.items.IFluidItem;
@@ -35,6 +36,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -49,6 +51,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 @Mod(IndustrialRecrafted.MODID)
@@ -71,6 +74,7 @@ public final class IndustrialRecrafted {
 
         IRItems.ITEMS.register(modEventBus);
         IREnergyTiers.ENERGY_TIERS.register(modEventBus);
+        IRCropRequirementSerializers.SERIALIZERS.register(modEventBus);
         IRDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         IRBlocks.BLOCKS.register(modEventBus);
         IRTranslations.TRANSLATIONS.register(modEventBus);
@@ -84,9 +88,32 @@ public final class IndustrialRecrafted {
         IRArmorMaterials.ARMOR_MATERIALS.register(modEventBus);
         IRNetworks.NETWORKS.register(modEventBus);
         IRSoundEvents.SOUND_EVENTS.register(modEventBus);
+        IRParticleTypes.PARTICLE_TYPES.register(modEventBus);
+        IRRecipes.RECIPE_TYPES.register(modEventBus);
+        IRRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         IRFluids.HELPER.register(modEventBus);
 
-        PDLConfigHelper.registerConfig(IRConfig.class, ModConfig.Type.COMMON, modContainer);
+        PDLConfig config = PDLConfigHelper.registerConfig(IRConfig.class, ModConfig.Type.COMMON, modContainer);
+        // Config events are only posted to the bus of the mod that owns the config, so PDL's own listener never sees them
+        modEventBus.addListener(ModConfigEvent.Loading.class, event -> applyConfigValues(config));
+        modEventBus.addListener(ModConfigEvent.Reloading.class, event -> applyConfigValues(config));
+    }
+
+    private static void applyConfigValues(PDLConfig config) {
+        for (String path : config.getConfigPaths()) {
+            Field field = config.getValue(path).field();
+            Object value = config.getSpecValue(path).get();
+            try {
+                // Floats are stored as doubles in the config spec
+                if (field.getType() == float.class) {
+                    field.setFloat(null, ((Number) value).floatValue());
+                } else {
+                    field.set(null, value);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void onArmorHurt(ArmorHurtEvent event) {
@@ -105,6 +132,7 @@ public final class IndustrialRecrafted {
 
     private void registerRegistries(NewRegistryEvent event) {
         event.register(IRRegistries.ENERGY_TIER);
+        event.register(IRRegistries.CROP_REQUIREMENT_SERIALIZER);
     }
 
     private void registerDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {

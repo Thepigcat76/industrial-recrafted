@@ -2,14 +2,17 @@ package com.portingdeadmods.indrec.api.blockentities;
 
 import com.mojang.datafixers.util.Pair;
 import com.portingdeadmods.indrec.IRCapabilities;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.capabilities.StorageChangedListener;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
+import com.portingdeadmods.indrec.api.items.UpgradeItem;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.menus.ChargingSlot;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
+import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.flags.FluidInputComponentFlag;
@@ -17,12 +20,15 @@ import com.portingdeadmods.indrec.content.recipes.flags.FluidOutputComponentFlag
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemOutputComponentFlag;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
+import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
 import com.portingdeadmods.indrec.registries.IRRecipeComponentFlags;
 import com.portingdeadmods.indrec.registries.IRSoundEvents;
+import com.portingdeadmods.indrec.utils.BlockUtils;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.utils.PDLBlockStateProperties;
+import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -30,11 +36,13 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -45,11 +53,13 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -57,24 +67,29 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-// TODO: Secondary chance outputs are not working
-// FIXME: When rejoining world, recipe doesn't load
 public class MachineBlockEntity extends ContainerBlockEntity implements RedstoneBlockEntity, WrenchListenerBlockEntity {
+    private static final int MIN_TICKS_TO_ACTIVATE = 5;
+    private static final ResourceLocation UPGRADES_KEY = IndustrialRecrafted.rl("upgrades");
+
     private final List<ChargingSlot> chargingSlots;
     private final List<BlockCapabilityCache<EnergyHandler, Direction>> euCaches;
     protected final IRMachine machine;
     private RedstoneSignalType redstoneSignalType = RedstoneSignalType.IGNORED;
     private int redstoneSignalStrength;
+    private boolean redstoneSignalChecked;
     protected RecipeHolder<MachineRecipeImpl> cachedRecipe;
     private ResourceLocation loadedRecipe;
     protected float progress;
     protected float maxProgress;
     protected float progressIncrement;
+    protected float energyUsageMultiplier;
     protected boolean burnt;
     private boolean removedByWrench;
-    protected Set<Direction> spreadDirections;
     protected boolean syncEnergyThisTick;
-    protected MachineContainerData containerData;
+    protected boolean syncFluidsThisTick;
+    private @Nullable ItemStackHandler upgradeItemHandler;
+    // What the upgrade items have last been told about, to tell additions and removals apart
+    private ItemStack @Nullable [] appliedUpgrades;
 
     public MachineBlockEntity(IRMachine machine, BlockPos blockPos, BlockState blockState) {
         super(machine.getBlockEntityType(), blockPos, blockState);
@@ -82,8 +97,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.euCaches = new ArrayList<>();
         this.chargingSlots = new ArrayList<>();
         this.progressIncrement = 1F;
-        this.spreadDirections = Set.of(Direction.values());
-        this.containerData = new MachineContainerData();
+        this.energyUsageMultiplier = 1F;
     }
 
     public MachineRecipeLayout<?> getRecipeLayout() {
@@ -98,10 +112,12 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return cachedRecipe != null;
     }
 
+    protected void syncProgress() {
+        PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.level, new ChunkPos(this.worldPosition), new SetProgressPayload(this.worldPosition, this.progress, this.maxProgress));
+    }
+
     @Override
     public void tick() {
-        this.syncEnergyThisTick = false;
-
         super.tick();
 
         for (ChargingSlot chargingSlot : this.chargingSlots) {
@@ -112,33 +128,62 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
         this.tickEnergySpreading();
 
-        this.tickRecipe();
+        // The signal isn't updated while the chunk is unloaded, so check it again after loading
+        if (!this.redstoneSignalChecked && !this.level.isClientSide()) {
+            this.updateRedstoneSignalStrength();
+        }
+
+        if (!this.burnt) {
+            if (this.isRedstoneActive()) {
+                this.tickRecipe();
+            } else {
+                this.tickRedstoneDisabled();
+            }
+            this.tickUpgrades();
+        }
 
         if (this.syncEnergyThisTick) {
             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition), new SetEnergyPayload(this.worldPosition, this.getEuStorage().getEnergyStored()));
+            // Reset only after syncing: energy can arrive from other block entities (e.g. cables)
+            // between this machine's ticks, and clearing the flag at the start of tick() would drop that sync
+            this.syncEnergyThisTick = false;
+        }
+
+        if (this.syncFluidsThisTick) {
+            // Fluid tanks have no dedicated payload, so send a block entity update (at most once per tick)
+            this.updateData();
+            this.syncFluidsThisTick = false;
         }
 
     }
 
-    public Set<Direction> getSpreadDirections() {
-        return spreadDirections;
+    public boolean canSpreadEnergy(Direction direction) {
+        return true;
     }
 
     protected void tickEnergySpreading() {
-        if (this.shouldSpreadEnergy() && !level.isClientSide()) {
+        if (this.shouldSpreadEnergy() && !this.burnt && !level.isClientSide()) {
             int amountPerBlock = this.getAmountPerBlock();
 
             for (BlockCapabilityCache<EnergyHandler, Direction> cache : this.euCaches) {
-                if (this.getSpreadDirections().contains(cache.context())) {
+                if (this.canSpreadEnergy(cache.context())) {
                     EnergyHandler euHandler = cache.getCapability();
                     if (euHandler != null) {
+                        if (!euHandler.isValidTier(this.getEuStorage().getEnergyTier())) {
+                            continue;
+                        }
+
+                        if (level.getBlockEntity(this.worldPosition.relative(cache.context())) instanceof MachineBlockEntity neighbor
+                                && (neighbor.isBurnt() || neighbor.tryBurn(euHandler, this.getEuStorage().getEnergyTier(), amountPerBlock))) {
+                            continue;
+                        }
+
                         int filled = euHandler.fillEnergy(amountPerBlock, false);
                         if (filled > 0) {
                             this.syncEnergyThisTick = true;
                             getEuStorage().forceDrainEnergy(filled, false);
                             PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) level, new ChunkPos(this.worldPosition.relative(cache.context())), new SetEnergyPayload(this.worldPosition.relative(cache.context()), euHandler.getEnergyStored()));
                         }
-                        //level.sendBlockUpdated(getBlockPos().relative(cache.context()), getBlockState(), getBlockState(), 3);
                     }
 
                 }
@@ -151,7 +196,21 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return burnt;
     }
 
+    public boolean tryBurn(EnergyHandler handler, EnergyTier energyTier, int energy) {
+        boolean overloaded = energy > 0
+                && !(handler instanceof EnergyHandler.NoFill)
+                && energyTier.order() - handler.getEnergyTier().order() > EnergyTier.MAX_TIER_DIFFERENCE;
+        if (overloaded) {
+            this.setBurnt(true);
+        }
+        return overloaded;
+    }
+
     public void setBurnt(boolean burnt) {
+        if (burnt && !this.burnt) {
+            BlockUtils.playBurnSound(this.level, this.worldPosition);
+            this.setActive(false);
+        }
         this.burnt = burnt;
         this.updateData();
     }
@@ -165,91 +224,68 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
-        if (this.getItemHandler() == null) return new MachineRecipe.MachineRecipeInput();
+        if (this.getItemHandler() == null) return MachineRecipe.MachineRecipeInput.EMPTY;
         return new MachineRecipe.MachineRecipeInput(List.of(this.getItemHandler().getStackInSlot(0)));
     }
 
     protected void onItemsChanged(int slot) {
-        //this.updateData();
-
         setChanged();
         this.refreshCachedRecipe();
     }
 
     protected void onFluidsChanged(int tank) {
-        //this.updateData();
-
+        if (!level.isClientSide)
+            this.syncFluidsThisTick = true;
         setChanged();
         this.refreshCachedRecipe();
     }
 
     protected void onEuChanged(int oldAmount) {
-        //this.updateData();
-
         if (!level.isClientSide)
             this.syncEnergyThisTick = true;
         setChanged();
         this.refreshCachedRecipe();
     }
 
-    protected void playMachineSound() {
-        if (this.progress % 12 == 0) {
-            this.level.playSound(null, worldPosition, IRSoundEvents.MACHINE.get(), SoundSource.BLOCKS, 0.15f, 1f);
+    /**
+     * Call this after adding progress. A machine on a weak supply only runs for single ticks at a time, which
+     * shouldn't toggle its block state (updating neighbors like cables every time) or play sounds.
+     */
+    protected void updateRunningState() {
+        if (this.progress >= MIN_TICKS_TO_ACTIVATE * this.progressIncrement) {
+            setActive(true);
+            this.playMachineSound();
         }
     }
 
+    protected void playMachineSound() {
+        // Not based on the progress, which skips over exact values when overclocked
+        if (this.level.getGameTime() % 12 == 0) {
+            this.level.playSound(null, worldPosition, IRSoundEvents.MACHINE.get(), SoundSource.BLOCKS, 0.35f, 1f);
+        }
+    }
+
+    /**
+     * Called instead of {@link #tickRecipe()} while the redstone signal disables the machine.
+     * The progress is kept, so the machine continues where it stopped once it gets enabled again
+     */
+    protected void tickRedstoneDisabled() {
+        this.setActive(false);
+    }
+
     protected void tickRecipe() {
+        if (!this.level.isClientSide && this.level.getGameTime() % 30 == 0) {
+            syncProgress();
+        }
+
         if (this.hasCachedRecipe()) {
             MachineRecipeImpl recipe = this.cachedRecipe.value();
             if (this.hasProgressFinished()) {
                 this.progress = 0;
-                RegistryAccess provider = this.level.registryAccess();
-                ItemStack resultItem = recipe.assemble(this.createRecipeInput(), provider);
-                FluidStack resultFluid = recipe.assembleResultFluid(this.createRecipeInput(), provider);
-
-                int resultEnergy = recipe.assembleResultEnergy(this.createRecipeInput(), provider);
-                ItemOutputComponentFlag itemOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
-                FluidOutputComponentFlag fluidOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
-
-                ItemInputComponentFlag itemInput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
-                FluidInputComponentFlag fluidInput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
-
-                boolean hasResultEnergy = recipe.hasResultEnergy(provider);
-                boolean hasResultItem = recipe.hasResultItem(provider);
-                boolean hasResultFluid = recipe.hasResultFluid(provider);
-
-                if (hasResultEnergy) {
-                    this.getEuStorage().forceFillEnergy(resultEnergy, false);
+                // Only the server rolls chances and changes the contents, clients get the result sent to them
+                if (!this.level.isClientSide()) {
+                    this.finishRecipe(recipe);
                 }
-
-                //if (!level.isClientSide()) {
-                if (hasResultItem && itemOutput.isOutputted(this.level.random, 0)) {
-                    List<ItemStack> outputs = itemOutput.getOutputs();
-                    for (int i = 0; i < outputs.size(); i++) {
-                        ItemStack output = outputs.get(i);
-                        if (itemOutput.isOutputted(this.level.random, i)) {
-                            this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
-                        }
-                    }
-                    this.updateData();
-                }
-                //}
-
-                if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
-                    this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
-                }
-
-                if (itemInput != null && !itemInput.getIngredients().isEmpty()) {
-                    for (int i = 0; i < itemInput.getIngredients().size(); i++) {
-                        this.getItemHandler().extractItem(i, itemInput.getIngredients().get(i).count(), false);
-                    }
-                }
-
-                if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
-                    this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
-                }
-
-                this.onRecipeComplete();
 
                 if (this.cachedRecipe == null) {
                     setActive(false);
@@ -259,10 +295,13 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
                 EnergyInputComponent inputComponent = recipe.getComponent(EnergyInputComponent.TYPE);
                 if (inputComponent != null) {
-                    int energy = inputComponent.energy() / recipe.getComponent(TimeComponent.TYPE).time();
-                    int drained = this.getEuStorage().forceDrainEnergy(energy, this.level.isClientSide());
-
-                    if (drained == energy) {
+                    int energy = Math.round(inputComponent.energy() / recipe.getComponent(TimeComponent.TYPE).time() * this.energyUsageMultiplier);
+                    // Energy stays in the machine until there's enough for a tick, so a weak supply fills it up
+                    // a bit and then drops, instead of being used up without doing anything
+                    if (this.getEuStorage().forceDrainEnergy(energy, true) == energy) {
+                        if (!this.level.isClientSide()) {
+                            this.getEuStorage().forceDrainEnergy(energy, false);
+                        }
                         canRun = true;
                     }
                 } else {
@@ -272,8 +311,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
                 if (canRun) {
                     this.progress += this.progressIncrement;
-                    setActive(true);
-                    this.playMachineSound();
+                    this.updateRunningState();
                 } else {
                     this.progress = 0;
                     setChanged();
@@ -287,16 +325,67 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
             setActive(false);
         }
 
-        //}
+    }
+
+    private void finishRecipe(MachineRecipeImpl recipe) {
+        RegistryAccess provider = this.level.registryAccess();
+        ItemStack resultItem = recipe.assemble(this.createRecipeInput(), provider);
+        FluidStack resultFluid = recipe.assembleResultFluid(this.createRecipeInput(), provider);
+
+        int resultEnergy = recipe.assembleResultEnergy(this.createRecipeInput(), provider);
+        ItemOutputComponentFlag itemOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_OUTPUT);
+        FluidOutputComponentFlag fluidOutput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_OUTPUT);
+
+        ItemInputComponentFlag itemInput = recipe.getComponentByFlag(IRRecipeComponentFlags.ITEM_INPUT);
+        FluidInputComponentFlag fluidInput = recipe.getComponentByFlag(IRRecipeComponentFlags.FLUID_INPUT);
+
+        boolean hasResultEnergy = recipe.hasResultEnergy(provider);
+        boolean hasResultItem = recipe.hasResultItem(provider);
+        boolean hasResultFluid = recipe.hasResultFluid(provider);
+
+        if (hasResultEnergy) {
+            this.getEuStorage().forceFillEnergy(resultEnergy, false);
+        }
+
+        if (hasResultItem) {
+            List<ItemStack> outputs = itemOutput.getOutputs();
+            for (int i = 0; i < outputs.size(); i++) {
+                ItemStack output = outputs.get(i);
+                if (itemOutput.isOutputted(this.level.random, i)) {
+                    this.forceInsertItem((IItemHandlerModifiable) this.getItemHandler(), this.getResultSlot() + i, i == 0 ? resultItem.copy() : output.copy(), false, this::onItemsChanged);
+                }
+            }
+        }
+
+        if (hasResultFluid && fluidOutput.isOutputted(this.level.random, 0)) {
+            this.forceFillTank(this.getFluidHandler(), resultFluid.copy(), IFluidHandler.FluidAction.EXECUTE, this::onFluidsChanged);
+        }
+
+        if (itemInput != null) {
+            if (!itemInput.getIngredients().isEmpty()) {
+                for (int i = 0; i < itemInput.getIngredients().size(); i++) {
+                    this.getItemHandler().extractItem(i, itemInput.getIngredients().get(i).count(), false);
+                }
+            } else if (itemInput.isSpecial()) {
+                this.handleSpecialItemInput(itemInput);
+            }
+        }
+
+        if (fluidInput != null && !fluidInput.getIngredients().isEmpty()) {
+            this.getFluidHandler().drain(fluidInput.getIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
+        }
+
+        this.updateData();
+    }
+
+    protected void handleSpecialItemInput(ItemInputComponentFlag itemInput) {
+        throw new UnsupportedOperationException("Special ItemInputs are not supported for " + this.getClass().getName());
     }
 
     public void setActive(boolean active) {
         if (MachineBlock.isActive(getBlockState()) != active) {
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(PDLBlockStateProperties.ACTIVE, active));
         }
-    }
-
-    protected void onRecipeComplete() {
     }
 
     protected boolean hasProgressFinished() {
@@ -321,6 +410,12 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
 
     public void addChargingSlot(ChargingSlot chargingSlot) {
         this.chargingSlots.add(chargingSlot);
+    }
+
+    protected boolean isValidChargingItem(ItemStack stack) {
+        EnergyHandler itemEnergyStorage = stack.getCapability(IRCapabilities.ENERGY_ITEM);
+        return itemEnergyStorage != null
+                && Math.abs(itemEnergyStorage.getEnergyTier().order() - this.getEuStorage().getEnergyTier().order()) <= EnergyTier.MAX_TIER_DIFFERENCE;
     }
 
     protected void tickChargingSlot(ChargingSlot slot) {
@@ -374,6 +469,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     protected final <T extends EnergyHandler & StorageChangedListener> void addMachineEuStorage(Function<Supplier<? extends EnergyTier>, T> energyHandlerConstructor, Consumer<Integer> onChangedFunction) {
+        if (!this.machine.canStoreEnergy()) {
+            throw new IllegalStateException(this.getClass().getName() + " cannot store energy. Tried adding eu storage anyways");
+        }
         this.addEuStorage(energyHandlerConstructor, this.machine::getEnergyTier, this.machine.getEnergyCapacity(), onChangedFunction);
     }
 
@@ -405,11 +503,38 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     public void setRedstoneSignalStrength(int redstoneSignalStrength) {
-        this.redstoneSignalStrength = redstoneSignalStrength;
+        if (this.redstoneSignalStrength != redstoneSignalStrength) {
+            this.redstoneSignalStrength = redstoneSignalStrength;
+            // Clients run the machines too, so they need the signal
+            if (this.level != null && !this.level.isClientSide()) {
+                this.updateData();
+            }
+        }
+    }
+
+    /**
+     * Reads the redstone signal this machine receives from its neighbors, only call this on the server
+     */
+    public void updateRedstoneSignalStrength() {
+        this.redstoneSignalChecked = true;
+        this.setRedstoneSignalStrength(this.level.getBestNeighborSignal(this.worldPosition));
+    }
+
+    /**
+     * @return whether the machine may run with its current redstone signal and signal type
+     */
+    public boolean isRedstoneActive() {
+        return this.redstoneSignalType.isActive(this.redstoneSignalStrength);
+    }
+
+    protected @Nullable EnergyHandler getNeighborEuHandler(Direction direction) {
+        this.initCapCache();
+        // The caches are created in the order of Direction.values()
+        return this.euCaches.isEmpty() ? null : this.euCaches.get(direction.ordinal()).getCapability();
     }
 
     public void initCapCache() {
-        if (level instanceof ServerLevel serverLevel) {
+        if (level instanceof ServerLevel serverLevel && this.euCaches.isEmpty()) {
             for (Direction direction : Direction.values()) {
                 this.euCaches.add(BlockCapabilityCache.create(IRCapabilities.ENERGY_BLOCK, serverLevel, worldPosition.relative(direction), direction));
             }
@@ -423,7 +548,13 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.initCapCache();
 
         if (this.loadedRecipe != null) {
-            this.level.getRecipeManager().byKey(this.loadedRecipe).ifPresent(this::setCachedRecipe);
+            Optional<RecipeHolder<?>> recipeHolder = this.level.getRecipeManager().byKey(this.loadedRecipe);
+            recipeHolder.ifPresent(recipe -> {
+                this.setCachedRecipe(recipe);
+                if (recipe.value() instanceof MachineRecipe machineRecipe) {
+                    this.setMaxProgress(this.getRecipeTime(machineRecipe));
+                }
+            });
         }
 
     }
@@ -432,6 +563,9 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     public void dropItems(IItemHandler handler) {
         if (!this.removedByWrench && handler != null) {
             super.dropItems(handler);
+            if (this.upgradeItemHandler != null) {
+                super.dropItems(this.upgradeItemHandler);
+            }
         } else {
             this.removedByWrench = false;
         }
@@ -458,8 +592,25 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
+
+        // Loading doesn't report changed items, and the client's recipe would be outdated without an open menu
+        if (this.getRecipeLayout() != null) {
+            this.refreshCachedRecipe();
+        }
+    }
+
+    @Override
     protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadData(tag, provider);
+
+        // Handlers don't report changes when they get loaded
+        if (this.upgradeItemHandler != null) {
+            for (int i = 0; i < this.upgradeItemHandler.getSlots(); i++) {
+                this.applyUpgradeChange(i);
+            }
+        }
 
         this.burnt = tag.getBoolean("burnt");
         this.redstoneSignalStrength = tag.getInt("signal_strength");
@@ -496,8 +647,8 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
     }
 
     private void refreshCachedRecipe() {
-        MachineRecipe.MachineRecipeInput recipeInput = this.createRecipeInput();
         if (this.getRecipeLayout() != null) {
+            MachineRecipe.MachineRecipeInput recipeInput = this.createRecipeInput();
             RecipeType<MachineRecipeImpl> recipeType = (RecipeType<MachineRecipeImpl>) this.getRecipeLayout().getRecipeType();
             RecipeHolder<MachineRecipeImpl> recipeHolder = this.level.getRecipeManager().getRecipeFor(recipeType, recipeInput, this.level)
                     .orElse(null);
@@ -584,29 +735,104 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         this.progress = progress;
     }
 
-    protected class MachineContainerData implements ContainerData {
-        @Override
-        public int get(int i) {
-            return switch (i) {
-                case 0 -> (int) MachineBlockEntity.this.progress;
-                case 1 -> MachineBlockEntity.this.getMaxProgress();
-                default -> -1;
-            };
+    /**
+     * Sets up upgrades for this machine, call this in the constructor of a machine that implements {@link UpgradeBlockEntity}.
+     * That and adding the upgrade panel to its screen is all that's needed, this class has the interface's methods
+     * already, which can be overridden to limit what the machine supports.
+     */
+    protected final void addUpgradeItemHandler(int slots) {
+        if (!(this instanceof UpgradeBlockEntity)) {
+            throw new IllegalStateException(this.getClass().getName() + " has to implement UpgradeBlockEntity to have upgrades");
         }
 
-        @Override
-        public void set(int i, int i1) {
-            switch (i) {
-                case 0 -> MachineBlockEntity.this.progress = i1;
-                case 1 -> MachineBlockEntity.this.maxProgress = i1;
-                default -> throw new UnsupportedOperationException();
-            }
-            ;
-        }
+        // Not limited any further here, the upgrade slots apply the limit of each upgrade
+        this.upgradeItemHandler = this.addHandler(UPGRADES_KEY, HandlerUtils.newItemStackHandler(this::isUpgradeValid, slot -> Item.DEFAULT_MAX_STACK_SIZE, this::onUpgradesChanged, slots));
+        this.appliedUpgrades = new ItemStack[slots];
+        Arrays.fill(this.appliedUpgrades, ItemStack.EMPTY);
+    }
 
-        @Override
-        public int getCount() {
-            return 2;
+    public boolean supportsUpgrades() {
+        return this.upgradeItemHandler != null;
+    }
+
+    public boolean supportsUpgrade(UpgradeItem upgrade) {
+        return true;
+    }
+
+    public int getUpgradeSlots(UpgradeItem upgrade) {
+        return this.upgradeItemHandler != null ? this.upgradeItemHandler.getSlots() : 0;
+    }
+
+    public @Nullable IItemHandler getUpgradeItemHandler() {
+        return this.upgradeItemHandler;
+    }
+
+    private boolean isUpgradeValid(int slot, ItemStack stack) {
+        return stack.getItem() instanceof UpgradeItem upgrade && this.supportsUpgrade(upgrade);
+    }
+
+    private void onUpgradesChanged(int slot) {
+        this.applyUpgradeChange(slot);
+        if (!this.level.isClientSide()) {
+            this.updateData();
+        } else {
+            this.setChanged();
         }
     }
+
+    private void applyUpgradeChange(int slot) {
+        ItemStack previous = this.appliedUpgrades[slot];
+        ItemStack current = this.upgradeItemHandler.getStackInSlot(slot);
+        this.appliedUpgrades[slot] = current.copy();
+
+        boolean sameItem = previous.is(current.getItem());
+        if (previous.getItem() instanceof UpgradeItem upgrade && (!sameItem || current.getCount() < previous.getCount())) {
+            upgrade.onUpgradeRemoved((MachineBlockEntity & UpgradeBlockEntity) this);
+        }
+        if (current.getItem() instanceof UpgradeItem upgrade && (!sameItem || current.getCount() > previous.getCount())) {
+            upgrade.onUpgradeAdded((MachineBlockEntity & UpgradeBlockEntity) this);
+        }
+    }
+
+    private void tickUpgrades() {
+        if (this.upgradeItemHandler != null) {
+            for (int i = 0; i < this.upgradeItemHandler.getSlots(); i++) {
+                if (this.upgradeItemHandler.getStackInSlot(i).getItem() instanceof UpgradeItem upgrade) {
+                    upgrade.tickUpgrade((MachineBlockEntity & UpgradeBlockEntity) this);
+                }
+            }
+        }
+    }
+
+    public void setProgressIncrement(float progressIncrement) {
+        this.progressIncrement = progressIncrement;
+    }
+
+    public void setEnergyUsageMultiplier(float energyUsageMultiplier) {
+        this.energyUsageMultiplier = energyUsageMultiplier;
+    }
+
+    public EnergyTier getBaseEnergyTier() {
+        return this.machine.getEnergyTier();
+    }
+
+    public void setEnergyTier(EnergyTier energyTier) {
+        if (this.getEuStorage() instanceof EnergyHandlerImpl energyHandler) {
+            energyHandler.setEnergyTier(energyTier);
+        }
+    }
+
+    public int getBaseEnergyCapacity() {
+        return this.machine.getEnergyCapacity();
+    }
+
+    public void setEnergyCapacity(int energyCapacity) {
+        EnergyHandler energyStorage = this.getEuStorage();
+        energyStorage.setEnergyCapacity(energyCapacity);
+        // The level is missing while loading, where the stored energy can't be above the saved capacity anyway
+        if (this.level != null && energyStorage.getEnergyStored() > energyCapacity) {
+            energyStorage.setEnergyStored(energyCapacity);
+        }
+    }
+
 }

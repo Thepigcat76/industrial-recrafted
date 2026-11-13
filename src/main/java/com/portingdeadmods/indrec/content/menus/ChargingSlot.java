@@ -1,9 +1,10 @@
 package com.portingdeadmods.indrec.content.menus;
 
+import com.portingdeadmods.indrec.api.menus.IRSlotItemHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-public class ChargingSlot extends SlotItemHandler {
+public class ChargingSlot extends IRSlotItemHandler {
     private final ChargeMode mode;
 
     public ChargingSlot(IItemHandler itemHandler, int index, ChargeMode mode, int xPosition, int yPosition) {

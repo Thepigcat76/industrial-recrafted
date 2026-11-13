@@ -8,13 +8,13 @@ public final class IRConfig {
     @ConfigValue(key = "basic_generator", name = "Basic Generator Energy Capacity", comment = "The Energy Capacity of the Basic Generator", category = BLOCKS_ENERGY_CAPACITY)
     public static int basicGeneratorEnergyCapacity = 4_000;
     @ConfigValue(key = "geothermal_generator", name = "Geothermal Generator Energy Capacity", comment = "The Energy Capacity of the Geothermal Generator", category = BLOCKS_ENERGY_CAPACITY)
-    public static int geothermalGeneratorEnergyCapacity = 4_000;
+    public static int geothermalGeneratorEnergyCapacity = 16_000;
     @ConfigValue(key = "wind_mill", name = "Wind Mill Energy Capacity", comment = "The Energy Capacity of the Wind Mill", category = BLOCKS_ENERGY_CAPACITY)
-    public static int windMillEnergyCapacity = 16000;
+    public static int windMillEnergyCapacity = 64_000;
     @ConfigValue(key = "water_mill", name = "Water Mill Energy Capacity", comment = "The Energy Capacity of the Water Mill", category = BLOCKS_ENERGY_CAPACITY)
-    public static int waterMillEnergyCapacity = 16000;
+    public static int waterMillEnergyCapacity = 16_000;
     @ConfigValue(key = "basic_solar_panel", name = "Basic Solar Panel Energy Capacity", comment = "The Energy Capacity of the Basic Solar Panel", category = BLOCKS_ENERGY_CAPACITY)
-    public static int basicSolarPanelEnergyCapacity = 4000;
+    public static int basicSolarPanelEnergyCapacity = 4_000;
     @ConfigValue(key = "nuclear_reactor", name = "Nuclear Reactor Energy Capacity", comment = "The Energy Capacity of the Nuclear Reactor", category = BLOCKS_ENERGY_CAPACITY)
     public static int nuclearReactorEnergyCapacity = 1_000_000;
 
@@ -29,20 +29,22 @@ public final class IRConfig {
     public static int matterFabricatorEnergyCapacity = 1_000_000;
 
     @ConfigValue(key = "electric_furnace", name = "Electric Furnace Energy Capacity", comment = "The Energy Capacity of the Electric Furnace", category = BLOCKS_ENERGY_CAPACITY)
-    public static int electricFurnaceEnergyCapacity = 4000;
+    public static int electricFurnaceEnergyCapacity = 4_000;
     @ConfigValue(key = "macerator", name = "Macerator Energy Capacity", comment = "The Energy Capacity of the Macerator", category = BLOCKS_ENERGY_CAPACITY)
-    public static int maceratorEnergyCapacity = 4000;
+    public static int maceratorEnergyCapacity = 4_000;
     @ConfigValue(key = "compressor", name = "Compressor Energy Capacity", comment = "The Energy Capacity of the Compressor", category = BLOCKS_ENERGY_CAPACITY)
-    public static int compressorEnergyCapacity = 4000;
+    public static int compressorEnergyCapacity = 4_000;
     @ConfigValue(key = "recycler", name = "Recycler Energy Capacity", comment = "The Energy Capacity of the Recycler", category = BLOCKS_ENERGY_CAPACITY)
-    public static int recyclerEnergyCapacity = 4000;
+    public static int recyclerEnergyCapacity = 16_000;
     @ConfigValue(key = "extractor", name = "Extractor Energy Capacity", comment = "The Energy Capacity of the Extractor", category = BLOCKS_ENERGY_CAPACITY)
-    public static int extractorEnergyCapacity = 4000;
+    public static int extractorEnergyCapacity = 4_000;
     @ConfigValue(key = "canning_machine", name = "Canning Machine Energy Capacity", comment = "The Energy Capacity of the Canning Machine", category = BLOCKS_ENERGY_CAPACITY)
-    public static int canningMachineEnergyCapacity = 4000;
+    public static int canningMachineEnergyCapacity = 16_000;
 
     @ConfigValue(key = "charge_pad", name = "Charge Pad Energy Capacity", comment = "The Energy Capacity of the Charge Pad", category = BLOCKS_ENERGY_CAPACITY)
     public static int chargePadEnergyCapacity = 1_000_000;
+    @ConfigValue(key = "crop_manager", name = "Crop Manager Energy Capacity", comment = "The Energy Capacity of the Crop Manager", category = BLOCKS_ENERGY_CAPACITY)
+    public static int cropManagerEnergyCapacity = 16_000;
 
     private static final String BLOCKS_ENERGY_PRODUCTION = "blocks.energy.production";
 
@@ -60,12 +62,27 @@ public final class IRConfig {
     private static final String BLOCKS_ENERGY_TRANSFER = "blocks.energy.transfer";
 
     @ConfigValue(key = "charge_pad", name = "Charge Pad", comment = "The amount of Energy the Charge Pad transfers to items", category = BLOCKS_ENERGY_TRANSFER)
-    public static final int chargePadEnergyTransfer = 8_192;
+    public static int chargePadEnergyTransfer = 8_192;
 
     private static final String BLOCKS_FLUID_CAPACITY = "blocks.fluid.capacity";
 
     @ConfigValue(key = "geothermal_generator", name = "Geothermal Generator Fluid Capacity", comment = "The Fluid Capacity of the Geothermal Generator", category = BLOCKS_FLUID_CAPACITY)
-    public static int geothermalGeneratorFluidCapacity = 1000;
+    public static int geothermalGeneratorFluidCapacity = 1_000;
+
+    private static final String CROP_MANAGER = "blocks.crop_manager";
+
+    @ConfigValue(key = "range", name = "Crop Manager Range", comment = "The radius of the square around the Crop Manager in which crops are managed", category = CROP_MANAGER)
+    public static int cropManagerRange = 4;
+    @ConfigValue(key = "interval", name = "Crop Manager Interval", comment = "The amount of ticks between the Crop Manager harvesting crops and removing weeds", category = CROP_MANAGER)
+    public static int cropManagerInterval = 20;
+    @ConfigValue(key = "bonemeal_interval", name = "Crop Manager Bone Meal Interval", comment = "The amount of ticks between the Crop Manager applying bone meal to the crops", category = CROP_MANAGER)
+    public static int cropManagerBonemealInterval = 100;
+    @ConfigValue(key = "harvest_energy_usage", name = "Crop Manager Harvest Energy Usage", comment = "The Energy used by the Crop Manager to harvest a crop", category = CROP_MANAGER)
+    public static int cropManagerHarvestEnergyUsage = 40;
+    @ConfigValue(key = "bonemeal_energy_usage", name = "Crop Manager Bone Meal Energy Usage", comment = "The Energy used by the Crop Manager to apply bone meal to a crop", category = CROP_MANAGER)
+    public static int cropManagerBonemealEnergyUsage = 20;
+    @ConfigValue(key = "weed_removal_energy_usage", name = "Crop Manager Weed Removal Energy Usage", comment = "The Energy used by the Crop Manager to remove a weed", category = CROP_MANAGER)
+    public static int cropManagerWeedRemovalEnergyUsage = 10;
 
     private static final String ITEMS_ENERGY_CAPACITY = "items.energy.capacity";
 
@@ -79,6 +96,10 @@ public final class IRConfig {
     public static int electricHoeCapacity = 10_000;
     @ConfigValue(key = "electric_tree_tap", name = "Electric Tree Tap Energy Capacity", comment = "The Energy Capacity of the Electric Tree Tap", category = ITEMS_ENERGY_CAPACITY)
     public static int electricTreeTapCapacity = 10_000;
+    @ConfigValue(key = "crop_analyzer", name = "Crop Analyzer Energy Capacity", comment = "The Energy Capacity of the Crop Analyzer", category = ITEMS_ENERGY_CAPACITY)
+    public static int cropAnalyzerCapacity = 10_000;
+    @ConfigValue(key = "mining_laser", name = "Mining Laser Energy Capacity", comment = "The Energy Capacity of the Mining Laser", category = ITEMS_ENERGY_CAPACITY)
+    public static int miningLaserCapacity = 64_000;
 
     @ConfigValue(key = "nano_suit", name = "Nano Suit Energy Capacity", comment = "The Energy Capacity of the Nano Suit", category = ITEMS_ENERGY_CAPACITY)
     public static int nanoSuitEnergyCapacity = 1_000_000;
@@ -109,9 +130,15 @@ public final class IRConfig {
     public static int electricHoeEnergyUsage = 80;
     @ConfigValue(key = "electric_tree_tap", name = "Electric Tree Tap Energy Usage", comment = "The Energy Usage of the Electric Tree Tap", category = ITEMS_ENERGY_USAGE)
     public static int electricTreeTapEnergyUsage = 80;
+    @ConfigValue(key = "crop_analyzer", name = "Crop Analyzer Energy Usage", comment = "The Energy used by the Crop Analyzer to analyze a crop", category = ITEMS_ENERGY_USAGE)
+    public static int cropAnalyzerEnergyUsage = 500;
+    @ConfigValue(key = "mining_laser", name = "Mining Laser Energy Usage", comment = "The Energy used by the Mining Laser per tick while firing", category = ITEMS_ENERGY_USAGE)
+    public static int miningLaserEnergyUsage = 32;
+    @ConfigValue(key = "mining_laser_entity", name = "Mining Laser Entity Energy Usage", comment = "The Energy used by the Mining Laser per tick while its beam hits an entity, instead of the normal usage", category = ITEMS_ENERGY_USAGE)
+    public static int miningLaserEntityEnergyUsage = 320;
 
     @ConfigValue(key = "nano_suit", name = "Nano Suit Energy Usage", comment = "The Energy Usage of the Nano Suit", category = ITEMS_ENERGY_USAGE)
-    public static int nanoSuitEnergyUsage = 1000;
+    public static int nanoSuitEnergyUsage = 1_000;
     @ConfigValue(key = "quantum_suit", name = "Quantum Suit Energy Usage", comment = "The Energy Usage of the Quantum Suit", category = ITEMS_ENERGY_USAGE)
     public static int quantumSuitEnergyUsage = 10_000;
     @ConfigValue(key = "jetpack", name = "Jetpack Energy Usage", comment = "The Energy Usage of the Jetpack", category = ITEMS_ENERGY_USAGE)
@@ -123,6 +150,11 @@ public final class IRConfig {
     public static int advancedDrillEnergyUsage = 800;
     @ConfigValue(key = "advanced_chainsaw", name = "Advanced Chainsaw Energy Usage", comment = "The Energy Usage of the Advanced Chainsaw", category = ITEMS_ENERGY_USAGE)
     public static int advancedChainsawEnergyUsage = 800;
+
+    private static final String CROPS = "crops";
+
+    @ConfigValue(key = "weed_growth_chance", name = "Weed Growth Chance", comment = "Chance per random tick for a weed to grow on empty crop sticks", category = CROPS)
+    public static float weedGrowthChance = 0.15f;
 
     private static final String ITEMS_FLUID_CAPACITY = "items.fluid.capacity";
 
@@ -136,13 +168,25 @@ public final class IRConfig {
     @ConfigValue(name = "Nano Saber Attack Damage", comment = "The Attack Damage of the Nano Saber when activated")
     public static int nanoSaberAttackDamage = 19;
 
+    @ConfigValue(name = "Mining Laser Range", comment = "The maximum distance in blocks the Mining Laser can reach")
+    public static int miningLaserRange = 32;
+    @ConfigValue(name = "Mining Laser Speed", comment = "The mining speed of the Mining Laser. For comparison: Diamond Pickaxe = 8")
+    public static float miningLaserSpeed = 8.0F;
+    @ConfigValue(name = "Mining Laser Entity Damage", comment = "The damage the Mining Laser deals per hit, entities can be hit about twice per second")
+    public static float miningLaserEntityDamage = 6.0F;
+
     @ConfigValue(name = "Energy Conversion Factor", comment = "The factor for converting EU to FE (By default: 1 EU = 4 FE)")
     public static float energyConversionFactor = 4.0f;
 
-//    public static final String OVERCLOCKER_UPGRADE_CATEGORY = "upgrade.overclocker";
-//
-//    @ConfigValue(key = "speed", name = "Overclocker Upgrade Speed", comment = "How much the overclocker upgrade speeds up a machine. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
-//    public static float overclockerUpgradeSpeed = 0.45F;
-//    @ConfigValue(key = "energy", name = "Overclocker Upgrade Energy", comment = "How much more energy a machine with the overclocker upgrade consumes. For example 0.1 = 10%", category = OVERCLOCKER_UPGRADE_CATEGORY)
-//    public static float overclockerUpgradeEnergy = 0.6F;
+    private static final String OVERCLOCKER_UPGRADE_CATEGORY = "upgrade.overclocker";
+
+    @ConfigValue(key = "time_multiplier", name = "Overclocker Upgrade Time Multiplier", comment = "What each overclocker upgrade multiplies a machine's process time by. For example 0.7 = 70% of the time", category = OVERCLOCKER_UPGRADE_CATEGORY)
+    public static float overclockerUpgradeTimeMultiplier = 0.7F;
+    @ConfigValue(key = "energy_multiplier", name = "Overclocker Upgrade Energy Multiplier", comment = "What each overclocker upgrade multiplies a machine's energy usage per tick by. For example 1.6 = 160% of the power", category = OVERCLOCKER_UPGRADE_CATEGORY)
+    public static float overclockerUpgradeEnergyMultiplier = 1.6F;
+
+    private static final String ENERGY_UPGRADE_CATEGORY = "upgrade.energy";
+
+    @ConfigValue(key = "capacity", name = "Energy Upgrade Capacity", comment = "How much energy capacity each energy upgrade adds to a machine", category = ENERGY_UPGRADE_CATEGORY)
+    public static int energyUpgradeCapacity = 10_000;
 }

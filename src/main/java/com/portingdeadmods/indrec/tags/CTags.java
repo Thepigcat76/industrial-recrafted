@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,10 @@ public final class CTags {
         public static final TagKey<Item> INGOTS_BRONZE = createTag("ingots/bronze", () -> List.of(item(IRItems.BRONZE_INGOT)));
         public static final TagKey<Item> INGOTS = createTag("ingots", () -> List.of(tag(INGOTS_URANIUM), tag(INGOTS_TIN), tag(INGOTS_REFINED_IRON), tag(INGOTS_IRIDIUM), tag(INGOTS_BRONZE)));
 
+        public static final TagKey<Item> NUGGETS_TIN = createTag("nuggets/tin", () -> List.of(item(IRItems.TIN_NUGGET)));
+        public static final TagKey<Item> NUGGETS_COPPER = createTag("nuggets/copper", () -> List.of(item(IRItems.COPPER_NUGGET)));
+        public static final TagKey<Item> NUGGETS = createTag("nuggets", () -> List.of(tag(NUGGETS_TIN), tag(NUGGETS_COPPER)));
+
         public static final TagKey<Item> DUSTS_GOLD = createTag("dusts/gold", () -> List.of(item(IRItems.GOLD_DUST)));
         public static final TagKey<Item> DUSTS_COAL = createTag("dusts/coal", () -> List.of(item(IRItems.COAL_DUST)));
         public static final TagKey<Item> DUSTS_IRON = createTag("dusts/iron", () -> List.of(item(IRItems.IRON_DUST)));
@@ -57,6 +62,29 @@ public final class CTags {
         }
 
         private static Either<ItemLike, TagKey<Item>> tag(TagKey<Item> tag) {
+            return Either.right(tag);
+        }
+    }
+
+    public static class BlockTags {
+        public static final Map<TagKey<Block>, Supplier<List<Either<Block, TagKey<Block>>>>> TAGS = new HashMap<>();
+
+        public static final TagKey<Block> ORES_TIN = createTag("ores/tin", () -> List.of(block(IRBlocks.TIN_ORE.get()), block(IRBlocks.DEEPSLATE_TIN_ORE.get())));
+        public static final TagKey<Block> ORES_URANIUM = createTag("ores/uranium", () -> List.of(block(IRBlocks.URANIUM_ORE.get()), block(IRBlocks.DEEPSLATE_URANIUM_ORE.get())));
+        public static final TagKey<Block> ORES_IRIDIUM = createTag("ores/iridium", () -> List.of(block(IRBlocks.IRIDIUM_ORE.get()), block(IRBlocks.DEEPSLATE_IRIDIUM_ORE.get())));
+        public static final TagKey<Block> ORES = createTag("ores", () -> List.of(tag(ORES_TIN), tag(ORES_URANIUM), tag(ORES_IRIDIUM)));
+
+        private static TagKey<Block> createTag(String id, Supplier<List<Either<Block, TagKey<Block>>>> blocks) {
+            TagKey<Block> tag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", id));
+            TAGS.put(tag, blocks);
+            return tag;
+        }
+
+        private static Either<Block, TagKey<Block>> block(Block block) {
+            return Either.left(block);
+        }
+
+        private static Either<Block, TagKey<Block>> tag(TagKey<Block> tag) {
             return Either.right(tag);
         }
     }

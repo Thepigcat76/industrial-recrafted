@@ -7,12 +7,17 @@ import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import com.portingdeadmods.indrec.IRFeatureFlags;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import com.portingdeadmods.indrec.content.blocks.CropBlock;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
@@ -24,7 +29,7 @@ public class IRBlockLootTableProvider extends BlockLootSubProvider {
     private final Set<Block> knownBlocks = new ReferenceOpenHashSet<>();
 
     public IRBlockLootTableProvider(HolderLookup.Provider registries) {
-        super(Set.of(), FeatureFlags.VANILLA_SET, registries);
+        super(Set.of(), FeatureFlags.VANILLA_SET.join(FeatureFlagSet.of(IRFeatureFlags.EXPERIMENTAL)), registries);
     }
 
     @Override
@@ -62,6 +67,18 @@ public class IRBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(IRBlocks.RUBBER_TREE_WOOD.get());
         dropSelf(IRBlocks.STRIPPED_RUBBER_TREE_WOOD.get());
         dropSelf(IRBlocks.RUBBER_TREE_SAPLING.get());
+        dropSelf(IRBlocks.GOLDEN_DANDELION.get());
+        dropSelf(IRBlocks.IRON_VINES.get());
+        dropSelf(IRBlocks.TIN_BLOSSOM.get());
+        dropSelf(IRBlocks.COPRIUM.get());
+        dropSelf(IRBlocks.EXPOSED_COPRIUM.get());
+        dropSelf(IRBlocks.WEATHERED_COPRIUM.get());
+        dropSelf(IRBlocks.OXIDIZED_COPRIUM.get());
+        dropSelf(IRBlocks.WAXED_COPRIUM.get());
+        dropSelf(IRBlocks.WAXED_EXPOSED_COPRIUM.get());
+        dropSelf(IRBlocks.WAXED_WEATHERED_COPRIUM.get());
+        dropSelf(IRBlocks.WAXED_OXIDIZED_COPRIUM.get());
+        dropSelf(IRBlocks.ENDER_LILY.get());
         dropSelf(IRBlocks.RUBBER_TREE_BUTTON.get());
         dropSelf(IRBlocks.RUBBER_TREE_PLANKS.get());
         dropSelf(IRBlocks.RUBBER_TREE_PRESSURE_PLATE.get());
@@ -81,6 +98,21 @@ public class IRBlockLootTableProvider extends BlockLootSubProvider {
 
         dropOther(IRBlocks.IRIDIUM_ORE.get(), IRItems.RAW_IRIDIUM);
         dropOther(IRBlocks.DEEPSLATE_IRIDIUM_ORE.get(), IRItems.RAW_IRIDIUM);
+
+        add(IRBlocks.CROP.get(), createCropSticksTable(IRBlocks.CROP.get()));
+    }
+
+    /**
+     * One crop stick, two if the sticks are set up for crossbreeding. The planted crop's seed is dropped by the block itself
+     */
+    private LootTable.Builder createCropSticksTable(Block cropBlock) {
+        return LootTable.lootTable()
+                .withPool(applyExplosionCondition(cropBlock, LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1F))
+                        .add(LootItem.lootTableItem(IRItems.CROP_STICKS)
+                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2F))
+                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(cropBlock)
+                                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.CROSSBREED, true)))))));
     }
 
     private LootTable.Builder createResinLogTable(ItemLike logBlock, ItemLike resinItem) {

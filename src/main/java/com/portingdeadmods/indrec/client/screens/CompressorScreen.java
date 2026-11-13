@@ -1,8 +1,10 @@
 package com.portingdeadmods.indrec.client.screens;
 
+import com.portingdeadmods.indrec.client.screens.widgets.UpgradePanelWidget;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
+import com.portingdeadmods.indrec.client.screens.widgets.IREnergyBarWidget;
 import com.portingdeadmods.indrec.content.menus.CompressorMenu;
 import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.registries.IRTranslations;
@@ -29,10 +31,12 @@ public class CompressorScreen extends MachineScreen<CompressorMenu> {
         this.imageHeight = 186;
         this.inventoryLabelY = this.imageHeight - 94;
         super.init();
-        EnergyBarWidget energyBarWidget = addRenderableOnly(
-                new EnergyBarWidget(this.leftPos + 11, this.topPos + 17, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString(), true)
+        IREnergyBarWidget energyBarWidget = addRenderableOnly(
+                new IREnergyBarWidget(this.leftPos + 11, this.topPos + 17,12, 48, new IRGenericEnergyWrapper(menu.blockEntity.getEuStorage()), IRTranslations.ENERGY_UNIT.component().getString())
+                        .setHasBorder(true)
         );
         addPanelWidget(new RedstonePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2));
+        addPanelWidget(new UpgradePanelWidget(this.leftPos + this.imageWidth, this.topPos + 2 + 24 + 2));
         addRenderableOnly(new BatterySlotWidget(this.leftPos + 8, this.topPos + 14 + energyBarWidget.getHeight() + 5));
     }
 
@@ -42,7 +46,8 @@ public class CompressorScreen extends MachineScreen<CompressorMenu> {
 
         float progress;
         if (this.menu.blockEntity.getCachedRecipe() != null) {
-            progress = (float) this.menu.blockEntity.getProgress() / this.menu.blockEntity.getMaxProgress();
+            // Overclocking can overshoot the max progress for a tick
+            progress = Math.min(1F, (float) this.menu.blockEntity.getProgress() / this.menu.blockEntity.getMaxProgress());
         } else {
             progress = 0;
         }

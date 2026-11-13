@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
+import net.neoforged.neoforge.registries.DeferredBlock;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.client.items.IRItemProperties;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
@@ -46,6 +47,8 @@ public class IRItemModelProvider extends ItemModelProvider {
         basicItem(IRItems.RAW_IRIDIUM.get());
 
         basicItem(IRItems.TIN_INGOT.get());
+        basicItem(IRItems.TIN_NUGGET.get());
+        basicItem(IRItems.COPPER_NUGGET.get());
         basicItem(IRItems.REFINED_IRON_INGOT.get());
         basicItem(IRItems.BRONZE_INGOT.get());
         basicItem(IRItems.IRIDIUM_ALLOY_INGOT.get());
@@ -67,6 +70,9 @@ public class IRItemModelProvider extends ItemModelProvider {
 
         basicItem(IRItems.BASIC_CIRCUIT.get());
         basicItem(IRItems.ADVANCED_CIRCUIT.get());
+        basicItem(IRItems.OVERCLOCKER_UPGRADE.get());
+        basicItem(IRItems.ENERGY_UPGRADE.get());
+        basicItem(IRItems.TRANSFORMER_UPGRADE.get());
 
         basicItem(IRItems.TREETAP.get());
         handheldItem(IRItems.WRENCH.get());
@@ -83,6 +89,7 @@ public class IRItemModelProvider extends ItemModelProvider {
         activeModel(IRItems.ADVANCED_CHAINSAW);
         activeModel(IRItems.BASIC_DRILL);
         activeModel(IRItems.ADVANCED_DRILL);
+        basicItem(IRItems.CROP_ANALYZER.get());
 
         basicItem(IRItems.NANO_HELMET.get());
         basicItem(IRItems.NANO_CHESTPLATE.get());
@@ -143,6 +150,20 @@ public class IRItemModelProvider extends ItemModelProvider {
 
         basicItemBlock(IRBlocks.RUBBER_TREE_DOOR.asItem(), "tree");
         basicItemBlock(IRBlocks.RUBBER_TREE_SAPLING.asItem(), "tree");
+        basicItemBlock(IRBlocks.GOLDEN_DANDELION.asItem(), null);
+        basicItemBlock(IRBlocks.IRON_VINES.asItem(), null);
+        copriumItem(IRBlocks.COPRIUM, "coprium");
+        copriumItem(IRBlocks.EXPOSED_COPRIUM, "exposed_coprium");
+        copriumItem(IRBlocks.WEATHERED_COPRIUM, "weathered_coprium");
+        copriumItem(IRBlocks.OXIDIZED_COPRIUM, "oxidized_coprium");
+        copriumItem(IRBlocks.WAXED_COPRIUM, "coprium");
+        copriumItem(IRBlocks.WAXED_EXPOSED_COPRIUM, "exposed_coprium");
+        copriumItem(IRBlocks.WAXED_WEATHERED_COPRIUM, "weathered_coprium");
+        copriumItem(IRBlocks.WAXED_OXIDIZED_COPRIUM, "oxidized_coprium");
+        getBuilder(IRBlocks.TIN_BLOSSOM.getId().toString()).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", modLoc("block/crops/tin_blossom_stage5"));
+        getBuilder(IRBlocks.ENDER_LILY.getId().toString()).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", modLoc("block/crops/ender_lily_stage7"));
         parentItemBlock(IRBlocks.RUBBER_TREE_BUTTON.get().asItem(), "_inventory");
         parentItemBlock(IRBlocks.RUBBER_TREE_FENCE.get().asItem(), "_inventory");
         parentItemBlock(IRBlocks.RUBBER_TREE_TRAPDOOR.get().asItem(), "_bottom");
@@ -257,6 +278,16 @@ public class IRItemModelProvider extends ItemModelProvider {
         }
     }
 
+    /**
+     * Item model with two layers: the base texture (layer0) and an overlay texture (layer1, tint index 1)
+     */
+    public ItemModelBuilder layeredItem(ItemLike item, String overlaySuffix) {
+        return getBuilder(name(item))
+                .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", itemTexture(item))
+                .texture("layer1", itemTexture(item).withSuffix(overlaySuffix));
+    }
+
     public ItemModelBuilder basicItem(ItemLike item, ResourceLocation texture) {
         return getBuilder(name(item))
                 .parent(new ModelFile.UncheckedModelFile("item/generated"))
@@ -302,4 +333,9 @@ public class IRItemModelProvider extends ItemModelProvider {
         return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
     }
 
+    // Uses the last crop stage of the variant, waxed variants look like their unwaxed variant
+    private void copriumItem(DeferredBlock<?> block, String variant) {
+        getBuilder(block.getId().toString()).parent(new ModelFile.UncheckedModelFile("item/generated"))
+                .texture("layer0", modLoc("block/crops/" + variant + "_stage_6"));
+    }
 }

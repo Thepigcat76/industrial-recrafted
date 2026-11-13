@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.content.blocks;
 
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -51,7 +52,7 @@ public class BurntCableBlock extends CableBlock {
     }
 
     @Override
-    public boolean canConnectTo(BlockEntity connectTo) {
+    public boolean canConnectTo(BlockEntity connectTo, Direction direction) {
         return false;
     }
 

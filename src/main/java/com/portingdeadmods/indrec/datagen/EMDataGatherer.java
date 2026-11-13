@@ -40,7 +40,8 @@ public final class EMDataGatherer {
                 new LootTableProvider.SubProviderEntry(IRBlockLootTableProvider::new, LootContextParamSets.BLOCK),
                 new LootTableProvider.SubProviderEntry(IRMiscLootTableProvider::new, LootContextParamSets.EMPTY)
         ), lookupProvider));
-        generator.addProvider(event.includeServer(), new IRDatapackEntriesProvider(packOutput, lookupProvider));
+        IRDatapackEntriesProvider datapackEntriesProvider = generator.addProvider(event.includeServer(), new IRDatapackEntriesProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new IRTagsProvider.DamageTypesProvider(packOutput, datapackEntriesProvider.getRegistryProvider(), existingFileHelper));
         generator.addProvider(event.includeServer(), new IRDataMapProvider(packOutput, lookupProvider));
     }
 }
