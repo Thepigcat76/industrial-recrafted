@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "indrec:block/crops/brown_mushroom_stage2"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "indrec:block/crop_stem_stage_1",
+  "textures": {
+    "stem": "indrec:block/crops/melon_crop_stem_1"
+  }
+}

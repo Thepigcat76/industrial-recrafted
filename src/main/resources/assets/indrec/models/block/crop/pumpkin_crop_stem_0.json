@@ -1,0 +1,6 @@
+{
+  "parent": "indrec:block/crop_stem_stage_0",
+  "textures": {
+    "stem": "indrec:block/crops/pumpkin_crop_stem_0"
+  }
+}

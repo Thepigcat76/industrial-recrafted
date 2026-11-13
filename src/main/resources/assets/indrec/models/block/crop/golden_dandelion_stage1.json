@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "indrec:block/crops/golden_dandelion_stage1"
+  }
+}

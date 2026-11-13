@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "indrec:block/crops/tin_blossom_stage4"
+  }
+}

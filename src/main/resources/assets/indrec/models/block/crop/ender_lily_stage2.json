@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "indrec:block/crops/ender_lily_stage2"
+  }
+}

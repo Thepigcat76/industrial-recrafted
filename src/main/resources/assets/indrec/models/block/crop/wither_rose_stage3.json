@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "indrec:block/crops/wither_rose_stage3"
+  }
+}
