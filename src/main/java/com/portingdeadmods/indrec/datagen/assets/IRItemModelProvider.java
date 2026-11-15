@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.datagen.assets;
 
 import net.neoforged.neoforge.registries.DeferredBlock;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
+import com.portingdeadmods.indrec.compat.guideme.IRGuide;
 import com.portingdeadmods.indrec.client.items.IRItemProperties;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
 import com.portingdeadmods.indrec.registries.IRBlocks;
@@ -40,6 +41,9 @@ public class IRItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+        // Model of GuideME's guide item for this mod's guide, set in the guide's item settings
+        withExistingParent(IRGuide.ID.getPath(), mcLoc("item/generated")).texture("layer0", modLoc("item/guide"));
+
         IRBlocks.BLOCKS.getBlockItems().stream().filter(b -> !CUSTOM_ITEM_MODELS.contains(b.get().getBlock())).map(Supplier::get).map(BlockItem::getBlock).forEach(this::simpleBlockItem);
 
         basicItem(IRItems.RAW_TIN.get());
@@ -76,7 +80,7 @@ public class IRItemModelProvider extends ItemModelProvider {
 
         basicItem(IRItems.TREETAP.get());
         handheldItem(IRItems.WRENCH.get());
-        handheldItem(IRItems.CUTTER.get());
+        basicItem(IRItems.TOOLBOX.get());
         basicItem(IRItems.REMOTE_DETONATOR.get());
         basicItem(IRItems.DYNAMITE.get());
 
@@ -173,6 +177,7 @@ public class IRItemModelProvider extends ItemModelProvider {
         parentItemBlock(IRBlocks.RUBBER_SHEET.asItem(), "2");
 
         basicItem(IRItems.PLANT_BALL.get());
+        basicItem(IRItems.STICK_REED.get());
 
         overrideItemModel(6, basicItem(IRItems.ELECTRIC_JETPACK, itemTexture(IRItems.ELECTRIC_JETPACK).withSuffix("_0")), IRItemProperties.JETPACK_STAGE_KEY,
                 i -> basicItem(IRItems.ELECTRIC_JETPACK, "_" + i));

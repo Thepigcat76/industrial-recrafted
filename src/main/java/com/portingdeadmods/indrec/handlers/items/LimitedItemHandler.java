@@ -1,4 +1,4 @@
-package com.portingdeadmods.indrec.impl.items;
+package com.portingdeadmods.indrec.handlers.items;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;

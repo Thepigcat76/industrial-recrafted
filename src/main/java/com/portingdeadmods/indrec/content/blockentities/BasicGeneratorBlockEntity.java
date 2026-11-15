@@ -4,21 +4,14 @@ import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
-import com.portingdeadmods.indrec.content.menus.BasicGeneratorMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ChunkPos;
@@ -26,10 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class BasicGeneratorBlockEntity extends MachineBlockEntity implements MenuProvider, GeneratorBlockEntity {
+public class BasicGeneratorBlockEntity extends MachineBlockEntity implements GeneratorBlockEntity {
     private int burnTime;
     private int maxBurnTime;
 
@@ -149,17 +140,5 @@ public class BasicGeneratorBlockEntity extends MachineBlockEntity implements Men
         super.loadData(pTag, provider);
         burnTime = pTag.getInt("burnTime");
         maxBurnTime = pTag.getInt("maxBurnTime");
-    }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.BASIC_GENERATOR.component();
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        this.syncProgress();
-        return new BasicGeneratorMenu(i, inventory, this);
     }
 }

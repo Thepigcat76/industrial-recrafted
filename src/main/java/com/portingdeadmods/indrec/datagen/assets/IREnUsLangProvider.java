@@ -1,5 +1,7 @@
 package com.portingdeadmods.indrec.datagen.assets;
 
+import com.portingdeadmods.indrec.compat.guideme.IRGuide;
+
 import com.portingdeadmods.portingdeadlibs.api.blockentities.RedstoneBlockEntity;
 import com.portingdeadmods.portingdeadlibs.PortingDeadLibs;
 import com.portingdeadmods.indrec.IRConfig;
@@ -33,6 +35,7 @@ public class IREnUsLangProvider extends LanguageProvider {
 
         addCrop("stick_reed", "Stick Reed");
         addCrop("wheat", "Wheat");
+        addCrop("sugar_cane", "Sugar Cane");
         addCrop("beetroots", "Beetroots");
         addCrop("carrots", "Carrots");
         addCrop("potatoes", "Potatoes");
@@ -52,12 +55,14 @@ public class IREnUsLangProvider extends LanguageProvider {
         addCrop("poppy", "Poppy");
         addCrop("ender_lily", "Ender Lily");
         addCrop("nether_wart", "Nether Wart");
+        addCrop("sweet_berry_bush", "Sweet Berry Bush");
         addCrop("red_mushroom", "Red Mushroom");
         addCrop("brown_mushroom", "Brown Mushroom");
 
         // The crop sticks item is a block item of the crop block, so they share their name
         addBlock(IRBlocks.CROP, "Crop Sticks");
         addItem(IRItems.CROP_ANALYZER, "Crop Analyzer");
+        add(IRGuide.NAME_KEY, "Industrial Recrafted Guide");
 
         addItem(IRItems.RAW_TIN, "Raw Tin");
         addItem(IRItems.RAW_URANIUM, "Raw Uranium");
@@ -93,7 +98,9 @@ public class IREnUsLangProvider extends LanguageProvider {
 
         addItem(IRItems.WRENCH, "Wrench");
         addItem(IRItems.TREETAP, "Treetap");
-        addItem(IRItems.CUTTER, "Cutter");
+        addItem(IRItems.TOOLBOX, "Toolbox");
+        add("key.indrec.open_toolbox", "Open Toolbox Filters");
+        add("key.categories.indrec", "Industrial Recrafted");
         addItem(IRItems.REMOTE_DETONATOR, "Remote Detonator");
         addItem(IRItems.DYNAMITE, "Dynamite");
 
@@ -146,6 +153,7 @@ public class IREnUsLangProvider extends LanguageProvider {
         addItem(IRFluids.BIO_FUEL.getDeferredBucket(), "Bio Fuel Bucket");
 
         addItem(IRItems.PLANT_BALL, "Plant Ball");
+        addItem(IRItems.STICK_REED, "Stick Reed");
 
         addItem(IRItems.SINGLE_URANIUM_FUEL_ROD, "Uranium Fuel Rod");
         addItem(IRItems.DOUBLE_URANIUM_FUEL_ROD, "Double Uranium Fuel Rod");

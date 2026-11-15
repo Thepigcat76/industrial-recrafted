@@ -12,7 +12,7 @@ import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.menus.ChargingSlot;
 import com.portingdeadmods.indrec.content.recipes.MachineRecipeImpl;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.content.recipes.components.TimeComponent;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyInputComponent;
 import com.portingdeadmods.indrec.content.recipes.flags.FluidInputComponentFlag;
@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -112,7 +111,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         return cachedRecipe != null;
     }
 
-    protected void syncProgress() {
+    public void syncProgress() {
         PacketDistributor.sendToPlayersTrackingChunk((ServerLevel) this.level, new ChunkPos(this.worldPosition), new SetProgressPayload(this.worldPosition, this.progress, this.maxProgress));
     }
 
@@ -835,4 +834,7 @@ public class MachineBlockEntity extends ContainerBlockEntity implements Redstone
         }
     }
 
+    public IRMachine getMachine() {
+        return this.machine;
+    }
 }

@@ -59,7 +59,7 @@ public class IRRuRuLangProvider extends LanguageProvider {
 
         addItem(IRItems.WRENCH, "Гаечный ключ");
         addItem(IRItems.TREETAP, "Краник");
-        addItem(IRItems.CUTTER, "Кусачки");
+        addItem(IRItems.TOOLBOX, "Ящик для инструментов");
         addItem(IRItems.REMOTE_DETONATOR, "Радиопульт подрыва");
         addItem(IRItems.DYNAMITE, "Динамит");
 

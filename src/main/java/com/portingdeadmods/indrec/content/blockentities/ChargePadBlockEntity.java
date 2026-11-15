@@ -4,7 +4,7 @@ import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

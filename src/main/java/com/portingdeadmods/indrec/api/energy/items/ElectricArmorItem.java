@@ -2,7 +2,7 @@ package com.portingdeadmods.indrec.api.energy.items;
 
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
-import com.portingdeadmods.indrec.impl.energy.ComponentEuStorage;
+import com.portingdeadmods.indrec.handlers.energy.ComponentEuStorage;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.utils.ItemBarUtils;
 import com.portingdeadmods.indrec.utils.TooltipUtils;

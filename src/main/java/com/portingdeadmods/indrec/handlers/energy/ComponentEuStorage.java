@@ -1,4 +1,4 @@
-package com.portingdeadmods.indrec.impl.energy;
+package com.portingdeadmods.indrec.handlers.energy;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -5,6 +5,7 @@ import com.portingdeadmods.portingdeadlibs.api.translations.DefaultTranslationCa
 import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslation;
 import com.portingdeadmods.portingdeadlibs.api.translations.DeferredTranslationRegister;
 import com.portingdeadmods.portingdeadlibs.api.translations.TranslatableConstant;
+import net.minecraft.network.chat.Component;
 
 public final class IRTranslations {
     public static final DeferredTranslationRegister TRANSLATIONS = DeferredTranslationRegister.createTranslations(IndustrialRecrafted.MODID);
@@ -33,6 +34,13 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> ENERGY_TIER = TOOLTIP_CATEGORY.registerWithDefault("energy.tier", "Tier: ");
     public static final DeferredTranslation<TranslatableConstant> ENERGY_AMOUNT = TOOLTIP_CATEGORY.registerWithDefault("energy.amount", "%d");
     public static final DeferredTranslation<TranslatableConstant> ENERGY_AMOUNT_WITH_CAPACITY = TOOLTIP_CATEGORY.registerWithDefault("energy.amount_with_capacity", "%s/%s");
+
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_FULLNESS = TOOLTIP_CATEGORY.registerWithDefault("toolbox.fullness", "Tools: %d/%d");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_SELECTED = TOOLTIP_CATEGORY.registerWithDefault("toolbox.selected", "Selected: ");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_INSERT_HINT = TOOLTIP_CATEGORY.registerWithDefault("toolbox.insert_hint", "Right-Click tools onto the toolbox to store them");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_FILTER_HINT = TOOLTIP_CATEGORY.registerWithDefault("toolbox.filter_hint", "Press %s while holding to set slot filters");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_COLLECT_HINT = TOOLTIP_CATEGORY.registerWithDefault("toolbox.collect_hint", "Right-Click to collect tools from your inventory into matching filtered slots");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_SELECT_HINT = TOOLTIP_CATEGORY.registerWithDefault("toolbox.select_hint", "Scroll to select a tool, Right-Click to take it out");
 
     public static final DeferredTranslation<TranslatableConstant> SEED_BAG_CROP = TOOLTIP_CATEGORY.registerWithDefault("seed_bag.crop", "Crop: ");
     public static final DeferredTranslation<TranslatableConstant> SEED_BAG_UNKNOWN_CROP = TOOLTIP_CATEGORY.registerWithDefault("seed_bag.unknown_crop", "<unknown>");
@@ -104,6 +112,7 @@ public final class IRTranslations {
     public static final DeferredTranslation<TranslatableConstant> BATTERY_BOX = MENUS_CATEGORY.registerWithDefault("battery_box", "Battery Box");
     public static final DeferredTranslation<TranslatableConstant> CANNING_MACHINE = MENUS_CATEGORY.registerWithDefault("canning_machine", "Canning Machine");
     public static final DeferredTranslation<TranslatableConstant> MATTER_FABRICATOR = MENUS_CATEGORY.registerWithDefault("matter_fabricator", "Matter Fabricator");
+    public static final DeferredTranslation<TranslatableConstant> TOOLBOX_FILTER = MENUS_CATEGORY.registerWithDefault("toolbox_filter", "Set Toolbox Filter");
 
     private static final DefaultTranslationCategory MESSAGES_CATEGORY = TRANSLATIONS.createCategory("messages");
     public static final DeferredTranslation<TranslatableConstant> GUIDE_ME_MISSING = MESSAGES_CATEGORY.registerWithDefault("guide_me_missing", "GuideME must be installed to access the guide book!");

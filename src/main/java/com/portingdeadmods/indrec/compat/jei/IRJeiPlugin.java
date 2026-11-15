@@ -1,5 +1,7 @@
 package com.portingdeadmods.indrec.compat.jei;
 
+import com.portingdeadmods.indrec.client.screens.ToolboxFilterScreen;
+
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.api.crops.CropInteraction;
@@ -98,6 +100,7 @@ public class IRJeiPlugin implements IModPlugin {
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGenericGuiContainerHandler(PDLAbstractContainerScreen.class, new WidgetBounds());
+        registration.addGhostIngredientHandler(ToolboxFilterScreen.class, new ToolboxGhostIngredientHandler());
     }
 
     @Override

@@ -1,5 +1,9 @@
 package com.portingdeadmods.indrec.datagen.data;
 
+import com.portingdeadmods.indrec.compat.guideme.GuideMECompat;
+import com.portingdeadmods.indrec.compat.guideme.IRGuide;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+
 import net.minecraft.world.item.ItemStack;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.components.EnumRecipeComponent;
@@ -185,6 +189,13 @@ public class IRRecipeProvider extends RecipeProvider {
 
         uuMatterRecipes(output);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRGuide.createGuideItem())
+                .requires(CTags.ItemTags.INGOTS_REFINED_IRON)
+                .requires(Tags.Items.DUSTS_REDSTONE)
+                .requires(Items.BOOK)
+                .unlockedBy("has_refined_iron", has(CTags.ItemTags.INGOTS_REFINED_IRON))
+                .save(output.withConditions(new ModLoadedCondition(GuideMECompat.MODID)), IRGuide.ID);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.CROP_STICKS, 2)
                 .requires(Tags.Items.RODS_WOODEN)
                 .requires(Tags.Items.RODS_WOODEN)
@@ -319,6 +330,10 @@ public class IRRecipeProvider extends RecipeProvider {
         plantBallRecipe(Tags.Items.CROPS, "crops", output);
         plantBallRecipe(ItemTags.SAPLINGS, "sapling", output);
         plantBallRecipe(ItemTags.LEAVES, "leaves", output);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, IRItems.PLANT_BALL)
+                .requires(IRItems.STICK_REED, 2)
+                .unlockedBy("has_stick_reed", has(IRItems.STICK_REED))
+                .save(output, IndustrialRecrafted.rl("plant_ball_from_stick_reed"));
 
         this.geothermalGeneratorRecipe()
                 .component(new FluidInputComponent(FluidTags.LAVA, 1))
@@ -748,13 +763,13 @@ public class IRRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_bronze", has(Tags.Items.RODS_WOODEN))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IRItems.CUTTER.get())
-                .pattern("# #")
-                .pattern(" # ")
-                .pattern("S S")
-                .define('S', Tags.Items.RODS_WOODEN)
-                .define('#', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_iron", has(Tags.Items.INGOTS_IRON))
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, IRItems.TOOLBOX.get())
+                .pattern(" I ")
+                .pattern("###")
+                .pattern("###")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('#', CTags.ItemTags.INGOTS_BRONZE)
+                .unlockedBy("has_bronze", has(CTags.ItemTags.INGOTS_BRONZE))
                 .save(output);
     }
 
@@ -960,6 +975,9 @@ public class IRRecipeProvider extends RecipeProvider {
     }
 
     private void cropCrossbreedingRecipes(RecipeOutput output) {
+        CropCrossbreedingRecipeBuilder.of(IRCrops.SUGAR_CANE, IRCrops.WHEAT, IRCrops.STICK_REED)
+                .chance(0.25f)
+                .save(output);
         CropCrossbreedingRecipeBuilder.of(IRCrops.WHEAT, IRCrops.DANDELION, IRCrops.GOLDEN_DANDELION)
                 .chance(0.2f)
                 .save(output);
@@ -1073,11 +1091,11 @@ public class IRRecipeProvider extends RecipeProvider {
                 .save(output, IndustrialRecrafted.rl("copper_nuggets_from_coprium"));
 
         this.extractorRecipe()
-                .component(new ItemInputComponent(Items.SUGAR_CANE))
-                .component(new ItemOutputListComponent(Items.SUGAR, 2))
+                .component(new ItemInputComponent(IRItems.STICK_REED))
+                .component(new ItemOutputListComponent(new ItemOutputComponent(IRItems.STICKY_RESIN, 2), new ItemOutputComponent(IRItems.STICKY_RESIN, 0.75f)))
                 .component(new TimeComponent(200))
                 .component(new EnergyInputComponent(800))
-                .save(output);
+                .save(output, IndustrialRecrafted.rl("rubber_from_stick_reed"));
 
         this.extractorRecipe()
                 .component(new ItemInputComponent(Items.GRAVEL))
@@ -1098,6 +1116,12 @@ public class IRRecipeProvider extends RecipeProvider {
         this.compressorRecipe(Ingredient.of(CTags.ItemTags.PLATES_COPPER), 8, IRItems.DENSE_COPPER_PLATE, 1, 200, 4, output);
 
         this.compressorRecipe(Ingredient.of(Tags.Items.CROPS_SUGAR_CANE), 3, Items.PAPER, 5, 200, 4, output);
+        this.compressorRecipe()
+                .component(new ItemInputComponent(Ingredient.of(IRItems.STICK_REED), 3))
+                .component(new ItemOutputComponent(Items.PAPER, 7))
+                .component(new TimeComponent(200))
+                .component(new EnergyInputComponent(800))
+                .save(output, IndustrialRecrafted.rl("paper_from_stick_reed"));
         this.compressorRecipe(DataComponentIngredient.of(false, PDLDataComponents.FLUID, SimpleFluidContent.copyOf(new FluidStack(Fluids.WATER, 1000)), IRItems.FLUID_CELL, IRItems.JETPACK), 1, Items.SNOWBALL, 1, 200, 4, output);
 
         this.compressorRecipe(Ingredient.of(Blocks.SNOW_BLOCK), 4, Items.ICE, 1, 200, 4, output);
@@ -1125,6 +1149,8 @@ public class IRRecipeProvider extends RecipeProvider {
         this.maceratorRecipe(Tags.Items.INGOTS_IRON, IRItems.IRON_DUST, output);
         this.maceratorRecipe(ItemTags.COALS, IRItems.COAL_DUST, output);
 
+        this.maceratorRecipe(Items.SUGAR_CANE, Items.SUGAR, 2, output);
+        this.maceratorRecipe(Ingredient.of(IRItems.STICK_REED), 1, Items.SUGAR, 3, 200, 4, output, IndustrialRecrafted.rl("sugar_from_stick_reed"));
         this.maceratorRecipe(ItemTags.WOOL, Items.STRING, 4, output);
         this.maceratorRecipe(Tags.Items.BONES, Items.BONE_MEAL, 5, output);
         this.maceratorRecipe(Tags.Items.RODS_BLAZE, Items.BLAZE_POWDER, 5, output);

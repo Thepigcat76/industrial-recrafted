@@ -6,7 +6,7 @@ import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.api.energy.items.EnergyItem;
 import com.portingdeadmods.indrec.content.items.AbstractJetpackItem;
-import com.portingdeadmods.indrec.impl.energy.ComponentEuStorage;
+import com.portingdeadmods.indrec.handlers.energy.ComponentEuStorage;
 import com.portingdeadmods.indrec.registries.IRArmorMaterials;
 import com.portingdeadmods.indrec.registries.IRDataComponents;
 import com.portingdeadmods.indrec.registries.IREnergyTiers;

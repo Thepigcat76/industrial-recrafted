@@ -4,11 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +28,7 @@ import java.util.Map;
  * <p>
  * The table is evaluated as if a fully grown crop was harvested by hand (no tool, no enchantments, no luck, no explosion):
  * <ul>
- *     <li>{@code block_state_property} conditions pass</li>
+ *     <li>{@code block_state_property} conditions are tested against the given block state, they pass if no state is given</li>
  *     <li>{@code match_tool} conditions fail</li>
  *     <li>random chance conditions use their unenchanted chance</li>
  *     <li>fortune bonuses ({@code apply_bonus}) use enchantment level 0</li>
@@ -39,7 +42,13 @@ import java.util.Map;
 public final class LootTableParser {
     private static final int MAX_COUNT = 4096;
 
-    private LootTableParser() {
+    /**
+     * The state of the harvested block, null if unknown
+     */
+    private final @Nullable BlockState state;
+
+    private LootTableParser(@Nullable BlockState state) {
+        this.state = state;
     }
 
     public record LootDrop(Item item, double chance, int minCount, int maxCount, double averageCount, double[] countChances) {
@@ -51,11 +60,26 @@ public final class LootTableParser {
     }
 
     public static List<LootDrop> parse(LootTable table, HolderLookup.Provider registries) {
+        return parse(table, registries, null);
+    }
+
+    /**
+     * @param state the state of the harvested block, tested by {@code block_state_property} conditions, if null these conditions pass
+     */
+    public static List<LootDrop> parse(LootTable table, HolderLookup.Provider registries, @Nullable BlockState state) {
         JsonElement json = LootTable.DIRECT_CODEC.encodeStart(RegistryOps.create(JsonOps.INSTANCE, registries), table).getOrThrow();
-        return parse(json);
+        return parse(json, state);
     }
 
     public static List<LootDrop> parse(JsonElement json) {
+        return parse(json, null);
+    }
+
+    public static List<LootDrop> parse(JsonElement json, @Nullable BlockState state) {
+        return new LootTableParser(state).parseTable(json);
+    }
+
+    private List<LootDrop> parseTable(JsonElement json) {
         JsonObject table = json.getAsJsonObject();
         JsonArray tableFunctions = array(table, "functions");
 
@@ -78,7 +102,7 @@ public final class LootTableParser {
         return drops;
     }
 
-    private static Map<Item, double[]> parsePool(JsonObject pool, JsonArray tableFunctions) {
+    private Map<Item, double[]> parsePool(JsonObject pool, JsonArray tableFunctions) {
         Map<List<Singleton>, Double> candidates = new LinkedHashMap<>();
         candidates.put(List.of(), 1d);
         for (JsonElement entry : array(pool, "entries")) {
@@ -128,7 +152,7 @@ public final class LootTableParser {
     private record Singleton(@Nullable Item item, int weight, JsonArray functions) {
     }
 
-    private static List<Branch> expand(JsonObject entry) {
+    private List<Branch> expand(JsonObject entry) {
         double chance = conditionsChance(entry);
         String type = stripNamespace(string(entry, "type", "item"));
         List<Branch> branches = new ArrayList<>();
@@ -178,14 +202,14 @@ public final class LootTableParser {
         return branches;
     }
 
-    private static double[] applyFunctions(double[] count, JsonArray functions) {
+    private double[] applyFunctions(double[] count, JsonArray functions) {
         for (JsonElement element : functions) {
             count = applyFunction(count, element);
         }
         return count;
     }
 
-    private static double[] applyFunction(double[] count, JsonElement element) {
+    private double[] applyFunction(double[] count, JsonElement element) {
         if (element.isJsonArray()) return applyFunctions(count, element.getAsJsonArray());
 
         JsonObject function = element.getAsJsonObject();
@@ -220,7 +244,7 @@ public final class LootTableParser {
         return Dist.add(Dist.scale(applied, chance), Dist.scale(count, 1 - chance));
     }
 
-    private static double conditionsChance(JsonObject element) {
+    private double conditionsChance(JsonObject element) {
         double chance = 1;
         for (JsonElement condition : array(element, "conditions")) {
             chance *= conditionChance(condition);
@@ -228,7 +252,7 @@ public final class LootTableParser {
         return chance;
     }
 
-    private static double conditionChance(JsonElement element) {
+    private double conditionChance(JsonElement element) {
         if (element.isJsonArray()) {
             double chance = 1;
             for (JsonElement term : element.getAsJsonArray()) chance *= conditionChance(term);
@@ -248,8 +272,22 @@ public final class LootTableParser {
             case "random_chance_with_enchanted_bonus" -> clamp01(condition.get("unenchanted_chance").getAsDouble());
             case "table_bonus" -> clamp01(array(condition, "chances").get(0).getAsDouble());
             case "match_tool" -> 0;
+            case "block_state_property" -> blockStatePropertyChance(condition);
             default -> 1;
         };
+    }
+
+    private double blockStatePropertyChance(JsonObject condition) {
+        if (this.state == null) return 1;
+        Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(string(condition, "block", "minecraft:air")));
+        if (!this.state.is(block)) return 0;
+        JsonElement properties = condition.get("properties");
+        if (properties == null) return 1;
+        return StatePropertiesPredicate.CODEC.parse(JsonOps.INSTANCE, properties)
+                .result()
+                .map(predicate -> predicate.matches(this.state) ? 1d : 0d)
+                // Unknown properties format, assume the condition passes like before
+                .orElse(1d);
     }
 
     private static double[] numberDist(@Nullable JsonElement element) {

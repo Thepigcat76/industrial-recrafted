@@ -30,7 +30,14 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="transport_lib"
 type="required"
-versionRange="[1.0.4]"
+versionRange="[1.1.0]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="guideme"
+type="optional"
+versionRange="[${guideme_version},)"
 ordering="NONE"
 side="BOTH"
 

@@ -9,6 +9,9 @@ import com.portingdeadmods.indrec.networking.clientbound.SetCropPayload;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
 import com.portingdeadmods.indrec.networking.serverbound.RequestCropDropsPayload;
+import com.portingdeadmods.indrec.networking.serverbound.OpenToolboxPayload;
+import com.portingdeadmods.indrec.networking.serverbound.SelectToolboxToolPayload;
+import com.portingdeadmods.indrec.networking.serverbound.SetToolboxFilterPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpdateInputPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpgradeWidgetSetSlotPositionsPayload;
 import com.portingdeadmods.indrec.networking.serverbound.UpgradeWidgetTogglePayload;
@@ -37,6 +40,21 @@ public final class NetworkEvents {
                 UpgradeWidgetSetSlotPositionsPayload.TYPE,
                 UpgradeWidgetSetSlotPositionsPayload.STREAM_CODEC,
                 UpgradeWidgetSetSlotPositionsPayload::handle
+        );
+        registrar.playToServer(
+                OpenToolboxPayload.TYPE,
+                OpenToolboxPayload.STREAM_CODEC,
+                OpenToolboxPayload::handle
+        );
+        registrar.playToServer(
+                SetToolboxFilterPayload.TYPE,
+                SetToolboxFilterPayload.STREAM_CODEC,
+                SetToolboxFilterPayload::handle
+        );
+        registrar.playToServer(
+                SelectToolboxToolPayload.TYPE,
+                SelectToolboxToolPayload.STREAM_CODEC,
+                SelectToolboxToolPayload::handle
         );
         registrar.playToClient(
                 SetEnergyPayload.TYPE,

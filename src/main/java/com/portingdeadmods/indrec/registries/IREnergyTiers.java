@@ -3,7 +3,7 @@ package com.portingdeadmods.indrec.registries;
 import com.portingdeadmods.indrec.IRRegistries;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
-import com.portingdeadmods.indrec.impl.energy.EnergyTierImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyTierImpl;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

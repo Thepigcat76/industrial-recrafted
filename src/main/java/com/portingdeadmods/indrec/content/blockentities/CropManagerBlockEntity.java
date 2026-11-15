@@ -5,40 +5,32 @@ import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.api.energy.items.ElectricConsumerItem;
 import com.portingdeadmods.indrec.content.blocks.CropBlock;
-import com.portingdeadmods.indrec.content.menus.CropManagerMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
-import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.IRCrops;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.Util;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class CropManagerBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class CropManagerBlockEntity extends MachineBlockEntity {
     public static final int GRID_SLOTS = 9;
     public static final int SIDE_SLOTS = 2;
     public static final int HOE_SLOT = GRID_SLOTS;
@@ -245,15 +237,5 @@ public class CropManagerBlockEntity extends MachineBlockEntity implements MenuPr
             }
         }
         return true;
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return IRTranslations.CROP_MANAGER.component();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new CropManagerMenu(containerId, inventory, this);
     }
 }

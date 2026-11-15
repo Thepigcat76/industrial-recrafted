@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceKey;
 public final class IRCrops {
     public static final ResourceKey<Crop> STICK_REED = key("stick_reed");
     public static final ResourceKey<Crop> WEED = key("weed");
+    public static final ResourceKey<Crop> SUGAR_CANE = key("sugar_cane");
     public static final ResourceKey<Crop> WHEAT = key("wheat");
     public static final ResourceKey<Crop> BEETROOTS = key("beetroots");
     public static final ResourceKey<Crop> CARROTS = key("carrots");
@@ -15,6 +16,7 @@ public final class IRCrops {
     public static final ResourceKey<Crop> MELON = key("melon");
     public static final ResourceKey<Crop> PUMPKIN = key("pumpkin");
     public static final ResourceKey<Crop> NETHER_WART = key("nether_wart");
+    public static final ResourceKey<Crop> SWEET_BERRY_BUSH = key("sweet_berry_bush");
     public static final ResourceKey<Crop> RED_MUSHROOM = key("red_mushroom");
     public static final ResourceKey<Crop> BROWN_MUSHROOM = key("brown_mushroom");
     public static final ResourceKey<Crop> GOLDEN_DANDELION = key("golden_dandelion");

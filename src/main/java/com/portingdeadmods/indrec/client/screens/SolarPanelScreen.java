@@ -5,7 +5,7 @@ import com.portingdeadmods.indrec.api.client.screens.MachineScreen;
 import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
 import com.portingdeadmods.indrec.client.screens.widgets.IREnergyBarWidget;
 import com.portingdeadmods.indrec.content.menus.SolarPanelMenu;
-import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
+import com.portingdeadmods.indrec.handlers.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

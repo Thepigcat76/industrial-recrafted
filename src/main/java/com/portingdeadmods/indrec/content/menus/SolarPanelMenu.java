@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SolarPanelMenu extends MachineMenu<SolarPanelBlockEntity> {
     public SolarPanelMenu(int containerId, @NotNull Inventory inv, @NotNull SolarPanelBlockEntity blockEntity) {
-        super(IRMachines.BASIC_SOLAR_PANEL.getMenuType(), containerId, inv, blockEntity);
+        super(blockEntity.getMachine().getMenuType(), containerId, inv, blockEntity);
 
         addSlot(new ChargingSlot(blockEntity.getItemHandler(), 0, ChargingSlot.ChargeMode.CHARGE, (176 - 16) / 2, 45));
 

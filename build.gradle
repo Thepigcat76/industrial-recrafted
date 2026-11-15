@@ -22,6 +22,8 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    // GuideME
+    mavenCentral()
     maven {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
@@ -89,6 +91,9 @@ neoForge {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
 
             logLevel = org.slf4j.event.Level.DEBUG
+
+            systemProperty 'guideme.indrec.guide.sources', file("src/main/resources/assets/indrec/guides/indrec/guide").absolutePath
+            systemProperty 'guideme.indrec.guide.sourcesNamespace', "${mod_id}"
         }
     }
 
@@ -112,7 +117,11 @@ dependencies {
 
     implementation "com.github.Porting-Dead-Mods:Porting-Dead-Libs:${pdl_version}"
 
-    implementation "curse.maven:transport-lib-1438695:8418550"
+    implementation "curse.maven:transport-lib-1438695:9620145"
+
+    // Optional dependency, only available at runtime in dev
+    compileOnly "org.appliedenergistics:guideme:${guideme_version}"
+    localRuntime "org.appliedenergistics:guideme:${guideme_version}"
 }
 
 def parts = pdl_version.tokenize('.')
@@ -131,7 +140,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_authors            : mod_authors,
             mod_description        : mod_description,
             pdl_version            : pdl_version,
-            pdl_nextMinor          : pdl_nextMinor
+            pdl_nextMinor          : pdl_nextMinor,
+            guideme_version        : guideme_version
     ]
     inputs.properties replaceProperties
     expand replaceProperties

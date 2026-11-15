@@ -1,4 +1,4 @@
-package com.portingdeadmods.indrec.impl.energy;
+package com.portingdeadmods.indrec.handlers.energy;
 
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 

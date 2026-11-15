@@ -4,6 +4,8 @@ import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
+import com.portingdeadmods.indrec.compat.guideme.GuideMECompat;
+import com.portingdeadmods.indrec.compat.guideme.IRGuide;
 import com.portingdeadmods.indrec.content.items.FluidCellItem;
 import com.portingdeadmods.indrec.content.items.FuelJetpackItem;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,6 +29,9 @@ public final class IRCreativeTabs {
             .icon(IRItems.BASIC_DRILL::toStack)
             .title(Component.literal(IndustrialRecrafted.MODNAME))
             .displayItems((params, output) -> {
+                if (GuideMECompat.isLoaded()) {
+                    output.accept(IRGuide.createGuideItem());
+                }
                 IRMachines.HELPER.addToCreativeTab(output::accept);
                 IRItems.ITEMS.getCreativeTabItems().stream().map(Supplier::get).map(ItemStack::new).filter(item -> !(Block.byItem(item.getItem()) instanceof MachineBlock)).peek(stack -> {
                     EnergyHandler handler = stack.getCapability(IRCapabilities.ENERGY_ITEM);

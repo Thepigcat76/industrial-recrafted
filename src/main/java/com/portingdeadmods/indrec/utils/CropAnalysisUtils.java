@@ -1,5 +1,6 @@
 package com.portingdeadmods.indrec.utils;
 
+import com.portingdeadmods.indrec.api.crops.Crop;
 import com.portingdeadmods.indrec.content.items.electric.CropAnalyzerItem;
 import com.portingdeadmods.indrec.content.blockentities.CropBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,10 @@ import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +31,7 @@ public final class CropAnalysisUtils {
     }
 
     public static boolean isVanillaCrop(BlockState state) {
-        return state.getBlock() instanceof net.minecraft.world.level.block.CropBlock;
+        return VanillaCropInfo.isSupported(state);
     }
 
     public static @Nullable CropBlockEntity getPlantedCrop(BlockGetter level, BlockPos pos) {
@@ -66,34 +70,52 @@ public final class CropAnalysisUtils {
 
     private static List<CropDrop> collectPossibleDrops(ServerLevel level, BlockPos pos) {
         List<CropDrop> drops = new ArrayList<>();
-        LootTable lootTable = getLootTable(level, pos);
+        ReloadableServerRegistries.Holder lootTables = level.getServer().reloadableRegistries();
+        CropBlockEntity cropBE = getPlantedCrop(level, pos);
+        LootTable lootTable = null;
+        BlockState lootState = null;
+        if (cropBE != null) {
+            Crop crop = cropBE.getCrop().value();
+            lootTable = crop.loot()
+                    .map(loot -> loot.map(table -> table, lootTables::getLootTable))
+                    .orElse(null);
+            lootState = getFullyGrownLootState(crop);
+        } else {
+            VanillaCropInfo vanillaCrop = VanillaCropInfo.of(level.getBlockState(pos));
+            if (vanillaCrop != null) {
+                lootTable = lootTables.getLootTable(vanillaCrop.lootTable());
+                lootState = vanillaCrop.fullyGrownState();
+            }
+        }
+
         if (lootTable != null) {
             // The parser evaluates the table for a fully grown crop harvested without a tool
-            LootTableParser.parse(lootTable, level.registryAccess()).stream()
+            LootTableParser.parse(lootTable, level.registryAccess(), lootState).stream()
                     .sorted(Comparator.comparingDouble(LootTableParser.LootDrop::chance).reversed())
                     .map(CropDrop::of)
                     .forEach(drops::add);
         }
 
         // Dropped in addition to the loot when the crop is removed
-        CropBlockEntity cropBE = getPlantedCrop(level, pos);
         if (cropBE != null) {
             cropBE.getCrop().value().seedDrop().ifPresent(seedDrop -> drops.add(CropDrop.of(seedDrop)));
         }
         return List.copyOf(drops);
     }
 
-    private static @Nullable LootTable getLootTable(ServerLevel level, BlockPos pos) {
-        ReloadableServerRegistries.Holder lootTables = level.getServer().reloadableRegistries();
-        CropBlockEntity cropBE = getPlantedCrop(level, pos);
-        if (cropBE != null) {
-            return cropBE.getCrop().value().loot()
-                    .map(loot -> loot.map(table -> table, lootTables::getLootTable))
-                    .orElse(null);
-        }
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof net.minecraft.world.level.block.CropBlock cropBlock) {
-            return lootTables.getLootTable(cropBlock.getLootTable());
+    /**
+     * Same state as the one {@link com.portingdeadmods.indrec.content.blocks.CropBlock#getCropLoot} harvests fully grown crops with
+     *
+     * @return the fully grown state of the block the crop uses the model of, null if the crop has no such block (block state conditions then pass)
+     */
+    private static @Nullable BlockState getFullyGrownLootState(Crop crop) {
+        if (crop.models() instanceof Crop.Models.BlockModel(Block baseBlock, String ageProperty)) {
+            BlockState state = baseBlock.defaultBlockState();
+            for (Property<?> property : state.getProperties()) {
+                if (property instanceof IntegerProperty age && property.getName().equals(ageProperty)) {
+                    return age.getPossibleValues().contains(crop.maxStage()) ? state.setValue(age, crop.maxStage()) : null;
+                }
+            }
         }
         return null;
     }

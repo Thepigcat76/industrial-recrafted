@@ -2,28 +2,19 @@ package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
-import com.portingdeadmods.indrec.content.menus.MaceratorMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
-import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
+public class MaceratorBlockEntity extends MachineBlockEntity implements UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public MaceratorBlockEntity(BlockPos blockPos, BlockState blockState) {
@@ -53,16 +44,5 @@ public class MaceratorBlockEntity extends MachineBlockEntity implements MenuProv
     @Override
     public IItemHandler getItemHandlerOnSide(Direction direction) {
         return this.exposedItemHandler;
-    }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.MACERATOR.component();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        this.syncProgress();
-        return new MaceratorMenu(i, inventory, this);
     }
 }

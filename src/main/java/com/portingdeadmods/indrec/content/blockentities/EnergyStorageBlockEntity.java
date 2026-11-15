@@ -4,32 +4,24 @@ import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import com.portingdeadmods.indrec.content.blocks.CableBlock;
-import com.portingdeadmods.indrec.content.menus.BatteryBoxMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerWrapper;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerWrapper;
 import com.portingdeadmods.indrec.networking.clientbound.SetEnergyPayload;
 import com.portingdeadmods.indrec.registries.IRNetworks;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.indrec.utils.BlockUtils;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
-public class EnergyStorageBlockEntity extends MachineBlockEntity implements MenuProvider {
+public class EnergyStorageBlockEntity extends MachineBlockEntity {
     private final EnergyHandlerWrapper.NoFill outputEnergyHandler;
 
     public EnergyStorageBlockEntity(BlockPos blockPos, BlockState blockState, IRMachine machine) {
@@ -103,15 +95,4 @@ public class EnergyStorageBlockEntity extends MachineBlockEntity implements Menu
         }
         return super.getEuHandlerOnSide(direction);
     }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.BATTERY_BOX.component();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new BatteryBoxMenu(i, inventory, this);
-    }
-
 }

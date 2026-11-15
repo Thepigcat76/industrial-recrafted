@@ -41,13 +41,13 @@ public class IRTagsProvider {
     public static void createTagProviders(DataGenerator generator, PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper, boolean isServer) {
         BlocksProvider provider = new BlocksProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(isServer, provider);
-        generator.addProvider(isServer, new ItemsProvider(packOutput, lookupProvider, provider.contentsGetter()));
+        generator.addProvider(isServer, new ItemsProvider(packOutput, lookupProvider, provider.contentsGetter(), existingFileHelper));
         generator.addProvider(isServer, new FluidsProvider(packOutput, lookupProvider, existingFileHelper));
     }
 
     protected static class ItemsProvider extends ItemTagsProvider {
-        public ItemsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
-            super(output, lookupProvider, blockTags);
+        public ItemsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider, blockTags, IndustrialRecrafted.MODID, existingFileHelper);
         }
 
         @Override
@@ -56,6 +56,7 @@ public class IRTagsProvider {
             IRTags.ItemTags.TAGS.forEach(this::addTag);
 
             tag(ItemTags.HOES).add(IRItems.ELECTRIC_HOE.get());
+            tag(Tags.Items.TOOLS_WRENCH).add(IRItems.WRENCH.get());
 
             tag(ItemTags.PLANKS).add(IRBlocks.RUBBER_TREE_PLANKS.asItem());
 

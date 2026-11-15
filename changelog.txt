@@ -10,3 +10,71 @@
 - Improved charge pad effectiveness
 - Added [WIP] tag to unfinished items
 - Added more info to machine tooltips
+
+1.0.4
+
+- Added Russian translation (thanks to Revalto)
+- Added an experimental features datapack that enables unfinished content, like the first version of industrial crops and crop sticks
+- Fixed machine progress not syncing to the client
+- Fixed energy of machines and energy storage blocks not syncing to the client
+- Fixed the Recycler not consuming its input when finishing a recipe
+- Fixed the Electric Furnace draining energy on the client
+- Fixed the Matter Fabricator not accepting energy
+- Fixed batteries charging FE items without using their own energy
+- Fixed batteries using energy for items that are already full
+
+1.0.5
+
+=== Crop Update ===
+
+=== Other Additions ===
+
+=== Other Changes ===
+
+=== Bug Fixes ===
+
+- Industrial crops are no longer experimental
+    - Place crop sticks on farmland and plant seeds on them, or place a second crop stick to crossbreed neighboring crops into new crops
+    - Crops can mutate, react to items used on them and can have requirements like soil, light level or a block below the soil
+    - Weeds grow on empty crop sticks, so plant something on them quickly
+    - New crops: Stick Reed, Golden Dandelion, Iron Vines, Tin Blossom, Coprium (oxidizes over time, can be waxed with honeycomb), Wither Rose, Dandelion, Poppy, Ender Lily, Red Mushroom and Brown Mushroom
+    - Wheat, Carrots, Potatoes, Beetroots, Melons, Pumpkins and Nether Wart can be grown on crop sticks
+    - Crop crossbreeding recipes are shown in JEI
+    - Farmland with crops on it can't be trampled
+- New tool: Crop Analyzer, hold right-click on a crop to see its stage, drops and requirements
+- New machine: Crop Manager, harvests crops, removes weeds and applies bone meal in an area around it
+- New machines: Low, Medium, High and Extreme Voltage Transformers
+- Added machine upgrades: Overclocker, Energy and Transformer Upgrade, which can be managed in the new upgrade panel of machine guis
+- The Mining Laser is now functional: it mines blocks and damages entities with a laser beam (range, speed and damage are configurable)
+- The Electric Hoe can harvest crops by right-clicking them and now uses energy when breaking blocks
+- Added Tin and Copper Nuggets
+- Machines now play a sound while running
+- Machines now react to redstone changes right away
+- Burnt machines can't be opened anymore and tell you to repair them by right-clicking them with a Fuse
+- Cables now also connect to blocks that only use FE
+- Fixed energy not being transported correctly through blocks that only accept energy on some sides, like transformers
+- Renamed Stick Resin to Sticky Resin
+- Added config options for the Crop Manager, Crop Analyzer, Mining Laser and the machine upgrades
+- Added a Guide book when GuideME is installed (GuideME is optional)
+    - Craftable from a book, a refined iron ingot and redstone, and can be found in dungeon chests
+    - Contains a list of all industrial crops
+- Added Toolbox
+    - Stores up to 8 tools, right-click tools onto it to store them
+    - Scroll while hovering it to select a tool, right-click with an empty cursor to take it out
+    - Press C while holding it to set filters for its slots, also supports dragging items from JEI
+    - Right-click it to collect all tools from your inventory that fit into its filtered slots
+- Added Sugar Cane crop
+- Added Sweet Berry Bush crop
+- Reworked Stick Reed
+    - New Stick Reed item and textures, the crop now has 9 growth stages
+    - Drops 2-3 Stick Reeds, which are also its seed
+    - Crossbreed Sugar Cane and Wheat to get Stick Reed
+    - Extract into 2 Rubber with a 75% chance for a third one, macerate into 3 Sugar, compress 3 into 7 Paper or craft 2 into a Plant Ball
+- Sugar Cane is now turned into Sugar in the Macerator instead of the Extractor
+- Crop mutations and crop interactions are now shown in JEI
+- Dungeon and village chests now contain Industrial Recrafted loot
+- The Crop Analyzer now counts growth stages from 1 (e.g. 9/9 instead of 8/8)
+- The Crop Analyzer now shows the correct soil and light requirements for vanilla crops and hides the light requirement for crops that grow at any light level
+- The Basic and Advanced Energy Storage Units now show their own name in their gui instead of "Battery Box"
+- The Wrench is now part of the c:tools/wrench tag
+- Removed the Cutter

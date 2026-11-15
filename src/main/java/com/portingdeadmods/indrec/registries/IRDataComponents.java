@@ -4,7 +4,8 @@ import com.portingdeadmods.indrec.data.components.AnalyzedCropsComponent;
 import com.mojang.serialization.Codec;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.data.components.CannedFood;
-import com.portingdeadmods.indrec.impl.energy.ComponentEuStorage;
+import com.portingdeadmods.indrec.data.components.ToolboxContents;
+import com.portingdeadmods.indrec.handlers.energy.ComponentEuStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -30,6 +31,9 @@ public final class IRDataComponents {
                     .networkSynchronized(CannedFood.STREAM_CODEC));
     public static final Supplier<DataComponentType<AnalyzedCropsComponent>> ANALYZED_CROPS = registerDataComponentType("analyzed_crops",
             () -> builder -> builder.persistent(AnalyzedCropsComponent.CODEC).networkSynchronized(AnalyzedCropsComponent.STREAM_CODEC));
+
+    public static final Supplier<DataComponentType<ToolboxContents>> TOOLBOX_CONTENTS = registerDataComponentType("toolbox_contents",
+            () -> builder -> builder.persistent(ToolboxContents.CODEC).networkSynchronized(ToolboxContents.STREAM_CODEC).cacheEncoding());
 
     // Data for capabilities
     public static final Supplier<DataComponentType<ComponentEuStorage>> ENERGY = registerDataComponentType("energy",

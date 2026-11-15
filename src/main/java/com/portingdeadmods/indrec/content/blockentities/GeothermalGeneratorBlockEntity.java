@@ -4,19 +4,12 @@ import com.portingdeadmods.indrec.IRConfig;
 import com.portingdeadmods.indrec.api.blockentities.GeneratorBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.menus.GeothermalGeneratorMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.registries.IRRecipeLayouts;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.SerializerUtils;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -26,9 +19,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implements MenuProvider, GeneratorBlockEntity {
+public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implements GeneratorBlockEntity {
     public GeothermalGeneratorBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(IRMachines.GEOTHERMAL_GENERATOR, blockPos, blockState);
         this.addMachineEuStorage(EnergyHandlerImpl.NoFill::new, this::onEuChanged);
@@ -107,16 +99,4 @@ public class GeothermalGeneratorBlockEntity extends MachineBlockEntity implement
     public int getGenerationAmount() {
         return IRConfig.geothermalGeneratorEnergyProduction;
     }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.GEOTHERMAL_GENERATOR.component();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        this.syncProgress();
-        return new GeothermalGeneratorMenu(i, inventory, this);
-    }
-
 }

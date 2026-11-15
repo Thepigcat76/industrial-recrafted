@@ -4,6 +4,8 @@ import net.minecraft.world.level.block.Blocks;
 import com.mojang.datafixers.util.Either;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.registries.IRBlocks;
+import com.portingdeadmods.indrec.registries.IRItems;
+import net.neoforged.neoforge.common.Tags;
 import com.portingdeadmods.indrec.registries.IRMachines;
 import com.portingdeadmods.indrec.utils.machines.IRMachine;
 import net.minecraft.core.registries.Registries;
@@ -37,6 +39,27 @@ public final class IRTags {
                 item(IRBlocks.WAXED_EXPOSED_COPRIUM),
                 item(IRBlocks.WAXED_WEATHERED_COPRIUM),
                 item(IRBlocks.WAXED_OXIDIZED_COPRIUM)
+        ));
+
+        // Tools that can be stored in the toolbox
+        public static final TagKey<Item> TOOLBOX_STORABLE = createTag("toolbox_storable", () -> List.of(
+                tag(net.minecraft.tags.ItemTags.PICKAXES),
+                tag(net.minecraft.tags.ItemTags.AXES),
+                tag(net.minecraft.tags.ItemTags.SHOVELS),
+                tag(net.minecraft.tags.ItemTags.HOES),
+                tag(net.minecraft.tags.ItemTags.SWORDS),
+                tag(Tags.Items.TOOLS_WRENCH),
+                tag(Tags.Items.TOOLS_SHEAR),
+                item(IRItems.TREETAP),
+                item(IRItems.ELECTRIC_TREETAP),
+                item(IRItems.ELECTRIC_HOE),
+                item(IRItems.MINING_LASER),
+                item(IRItems.NANO_SABER),
+                item(IRItems.BASIC_DRILL),
+                item(IRItems.ADVANCED_DRILL),
+                item(IRItems.BASIC_CHAINSAW),
+                item(IRItems.ADVANCED_CHAINSAW),
+                item(IRItems.CROP_ANALYZER)
         ));
 
         private static TagKey<Item> createTag(String id, Supplier<List<Either<ItemLike, TagKey<Item>>>> items) {

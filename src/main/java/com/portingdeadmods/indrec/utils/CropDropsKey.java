@@ -8,7 +8,6 @@ import net.minecraft.network.codec.StreamCodec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * Identifies the kind of crop whose drops are cached, since drops don't depend on the crop's position.
  *
  * @param industrial whether {@code id} is the id of an industrial crop (crop registry entry, including ones added by other mods/datapacks),
- *                   or of a {@link CropBlock} (vanilla or modded) otherwise
+ *                   or of a crop block supported by {@link VanillaCropInfo} (vanilla or modded) otherwise
  */
 public record CropDropsKey(boolean industrial, ResourceLocation id) {
     public static final StreamCodec<ByteBuf, CropDropsKey> STREAM_CODEC = StreamCodec.composite(
@@ -32,7 +31,7 @@ public record CropDropsKey(boolean industrial, ResourceLocation id) {
             return cropBE.getCrop().unwrapKey().map(key -> new CropDropsKey(true, key.location())).orElse(null);
         }
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof CropBlock) {
+        if (VanillaCropInfo.isSupported(state)) {
             return new CropDropsKey(false, BuiltInRegistries.BLOCK.getKey(state.getBlock()));
         }
         return null;

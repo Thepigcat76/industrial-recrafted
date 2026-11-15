@@ -2,9 +2,8 @@ package com.portingdeadmods.indrec.client.screens.widgets;
 
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.IndustrialRecrafted;
-import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
+import com.portingdeadmods.indrec.handlers.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.utils.EnergyHelper;
-import com.portingdeadmods.indrec.utils.TooltipUtils;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.capabilities.EnergyStorageWrapper;
 import com.portingdeadmods.portingdeadlibs.api.capabilities.NeoEnergyStorageWrapper;

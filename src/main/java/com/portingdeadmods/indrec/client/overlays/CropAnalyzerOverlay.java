@@ -12,6 +12,7 @@ import com.portingdeadmods.indrec.registries.IRItems;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.indrec.utils.CropDrop;
 import com.portingdeadmods.indrec.utils.CropDropsKey;
+import com.portingdeadmods.indrec.utils.VanillaCropInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
@@ -27,7 +28,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -181,10 +181,16 @@ public class CropAnalyzerOverlay implements LayeredDraw.Layer {
             if (!soil.isEmpty()) {
                 sections.add(BlockSection.of(IRTranslations.CROP_ANALYZER_SOIL.component(), SOIL_RENDERER, soil));
             }
-        } else if (state.getBlock() instanceof CropBlock cropBlock) {
-            addCropLines(lines, cropBlock.getName(), cropBlock.getAge(state), cropBlock.getMaxAge());
-            addLightLine(requirementLines, DEFAULT_LIGHT_REQUIREMENT, light);
-            sections = List.of(BlockSection.of(IRTranslations.CROP_ANALYZER_SOIL.component(), SOIL_RENDERER, List.of(new ItemStack(Blocks.FARMLAND))));
+        } else if (VanillaCropInfo.of(state) instanceof VanillaCropInfo vanillaCrop) {
+            addCropLines(lines, vanillaCrop.name(), vanillaCrop.age(), vanillaCrop.maxAge());
+            if (vanillaCrop.light() != null) {
+                addLightLine(requirementLines, vanillaCrop.light(), light);
+            }
+            List<ItemStack> soil = vanillaCrop.soil().stream()
+                    .map(ItemStack::new)
+                    .filter(stack -> !stack.isEmpty())
+                    .toList();
+            sections = soil.isEmpty() ? List.of() : List.of(BlockSection.of(IRTranslations.CROP_ANALYZER_SOIL.component(), SOIL_RENDERER, soil));
         } else {
             return null;
         }
@@ -206,11 +212,13 @@ public class CropAnalyzerOverlay implements LayeredDraw.Layer {
     }
 
     /**
-     * e.g. "Light: 9+ (current 12)", the requirement is green if the current light level meets it, red otherwise
+     * e.g. "Light: 9+ (current 12)", the requirement is green if the current light level meets it, red otherwise.
+     * Nothing is added if the crop grows at any light level
      */
     private static void addLightLine(List<Component> lines, LightLevelRequirement requirement, int light) {
         int min = requirement.min();
         int max = requirement.max();
+        if (min <= 0 && max >= 15) return;
         MutableComponent value;
         if (min == max) {
             value = IRTranslations.CROP_ANALYZER_LIGHT_EXACT.component(min);
@@ -229,7 +237,8 @@ public class CropAnalyzerOverlay implements LayeredDraw.Layer {
         lines.add(IRTranslations.CROP_ANALYZER_CROP.component().withStyle(ChatFormatting.GRAY)
                 .append(name.copy().withStyle(ChatFormatting.WHITE)));
         lines.add(IRTranslations.CROP_ANALYZER_STAGE.component().withStyle(ChatFormatting.GRAY)
-                .append(IRTranslations.CROP_ANALYZER_STAGE_VALUE.component(age, maxAge).withStyle(ChatFormatting.WHITE)));
+                // Ages are zero-based, stages are shown one-based (e.g. a 9 stage crop shows 1/9 to 9/9)
+                .append(IRTranslations.CROP_ANALYZER_STAGE_VALUE.component(age + 1, maxAge + 1).withStyle(ChatFormatting.WHITE)));
     }
 
     private static void renderInfo(GuiGraphics guiGraphics, Font font, CropInfo info) {

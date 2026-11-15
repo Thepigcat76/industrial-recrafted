@@ -6,7 +6,7 @@ import com.portingdeadmods.indrec.client.screens.widgets.BatterySlotWidget;
 import com.portingdeadmods.indrec.client.screens.widgets.IREnergyBarWidget;
 import com.portingdeadmods.indrec.client.screens.widgets.UpgradePanelWidget;
 import com.portingdeadmods.indrec.content.menus.MaceratorMenu;
-import com.portingdeadmods.indrec.impl.energy.IRGenericEnergyWrapper;
+import com.portingdeadmods.indrec.handlers.energy.IRGenericEnergyWrapper;
 import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.client.screens.widgets.RedstonePanelWidget;
 import net.minecraft.client.gui.GuiGraphics;

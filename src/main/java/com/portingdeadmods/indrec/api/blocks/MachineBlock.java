@@ -1,5 +1,7 @@
 package com.portingdeadmods.indrec.api.blocks;
 
+import com.portingdeadmods.indrec.api.menus.MachineMenuProvider;
+
 import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
@@ -175,6 +177,12 @@ public class MachineBlock extends ContainerBlock implements EnergyTierBlock {
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         MachineBlockEntity be = BlockUtils.getBE(MachineBlockEntity.class, level, pos);
         if (be != null && !be.isBurnt()) {
+            if (this.machine.hasMenu()) {
+                if (!level.isClientSide()) {
+                    player.openMenu(new MachineMenuProvider(this.machine, be), pos);
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            }
             return super.useWithoutItem(state, level, pos, player, hitResult);
         }
         if (be != null && !level.isClientSide()) {

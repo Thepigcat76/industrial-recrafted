@@ -2,33 +2,20 @@ package com.portingdeadmods.indrec.content.blockentities;
 
 import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
-import com.portingdeadmods.indrec.content.menus.ElectricFurnaceMenu;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
-import com.portingdeadmods.indrec.networking.clientbound.SetProgressPayload;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
+public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements UpgradeBlockEntity {
     private static final int ENERGY_PER_TICK = 3;
 
     private RecipeHolder<SmeltingRecipe> cachedRecipe;
@@ -118,16 +105,5 @@ public class ElectricFurnaceBlockEntity extends MachineBlockEntity implements Me
 
     @Override
     protected void playMachineSound() {
-    }
-
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.ELECTRIC_FURNACE.component();
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        this.syncProgress();
-        return new ElectricFurnaceMenu(i, inventory, this);
     }
 }

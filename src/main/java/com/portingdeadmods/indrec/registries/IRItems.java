@@ -17,9 +17,9 @@ public final class IRItems {
     /* Tools */
     public static final DeferredItem<TreetapItem> TREETAP = ITEMS.registerItem("treetap", TreetapItem::defaultItem);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::defaultItem);
-    public static final DeferredItem<CutterItem> CUTTER = ITEMS.registerItem("cutter", CutterItem::defaultItem);
     public static final DeferredItem<RemoteDetonatorItem> REMOTE_DETONATOR = ITEMS.registerItem("remote_detonator", RemoteDetonatorItem::defaultItem);
     public static final DeferredItem<DynamiteItem> DYNAMITE = ITEMS.registerItem("dynamite", DynamiteItem::new);
+    public static final DeferredItem<ToolboxItem> TOOLBOX = ITEMS.registerItem("toolbox", ToolboxItem::new);
     /* Electric Tools */
     public static final DeferredItem<ElectricTreetapItem> ELECTRIC_TREETAP = ITEMS.register("electric_treetap", ElectricTreetapItem::defaultItem);
     //public static final DeferredItem<ElectricWrenchItem> ELECTRIC_WRENCH = ITEMS.register("electric_wrench", ElectricWrenchItem::defaultItem);
@@ -80,6 +80,7 @@ public final class IRItems {
 
     /* Plants */
     public static final DeferredItem<Item> PLANT_BALL = ITEMS.registerSimpleItem("plant_ball");
+    public static final DeferredItem<Item> STICK_REED = ITEMS.registerSimpleItem("stick_reed");
 
     /* Rubber */
     public static final DeferredItem<Item> STICKY_RESIN = ITEMS.registerSimpleItem("sticky_resin");

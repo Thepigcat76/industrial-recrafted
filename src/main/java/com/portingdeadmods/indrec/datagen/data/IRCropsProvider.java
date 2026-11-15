@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.Tags;
 
@@ -47,12 +48,18 @@ import java.util.function.Consumer;
 
 public final class IRCropsProvider {
     public static void bootstrap(BootstrapContext<Crop> context) {
-        register(context, IRCrops.STICK_REED, CropBuilder.of(4, modelsForAge(models -> {
-                    models.put(0, cropBlockModel("stick_reed"));
-                    models.put(1, cropBlockModel("stick_reed"));
-                    models.put(2, cropBlockModel("stick_reed"));
-                    models.put(3, cropBlockModel("stick_reed"));
-                }), IRLootTables.STICK_REED));
+        register(context, IRCrops.STICK_REED, CropBuilder.of(9, modelsForAge(models -> {
+                    for (int age = 0; age < 9; age++) {
+                        models.put(age, cropBlockModel("stick_reed_stage" + age));
+                    }
+                }), IRLootTables.STICK_REED)
+                .seedItem(IRItems.STICK_REED));
+        register(context, IRCrops.SUGAR_CANE, CropBuilder.of(7, modelsForAge(models -> {
+                    for (int age = 0; age < 7; age++) {
+                        models.put(age, cropBlockModel("sugar_cane_stage" + age));
+                    }
+                }), IRLootTables.SUGAR_CANE)
+                .seedItem(Items.SUGAR_CANE));
         register(context, IRCrops.WEED, CropBuilder.of(5, modelsForAge(models -> {
                     models.put(0, cropBlockModel("weed_stage_0"));
                     models.put(1, cropBlockModel("weed_stage_1"));
@@ -62,6 +69,7 @@ public final class IRCropsProvider {
                 }), IRLootTables.WEED)
                 .canHarvest(false)
                 .seedDrop(IRItems.PLANT_BALL, 0.2f));
+
         register(context, IRCrops.GOLDEN_DANDELION, CropBuilder.of(5, modelsForAge(models -> {
                     models.put(0, cropBlockModel("golden_dandelion_stage0"));
                     models.put(1, cropBlockModel("golden_dandelion_stage1"));
@@ -85,15 +93,17 @@ public final class IRCropsProvider {
                 }), IRLootTables.TIN_BLOSSOM)
                 .requirements(BlockBelowSoilRequirement.of(CTags.BlockTags.ORES_TIN))
                 .seedItem(IRBlocks.TIN_BLOSSOM));
+
         register(context, IRCrops.COPRIUM, copriumCrop(IRBlocks.COPRIUM)
                 .mutations(new CropMutation(IRCrops.EXPOSED_COPRIUM, 0.1f, true))
                 .interactions(CropInteraction.of(Ingredient.of(Items.HONEYCOMB), IRCrops.WAXED_COPRIUM)
                         .withSound(SoundEvents.HONEYCOMB_WAX_ON)));
-        // Same as coprium, but doesn't oxidize
-        register(context, IRCrops.WAXED_COPRIUM, copriumCrop(IRBlocks.WAXED_COPRIUM));
         register(context, IRCrops.EXPOSED_COPRIUM, oxidizedCopriumCrop("exposed_coprium", IRBlocks.EXPOSED_COPRIUM, IRCrops.WEATHERED_COPRIUM));
         register(context, IRCrops.WEATHERED_COPRIUM, oxidizedCopriumCrop("weathered_coprium", IRBlocks.WEATHERED_COPRIUM, IRCrops.OXIDIZED_COPRIUM));
         register(context, IRCrops.OXIDIZED_COPRIUM, oxidizedCopriumCrop("oxidized_coprium", IRBlocks.OXIDIZED_COPRIUM, null));
+        // Same as coprium, but doesn't oxidize
+        register(context, IRCrops.WAXED_COPRIUM, copriumCrop(IRBlocks.WAXED_COPRIUM));
+
         register(context, IRCrops.WITHER_ROSE, CropBuilder.of(5, modelsForAge(models -> {
                     for (int age = 0; age < 5; age++) {
                         models.put(age, cropBlockModel("wither_rose_stage" + age));
@@ -121,7 +131,7 @@ public final class IRCropsProvider {
                         models.put(age, cropBlockModel("ender_lily_stage" + age));
                     }
                 }), IRLootTables.ENDER_LILY)
-                .requirements(SoilRequirement.of(Blocks.END_STONE))
+                .requirements(SoilRequirement.of(Blocks.END_STONE), LightLevelRequirement.of(0, 15))
                 .seedItem(IRBlocks.ENDER_LILY));
         register(context, IRCrops.RED_MUSHROOM, CropBuilder.of(4, modelsForAge(models -> {
                     for (int age = 0; age < 4; age++) {
@@ -143,17 +153,17 @@ public final class IRCropsProvider {
         register(context, IRCrops.CARROTS, cropFromBlock(Blocks.CARROTS));
         register(context, IRCrops.POTATOES, cropFromBlock(Blocks.POTATOES));
         register(context, IRCrops.BEETROOTS, cropFromBlock(Blocks.BEETROOTS));
-        // Not a CropBlock, but it has an age property, so it can use its own model and loot table like the other vanilla crops
         register(context, IRCrops.NETHER_WART, CropBuilder.of(NetherWartBlock.MAX_AGE + 1,
                         new Crop.Models.BlockModel(Blocks.NETHER_WART, NetherWartBlock.AGE.getName()),
                         Blocks.NETHER_WART.getLootTable())
-                .requirements(SoilRequirement.of(Blocks.SOUL_SAND))
+                .requirements(SoilRequirement.of(Blocks.SOUL_SAND), LightLevelRequirement.of(0, 15))
                 .seedItem(Items.NETHER_WART));
+        register(context, IRCrops.SWEET_BERRY_BUSH, CropBuilder.of(SweetBerryBushBlock.MAX_AGE + 1,
+                        new Crop.Models.BlockModel(Blocks.SWEET_BERRY_BUSH, SweetBerryBushBlock.AGE.getName()),
+                        Blocks.SWEET_BERRY_BUSH.getLootTable())
+                .seedItem(Items.SWEET_BERRIES));
     }
 
-    /**
-     * @return an ingredient matching drinkable potions of any of the given potion types
-     */
     @SafeVarargs
     private static Ingredient potionIngredient(Holder<Potion>... potions) {
         return CompoundIngredient.of(Arrays.stream(potions)
@@ -165,9 +175,6 @@ public final class IRCropsProvider {
         context.register(key, builder.build());
     }
 
-    /**
-     * Unaffected coprium crop without mutations
-     */
     private static CropBuilder copriumCrop(ItemLike seed) {
         return CropBuilder.of(7, modelsForAge(models -> {
                     for (int age = 0; age < 7; age++) {

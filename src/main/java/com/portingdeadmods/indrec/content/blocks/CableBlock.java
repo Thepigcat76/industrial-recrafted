@@ -4,11 +4,9 @@ import com.mojang.serialization.MapCodec;
 import com.portingdeadmods.indrec.IRCapabilities;
 import com.portingdeadmods.indrec.api.blocks.PipeBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
-import com.portingdeadmods.indrec.api.energy.TieredEnergy;
 import com.portingdeadmods.indrec.api.energy.blocks.EnergyTierBlock;
 import com.portingdeadmods.indrec.registries.IRNetworks;
 import com.portingdeadmods.indrec.utils.TooltipUtils;
-import com.thepigcat.transportlib.api.NetworkNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -105,11 +103,9 @@ public class CableBlock extends PipeBlock implements EnergyTierBlock {
         BlockState newState = super.updateShape(blockState, facingDirection, facingBlockState, level, blockPos, facingBlockPos);
         if (level instanceof ServerLevel serverLevel) {
             boolean interactorExists = IRNetworks.ENERGY.get().checkForInteractorAt(serverLevel, blockPos, facingDirection);
-            NetworkNode<TieredEnergy> node = IRNetworks.ENERGY.get().getNodeAt(serverLevel, blockPos);
             if (IRNetworks.ENERGY.get().hasInteractorAt(serverLevel, facingBlockPos) && !interactorExists) {
                 IRNetworks.ENERGY.get().removeInteractor(serverLevel, facingBlockPos);
-            } else if (interactorExists && (node == null || !node.hasInteractorConnection(facingDirection))) {
-                // Only for new connections, this also runs whenever a connected machine changes its block state
+            } else if (interactorExists) {
                 int connectionsAmount = 0;
                 Direction[] directions = new Direction[6];
                 for (Direction direction : Direction.values()) {

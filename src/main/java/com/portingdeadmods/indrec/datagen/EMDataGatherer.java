@@ -43,5 +43,6 @@ public final class EMDataGatherer {
         IRDatapackEntriesProvider datapackEntriesProvider = generator.addProvider(event.includeServer(), new IRDatapackEntriesProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new IRTagsProvider.DamageTypesProvider(packOutput, datapackEntriesProvider.getRegistryProvider(), existingFileHelper));
         generator.addProvider(event.includeServer(), new IRDataMapProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new IRBlockLootModifierProvider(packOutput, lookupProvider));
     }
 }

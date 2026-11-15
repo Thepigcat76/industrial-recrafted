@@ -6,8 +6,12 @@ import com.portingdeadmods.indrec.api.blocks.MachineBlock;
 import com.portingdeadmods.indrec.api.energy.EnergyHandler;
 import com.portingdeadmods.indrec.api.energy.EnergyTier;
 import com.portingdeadmods.indrec.api.menus.MachineMenu;
+import com.portingdeadmods.indrec.api.menus.MachineMenuConstructor;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
@@ -41,6 +45,8 @@ public class IRMachine implements ItemLike {
     private final Supplier<BlockItem> blockItemSupplier;
     private final Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityTypeSupplier;
     private final @Nullable Supplier<MenuType<? extends MachineMenu<?>>> menuTypeSupplier;
+    private final @Nullable MachineMenuConstructor<?> menuConstructor;
+    private final @Nullable Supplier<Component> menuTitleSupplier;
     private final @Nullable MachineRecipeLayout<?> recipeLayout;
 
     private final List<Slot> inputSlots;
@@ -56,7 +62,7 @@ public class IRMachine implements ItemLike {
     public IRMachine(String name, Supplier<? extends EnergyTier> energyTierSupplier,
                      Supplier<? extends MachineBlock> blockSupplier, Supplier<BlockItem> blockItemSupplier,
                      Supplier<BlockEntityType<? extends MachineBlockEntity>> blockEntityTypeSupplier,
-                     @Nullable Supplier<MenuType<? extends MachineMenu<?>>> menuTypeSupplier,
+                     @Nullable Supplier<MenuType<? extends MachineMenu<?>>> menuTypeSupplier, @Nullable MachineMenuConstructor<?> menuConstructor, @Nullable Supplier<Component> menuTitleSupplier,
                      @Nullable MachineRecipeLayout<?> recipeLayout, List<Slot> inputSlots, List<Slot> outputSlots, List<Slot> catalystSlots, boolean addToCreative, boolean allowEnergyInsert, boolean allowEnergyExtract, IntSupplier energyCapacity) {
         this.name = name;
         this.energyTierSupplier = energyTierSupplier;
@@ -64,6 +70,8 @@ public class IRMachine implements ItemLike {
         this.blockItemSupplier = blockItemSupplier;
         this.blockEntityTypeSupplier = blockEntityTypeSupplier;
         this.menuTypeSupplier = menuTypeSupplier;
+        this.menuConstructor = menuConstructor;
+        this.menuTitleSupplier = menuTitleSupplier;
         this.recipeLayout = recipeLayout;
         this.addToCreative = addToCreative;
 
@@ -157,11 +165,27 @@ public class IRMachine implements ItemLike {
         return this.energyCapacity.getAsInt();
     }
 
+    public boolean hasMenu() {
+        return this.menuTypeSupplier != null && this.menuConstructor != null;
+    }
+
+    public Component getMenuTitle() {
+        return this.menuTitleSupplier != null ? this.menuTitleSupplier.get() : this.getBlock().getName();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <BE extends MachineBlockEntity> AbstractContainerMenu createMenu(int containerId, Inventory inventory, BE blockEntity) {
+        return ((MachineMenuConstructor<BE>) Objects.requireNonNull(this.menuConstructor, "%s machine has no menu".formatted(this.name)))
+                .create(containerId, inventory, blockEntity);
+    }
+
     public static class Builder {
         private TriFunction<String, MachineBlock.Builder, Supplier<? extends EnergyTier>, ? extends MachineBlock> blockFactory;
         private MachineBlock.Builder machineBlockBuilder;
         private Supplier<? extends BlockItem> blockItemSupplier;
         private IContainerFactory<? extends MachineMenu<?>> menuSupplier;
+        private MachineMenuConstructor<?> menuConstructor;
+        private Supplier<Component> menuTitleSupplier;
         private BlockEntityType.BlockEntitySupplier<? extends MachineBlockEntity> blockEntitySupplier;
         private final Supplier<? extends EnergyTier> energyTierSupplier;
         private MachineRecipeLayout<?> recipeLayout;
@@ -224,8 +248,35 @@ public class IRMachine implements ItemLike {
             return this;
         }
 
+        /**
+         * Registers the menu type without making the machine open it, for machines that don't have a screen yet
+         */
         public <T extends MachineBlockEntity> Builder menu(IContainerFactory<? extends MachineMenu<T>> menuSupplier) {
             this.menuSupplier = menuSupplier;
+            return this;
+        }
+
+        /**
+         * Registers the menu type and opens the menu when the machine is right-clicked, titled with the machine's block name
+         *
+         * @param menuSupplier    creates the client-side menu from the buffer sent by the server
+         * @param menuConstructor creates the server-side menu for the block entity
+         */
+        public <T extends MachineBlockEntity> Builder menu(IContainerFactory<? extends MachineMenu<T>> menuSupplier, MachineMenuConstructor<T> menuConstructor) {
+            return this.menu(menuSupplier, menuConstructor, null);
+        }
+
+        /**
+         * Registers the menu type and opens the menu when the machine is right-clicked
+         *
+         * @param menuSupplier      creates the client-side menu from the buffer sent by the server
+         * @param menuConstructor   creates the server-side menu for the block entity
+         * @param menuTitleSupplier the title of the menu, the machine's block name if null
+         */
+        public <T extends MachineBlockEntity> Builder menu(IContainerFactory<? extends MachineMenu<T>> menuSupplier, MachineMenuConstructor<T> menuConstructor, @Nullable Supplier<Component> menuTitleSupplier) {
+            this.menuSupplier = menuSupplier;
+            this.menuConstructor = menuConstructor;
+            this.menuTitleSupplier = menuTitleSupplier;
             return this;
         }
 
@@ -265,16 +316,15 @@ public class IRMachine implements ItemLike {
                     registeredBlock,
                     registrationHelper.getItemRegister().register(name, this.blockItemSupplier),
                     typeSupplier,
-                    this.menuSupplier != null ? registrationHelper.getMenuTypeRegister().register(name, () -> IMenuTypeExtension.create(this.menuSupplier)) : null,
+                    this.menuSupplier != null ? registrationHelper.getMenuTypeRegister().register(name, () -> IMenuTypeExtension.create(this.menuSupplier)) : null, this.menuConstructor,
+                    this.menuTitleSupplier,
                     this.recipeLayout,
                     this.inputSlots,
                     this.outputSlots,
                     this.catalystSlots,
                     this.addToCreativeTab,
                     this.allowEnergyInsert,
-                    this.allowEnergyExtract,
-                    this.energyCapacity
-            );
+                    this.allowEnergyExtract, this.energyCapacity);
         }
     }
 

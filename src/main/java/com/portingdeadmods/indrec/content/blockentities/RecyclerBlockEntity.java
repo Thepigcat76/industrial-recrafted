@@ -3,27 +3,19 @@ package com.portingdeadmods.indrec.content.blockentities;
 import com.portingdeadmods.indrec.api.blockentities.UpgradeBlockEntity;
 import com.portingdeadmods.indrec.api.blockentities.MachineBlockEntity;
 import com.portingdeadmods.indrec.api.recipes.MachineRecipe;
-import com.portingdeadmods.indrec.content.menus.RecyclerMenu;
 import com.portingdeadmods.indrec.content.recipes.flags.ItemInputComponentFlag;
-import com.portingdeadmods.indrec.impl.energy.EnergyHandlerImpl;
-import com.portingdeadmods.indrec.impl.items.LimitedItemHandler;
+import com.portingdeadmods.indrec.handlers.energy.EnergyHandlerImpl;
+import com.portingdeadmods.indrec.handlers.items.LimitedItemHandler;
 import com.portingdeadmods.indrec.registries.IRMachines;
-import com.portingdeadmods.indrec.registries.IRTranslations;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.HandlerUtils;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvider, UpgradeBlockEntity {
+public class RecyclerBlockEntity extends MachineBlockEntity implements UpgradeBlockEntity {
     private final IItemHandler exposedItemHandler;
 
     public RecyclerBlockEntity(BlockPos blockPos, BlockState blockState) {
@@ -42,16 +34,7 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvi
         this.exposedItemHandler = new LimitedItemHandler(this.getItemHandler(), IntSet.of(0), IntSet.of(1), IntSet.of(2));
     }
 
-    @Override
-    public @NotNull Component getDisplayName() {
-        return IRTranslations.RECYCLER.component();
-    }
 
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        this.syncProgress();
-        return new RecyclerMenu(i, inventory, this);
-    }
 
     @Override
     protected @NotNull MachineRecipe.MachineRecipeInput createRecipeInput() {
@@ -67,5 +50,4 @@ public class RecyclerBlockEntity extends MachineBlockEntity implements MenuProvi
     public IItemHandler getItemHandlerOnSide(Direction direction) {
         return this.exposedItemHandler;
     }
-
 }

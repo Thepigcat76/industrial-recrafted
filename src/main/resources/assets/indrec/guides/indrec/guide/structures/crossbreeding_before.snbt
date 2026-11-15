@@ -1,0 +1,17 @@
+{
+    DataVersion: 3955,
+    size: [3, 2, 1],
+    data: [
+        {pos: [0, 0, 0], state: "minecraft:farmland{moisture:7}"},
+        {pos: [1, 0, 0], state: "minecraft:farmland{moisture:7}"},
+        {pos: [2, 0, 0], state: "minecraft:farmland{moisture:7}"},
+        {pos: [0, 1, 0], state: "indrec:crop{crossbreed:false}", nbt: {id: "indrec:crop", crop: "indrec:carrots", age: 4}},
+        {pos: [1, 1, 0], state: "indrec:crop{crossbreed:true}", nbt: {id: "indrec:crop", age: 0}},
+        {pos: [2, 1, 0], state: "indrec:crop{crossbreed:false}", nbt: {id: "indrec:crop", crop: "indrec:pumpkin", age: 2}}
+    ],
+    entities: [],
+    palette: [
+        "minecraft:farmland{moisture:7}",
+        "indrec:crop{crossbreed:true}", "indrec:crop{crossbreed:false}"
+    ]
+}

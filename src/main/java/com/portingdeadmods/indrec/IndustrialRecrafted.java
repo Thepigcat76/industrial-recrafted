@@ -9,7 +9,7 @@ import com.portingdeadmods.indrec.api.recipes.MachineRecipeLayout;
 import com.portingdeadmods.indrec.content.recipes.RegisterRecipeLayoutEvent;
 import com.portingdeadmods.indrec.content.worldgen.IRPlacerTypes;
 import com.portingdeadmods.indrec.data.maps.IRDataMaps;
-import com.portingdeadmods.indrec.impl.energy.ItemEnergyHandlerWrapper;
+import com.portingdeadmods.indrec.handlers.energy.ItemEnergyHandlerWrapper;
 import com.portingdeadmods.indrec.registries.*;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfig;
 import com.portingdeadmods.portingdeadlibs.api.config.PDLConfigHelper;

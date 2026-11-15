@@ -2,6 +2,7 @@ package com.portingdeadmods.indrec.api.recipes;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
+import com.portingdeadmods.indrec.IndustrialRecrafted;
 import com.portingdeadmods.indrec.content.recipes.components.energy.EnergyOutputComponent;
 import com.portingdeadmods.indrec.content.recipes.flags.FluidInputComponentFlag;
 import com.portingdeadmods.indrec.content.recipes.flags.FluidOutputComponentFlag;
@@ -118,7 +119,7 @@ public abstract class MachineRecipeLayout<R extends MachineRecipe & Recipe<?>> {
                         DataResult<T> result = rawCodec.encodeStart(ops, entry.getValue());
                         if (result.isSuccess()) {
                             if (entry.getKey() == null) {
-                                System.out.println("Oops key is null");
+                                IndustrialRecrafted.LOGGER.error("Recipe entry key is null while encoding. Affected recipe layout: {}", MachineRecipeLayout.this.id);
                             }
                             prefix.add(entry.getKey(), result.getOrThrow());
                         } else {

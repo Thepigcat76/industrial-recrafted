@@ -9,6 +9,8 @@ import com.portingdeadmods.indrec.client.items.MiningLaserClientExtensions;
 import com.portingdeadmods.indrec.client.overlays.CropAnalyzerOverlay;
 import com.portingdeadmods.indrec.client.particles.LaserBeamParticle;
 import com.portingdeadmods.indrec.client.screens.*;
+import com.portingdeadmods.indrec.compat.guideme.GuideMECompat;
+import com.portingdeadmods.indrec.compat.guideme.IRGuide;
 import com.portingdeadmods.indrec.content.blockentities.WaterMillBlockEntity;
 import com.portingdeadmods.indrec.content.blockentities.WindMillBlockEntity;
 import com.portingdeadmods.indrec.content.items.electric.BatteryItem;
@@ -34,6 +36,12 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import com.portingdeadmods.indrec.client.items.ClientToolboxTooltip;
+import com.portingdeadmods.indrec.client.IRKeyMappings;
+import com.portingdeadmods.indrec.client.screens.ToolboxFilterScreen;
+import com.portingdeadmods.indrec.registries.IRMenuTypes;
+import com.portingdeadmods.indrec.content.items.ToolboxItem;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -63,13 +71,22 @@ public final class IndustrialRecraftedClient {
         modEventBus.addListener(this::registerAdditionalModels);
         modEventBus.addListener(this::registerParticleProviders);
         modEventBus.addListener(this::registerClientExtensions);
+        modEventBus.addListener(this::registerTooltipComponents);
+        modEventBus.addListener(IRKeyMappings::register);
         NeoForge.EVENT_BUS.addListener(TransportNetworkRenderer::renderNetworkNodes);
         NeoForge.EVENT_BUS.addListener(CropAnalyzerOverlay::onMouseScroll);
+        NeoForge.EVENT_BUS.addListener(ClientToolboxTooltip::onMouseScroll);
+        NeoForge.EVENT_BUS.addListener(IRKeyMappings::onClientTick);
 
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+
+        if (GuideMECompat.isLoaded()) {
+            IRGuide.register();
+        }
     }
 
     private void registerMenuScreens(RegisterMenuScreensEvent event) {
+        event.register(IRMenuTypes.TOOLBOX.get(), ToolboxFilterScreen::new);
         event.register(IRMachines.BASIC_GENERATOR.getMenuType(), BasicGeneratorScreen::new);
         event.register(IRMachines.GEOTHERMAL_GENERATOR.getMenuType(), GeothermalGeneratorScreen::new);
         event.register(IRMachines.ELECTRIC_FURNACE.getMenuType(), ElectricFurnaceScreen::new);
@@ -130,6 +147,10 @@ public final class IndustrialRecraftedClient {
                 ItemProperties.register(item, IRItemProperties.BATTERY_STAGE_KEY, IRItemProperties::getBatteryStage);
             }
         }
+    }
+
+    private void registerTooltipComponents(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(ToolboxItem.Tooltip.class, ClientToolboxTooltip::new);
     }
 
     private void registerGuiLayers(RegisterGuiLayersEvent event) {
